@@ -1,7 +1,7 @@
 {
-  "generated_at": "2026-07-10T05:52:08.322Z",
+  "generated_at": "2026-07-10T07:10:56.193Z",
   "timezone": "Asia/Shanghai",
-  "status": "stale",
+  "status": "ok",
   "tools": [
     {
       "id": "codex",
@@ -10,7 +10,7 @@
       "repo_url": "https://github.com/openai/codex",
       "official_url": "https://developers.openai.com/codex",
       "x_url": "https://x.com/OpenAI",
-      "stars": 96766,
+      "stars": 96798,
       "stars_delta_24h": null,
       "stars_delta_7d": null,
       "latest_release": {
@@ -28,7 +28,7 @@
         "version": "0.144.1",
         "weekly_downloads": 10625797
       },
-      "status": "error"
+      "status": "ok"
     },
     {
       "id": "claude-code",
@@ -37,7 +37,7 @@
       "repo_url": "https://github.com/anthropics/claude-code",
       "official_url": "https://code.claude.com/docs",
       "x_url": "https://x.com/AnthropicAI",
-      "stars": 137111,
+      "stars": 137128,
       "stars_delta_24h": null,
       "stars_delta_7d": null,
       "latest_release": {
@@ -55,7 +55,7 @@
         "version": "2.1.206",
         "weekly_downloads": 11482894
       },
-      "status": "error"
+      "status": "ok"
     },
     {
       "id": "agy",
@@ -78,7 +78,7 @@
         "median_days": 2
       },
       "npm": null,
-      "status": "error"
+      "status": "ok"
     },
     {
       "id": "openclaw",
@@ -87,7 +87,7 @@
       "repo_url": "https://github.com/openclaw/openclaw",
       "official_url": "https://openclaw.ai",
       "x_url": "https://x.com/openclaw",
-      "stars": 382392,
+      "stars": 382406,
       "stars_delta_24h": null,
       "stars_delta_7d": null,
       "latest_release": {
@@ -105,7 +105,7 @@
         "version": "2026.6.11",
         "weekly_downloads": 2676988
       },
-      "status": "error"
+      "status": "ok"
     }
   ],
   "models": [

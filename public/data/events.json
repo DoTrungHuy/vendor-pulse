@@ -1,5 +1,14 @@
 [
   {
+    "id": "source:gpt:cf68f1c9eb24",
+    "item_id": "gpt",
+    "item_name": "GPT",
+    "type": "source_changed",
+    "title": "GPT 官方发布说明页内容变化，待核验",
+    "occurred_at": "2026-07-10T07:10:59.168Z",
+    "source_url": "https://openai.com/news/"
+  },
+  {
     "id": "release:agy:351885150",
     "item_id": "agy",
     "item_name": "AGY",
