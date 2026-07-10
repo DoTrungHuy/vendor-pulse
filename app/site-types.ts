@@ -16,6 +16,24 @@ export type ToolRecord = {
   status: SourceHealth;
 };
 
+export type SignalRecord = {
+  title: string;
+  occurred_at: string;
+  source_url: string;
+  feed_id: string | null;
+  confidence?: "verified" | "needs_review";
+};
+
+export type ModelFeedStatus = {
+  id: string;
+  label: string;
+  kind: "model" | "deprecation" | string;
+  url: string;
+  status: SourceHealth | "ok" | "error" | "stale";
+  checked_at: string | null;
+  error: string | null;
+};
+
 export type ModelRecord = {
   id: string;
   name: string;
@@ -24,6 +42,9 @@ export type ModelRecord = {
   title: string | null;
   occurred_at: string | null;
   status: SourceHealth;
+  latest_model?: SignalRecord | null;
+  latest_policy?: SignalRecord | null;
+  feeds?: ModelFeedStatus[];
 };
 
 export type EventRecord = {
@@ -34,6 +55,9 @@ export type EventRecord = {
   title: string;
   occurred_at: string;
   source_url: string;
+  provider?: string | null;
+  feed_id?: string | null;
+  confidence?: "verified" | "needs_review";
 };
 
 export type CurrentData = {

@@ -1,183 +1,493 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
-import type { Capability, CurrentData, EventRecord, SnapshotSeries, ToolRecord } from "./site-types";
+import { useEffect, useMemo, useState } from "react";
+import type { CurrentData, EventRecord } from "./site-types";
 
 const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
 const dataPath = (name: string) => `${basePath}/data/${name}`;
-const accent = ["#4ee5d4", "#c7f464", "#ffbf69", "#ff7f6a"];
 
-const emptyData: CurrentData = {
+type ItemKind = "model" | "agent" | "notice";
+
+type FeedItem = {
+  id: string;
+  vendor: string;
+  vendorKey: string;
+  title: string;
+  note: string;
+  time: string | null;
+  href: string;
+  isPortal?: boolean;
+  topic?: string;
+};
+
+type TabId = "models" | "agents" | "notices";
+
+const OFFICIAL_NOTICES: FeedItem[] = [
+  {
+    id: "notice-openai-lifecycle",
+    vendor: "OpenAI",
+    vendorKey: "openai",
+    topic: "生命周期",
+    title: "模型与接口：哪些在淘汰、建议换成什么",
+    note: "不只有停用日期，也有推荐替代。做迁移时先看这里。",
+    time: null,
+    href: "https://developers.openai.com/api/docs/deprecations",
+    isPortal: true,
+  },
+  {
+    id: "notice-openai-release-notes",
+    vendor: "OpenAI",
+    vendorKey: "openai",
+    topic: "产品变更",
+    title: "ChatGPT / 模型发布说明",
+    note: "默认模型切换、功能调整、个别型号退役，常先写在这里。",
+    time: null,
+    href: "https://help.openai.com/en/articles/9624314-model-release-notes",
+    isPortal: true,
+  },
+  {
+    id: "notice-openai-changelog",
+    vendor: "OpenAI",
+    vendorKey: "openai",
+    topic: "API 变更",
+    title: "API 更新日志",
+    note: "新能力、参数调整、开发者侧变更，比新闻稿更细。",
+    time: null,
+    href: "https://developers.openai.com/api/docs/changelog",
+    isPortal: true,
+  },
+  {
+    id: "notice-openai-usage",
+    vendor: "OpenAI",
+    vendorKey: "openai",
+    topic: "使用政策",
+    title: "使用政策（Usage Policies）",
+    note: "能做什么、不能做什么；改版不频繁，但一改就影响合规。",
+    time: null,
+    href: "https://openai.com/policies/usage-policies/",
+    isPortal: true,
+  },
+  {
+    id: "notice-anthropic-lifecycle",
+    vendor: "Anthropic",
+    vendorKey: "anthropic",
+    topic: "生命周期",
+    title: "Claude 模型状态：在用 / 过渡 / 准备退役",
+    note: "官方用 Active、Legacy、Deprecated 描述状态，并给替换建议。",
+    time: null,
+    href: "https://platform.claude.com/docs/en/about-claude/model-deprecations",
+    isPortal: true,
+  },
+  {
+    id: "notice-anthropic-platform",
+    vendor: "Anthropic",
+    vendorKey: "anthropic",
+    topic: "平台更新",
+    title: "Claude 平台更新说明",
+    note: "API、控制台、SDK 和模型迁移通知，经常混在同一页。",
+    time: null,
+    href: "https://platform.claude.com/docs/en/release-notes/overview",
+    isPortal: true,
+  },
+  {
+    id: "notice-google-deprecations",
+    vendor: "Google",
+    vendorKey: "google",
+    topic: "生命周期",
+    title: "Gemini 弃用时间表",
+    note: "预览版、图像/视频模型何时停，官方集中列在这。",
+    time: null,
+    href: "https://ai.google.dev/gemini-api/docs/deprecations",
+    isPortal: true,
+  },
+  {
+    id: "notice-google-changelog",
+    vendor: "Google",
+    vendorKey: "google",
+    topic: "API 变更",
+    title: "Gemini API 更新日志",
+    note: "上新、能力调整和弃用公告，很多会先出现在 changelog。",
+    time: null,
+    href: "https://ai.google.dev/gemini-api/docs/changelog",
+    isPortal: true,
+  },
+  {
+    id: "notice-google-models",
+    vendor: "Google",
+    vendorKey: "google",
+    topic: "模型目录",
+    title: "当前可用模型一览",
+    note: "看现在能调哪些模型、预览版限制，比零散新闻清楚。",
+    time: null,
+    href: "https://ai.google.dev/gemini-api/docs/models",
+    isPortal: true,
+  },
+];
+
+const emptyCurrent: CurrentData = {
   generated_at: null,
   timezone: "Asia/Shanghai",
   status: "bootstrapping",
-  tools: [
-    { id: "codex", name: "Codex", repo: "openai/codex", repo_url: "https://github.com/openai/codex", official_url: "https://developers.openai.com/codex", x_url: "https://x.com/OpenAI", stars: null, stars_delta_24h: null, stars_delta_7d: null, latest_release: null, release_cadence_30d: { count: 0, median_days: null }, npm: { package: "@openai/codex", version: null, weekly_downloads: null }, status: "bootstrapping" },
-    { id: "claude-code", name: "Claude Code", repo: "anthropics/claude-code", repo_url: "https://github.com/anthropics/claude-code", official_url: "https://code.claude.com/docs", x_url: "https://x.com/AnthropicAI", stars: null, stars_delta_24h: null, stars_delta_7d: null, latest_release: null, release_cadence_30d: { count: 0, median_days: null }, npm: { package: "@anthropic-ai/claude-code", version: null, weekly_downloads: null }, status: "bootstrapping" },
-    { id: "agy", name: "AGY", repo: "google-antigravity/antigravity-cli", repo_url: "https://github.com/google-antigravity/antigravity-cli", official_url: "https://www.antigravity.google/docs/cli-using", x_url: "https://x.com/GoogleAI", stars: null, stars_delta_24h: null, stars_delta_7d: null, latest_release: null, release_cadence_30d: { count: 0, median_days: null }, npm: null, status: "bootstrapping" },
-    { id: "openclaw", name: "OpenClaw", repo: "openclaw/openclaw", repo_url: "https://github.com/openclaw/openclaw", official_url: "https://openclaw.ai", x_url: "https://x.com/openclaw", stars: null, stars_delta_24h: null, stars_delta_7d: null, latest_release: null, release_cadence_30d: { count: 0, median_days: null }, npm: { package: "openclaw", version: null, weekly_downloads: null }, status: "bootstrapping" },
-  ],
+  tools: [],
   models: [],
 };
 
-function formatCount(value: number | null) {
-  if (value === null || value === undefined) return "待采集";
-  return new Intl.NumberFormat("zh-CN", { notation: "compact", maximumFractionDigits: 1 }).format(value);
+function cleanTitle(raw: string) {
+  return raw
+    .replace(/^[^:]+:\s*/, "")
+    .replace(/\s+/g, " ")
+    .replace(/[\u0000-\u001F\u007F-\u009F\uE000-\uF8FF]/g, "")
+    .trim();
 }
 
-function formatDate(value: string | null) {
-  if (!value) return "待首次采集";
-  return new Intl.DateTimeFormat("zh-CN", { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit", timeZone: "Asia/Shanghai" }).format(new Date(value));
+function displayTitle(raw: string, max = 100) {
+  const title = cleanTitle(raw);
+  if (title.length <= max) return title;
+  const cut = title.slice(0, max);
+  const pause = Math.max(cut.lastIndexOf("。"), cut.lastIndexOf(". "), cut.lastIndexOf("，"), cut.lastIndexOf(", "));
+  return `${(pause > 36 ? cut.slice(0, pause) : cut).trim()}…`;
+}
+
+function isConcreteNotice(title: string) {
+  const text = cleanTitle(title);
+  if (text.length < 28 || text.length > 260) return false;
+  const noise = [
+    /see which .* are active/i,
+    /this page lists/i,
+    /anthropic uses the following terms/i,
+    /\bactive:\s*the model is fully supported/i,
+    /\blegacy:\s*the model will no longer/i,
+    /\bdeprecated:\s*the model is still functional/i,
+    /\boverview\b/i,
+    /copy page/i,
+    /\bpalette\b/i,
+  ];
+  if (noise.some((pattern) => pattern.test(text))) return false;
+  const hasSignal = /(deprecat|retir|shutdown|shut down|sunset|no longer|will be removed|migrate|replacement|default model|下线|弃用|迁移|替代)/i.test(text);
+  const hasModel = /\b(gpt[-\s]?\d|o[1-9]\b|claude|gemini|imagen|sonnet|opus|haiku|flash|codex|veo)\b/i.test(text);
+  const hasDate = /\b(20\d{2}|january|february|march|april|may|june|july|august|september|october|november|december)\b/i.test(text);
+  return hasSignal && (hasModel || hasDate);
+}
+
+function vendorOf(name: string, provider?: string | null) {
+  const text = `${provider || ""} ${name}`.toLowerCase();
+  if (text.includes("openai") || text.includes("gpt") || text.includes("codex")) return { label: "OpenAI", key: "openai" };
+  if (text.includes("anthropic") || text.includes("claude")) return { label: "Anthropic", key: "anthropic" };
+  if (text.includes("google") || text.includes("gemini") || text.includes("agy")) return { label: "Google", key: "google" };
+  if (text.includes("openclaw")) return { label: "OpenClaw", key: "other" };
+  return { label: provider || name || "其他", key: "other" };
+}
+
+function whereFrom(url: string) {
+  const u = url.toLowerCase();
+  if (u.includes("github.com")) return "GitHub";
+  if (u.includes("/news") || u.includes("rss")) return "官网新闻";
+  if (u.includes("deprecat") || u.includes("migration")) return "官方说明页";
+  if (u.includes("changelog") || u.includes("release-notes")) return "更新日志";
+  if (u.includes("docs.") || u.includes("/docs") || u.includes("help.")) return "官方文档";
+  return "官网";
+}
+
+function writeNote(kind: ItemKind, opts: { product: string; href: string; version?: string | null; title?: string }) {
+  const from = whereFrom(opts.href);
+  if (kind === "agent") {
+    if (opts.version) return `${opts.product} 出了新版本 ${opts.version}，详情在 ${from}`;
+    return `${opts.product} 有新版本，可到 ${from} 查看`;
+  }
+  if (kind === "notice") {
+    const title = opts.title || "";
+    if (/(retir|shutdown|shut down|sunset|下线|退役)/i.test(title)) return "和停用、退役有关，点开看日期和替代";
+    if (/(migrat|replacement|替代|迁移)/i.test(title)) return "和迁移、替换有关，看官方建议怎么换";
+    return `相关说明在 ${from}`;
+  }
+  if (from === "官网新闻") return `${opts.product} 的公开模型消息，来自新闻稿`;
+  if (from === "更新日志") return `${opts.product} 在更新日志里提到的模型变化`;
+  return `${opts.product} 的模型动态，来自 ${from}`;
+}
+
+function formatDate(value: string | null | undefined) {
+  if (!value) return "点进官网查看最新";
+  return new Intl.DateTimeFormat("zh-CN", {
+    month: "numeric",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+    timeZone: "Asia/Shanghai",
+  }).format(new Date(value));
 }
 
 function relativeTime(value: string | null) {
-  if (!value) return "--";
-  const hours = Math.max(0, Math.round((Date.now() - new Date(value).getTime()) / 3_600_000));
-  return hours < 1 ? "刚刚更新" : hours < 24 ? `${hours} 小时前` : `${Math.floor(hours / 24)} 天前`;
+  if (!value) return "尚未更新";
+  const mins = Math.max(0, Math.round((Date.now() - new Date(value).getTime()) / 60_000));
+  if (mins < 1) return "刚刚同步";
+  if (mins < 60) return `${mins} 分钟前同步`;
+  const hours = Math.round(mins / 60);
+  if (hours < 48) return `${hours} 小时前同步`;
+  return `${Math.floor(hours / 24)} 天前同步`;
 }
 
-function statusLabel(status: string) {
-  return status === "ok" ? "来源健康" : status === "stale" ? "数据延迟" : status === "error" ? "来源待修复" : "首次采集中";
+function statusText(status: string) {
+  if (status === "ok") return "数据正常";
+  if (status === "stale") return "部分源延迟";
+  if (status === "error") return "部分源异常";
+  return "准备中";
 }
 
-function Sparkline({ values, color, label }: { values: number[]; color: string; label: string }) {
-  const ref = useRef<HTMLCanvasElement>(null);
-  useEffect(() => {
-    const canvas = ref.current;
-    if (!canvas || values.length < 2) return;
-    const draw = () => {
-      const rect = canvas.getBoundingClientRect();
-      const ratio = window.devicePixelRatio || 1;
-      canvas.width = rect.width * ratio;
-      canvas.height = rect.height * ratio;
-      const context = canvas.getContext("2d");
-      if (!context) return;
-      context.scale(ratio, ratio);
-      const low = Math.min(...values);
-      const high = Math.max(...values);
-      const span = Math.max(1, high - low);
-      const points = values.map((value, index) => ({ x: (index / (values.length - 1)) * rect.width, y: rect.height - 8 - ((value - low) / span) * (rect.height - 16) }));
-      const gradient = context.createLinearGradient(0, 0, 0, rect.height);
-      gradient.addColorStop(0, `${color}55`);
-      gradient.addColorStop(1, `${color}00`);
-      context.beginPath();
-      context.moveTo(points[0].x, rect.height);
-      points.forEach((point) => context.lineTo(point.x, point.y));
-      context.lineTo(points[points.length - 1].x, rect.height);
-      context.closePath();
-      context.fillStyle = gradient;
-      context.fill();
-      context.beginPath();
-      points.forEach((point, index) => index === 0 ? context.moveTo(point.x, point.y) : context.lineTo(point.x, point.y));
-      context.strokeStyle = color;
-      context.lineWidth = 1.6;
-      context.stroke();
-    };
-    draw();
-    const observer = new ResizeObserver(draw);
-    observer.observe(canvas);
-    return () => observer.disconnect();
-  }, [values, color]);
-  return <canvas ref={ref} aria-label={label} role="img" />;
+function isHttpUrl(value: string | null | undefined): value is string {
+  return Boolean(value && /^https?:\/\//i.test(value));
 }
 
-function RadarCanvas({ capability }: { capability: Capability | undefined }) {
-  const ref = useRef<HTMLCanvasElement>(null);
-  const axes = useMemo(() => capability?.axes || [], [capability]);
-  useEffect(() => {
-    const canvas = ref.current;
-    if (!canvas || axes.length === 0) return;
-    const draw = () => {
-      const rect = canvas.getBoundingClientRect();
-      const ratio = window.devicePixelRatio || 1;
-      canvas.width = rect.width * ratio;
-      canvas.height = rect.height * ratio;
-      const context = canvas.getContext("2d");
-      if (!context) return;
-      context.scale(ratio, ratio);
-      const cx = rect.width / 2;
-      const cy = rect.height / 2;
-      const radius = Math.min(rect.width, rect.height) * 0.34;
-      const point = (index: number, scale: number) => {
-        const angle = -Math.PI / 2 + (index * Math.PI * 2) / axes.length;
-        return { x: cx + Math.cos(angle) * radius * scale, y: cy + Math.sin(angle) * radius * scale };
-      };
-      context.clearRect(0, 0, rect.width, rect.height);
-      [0.25, 0.5, 0.75, 1].forEach((scale) => {
-        context.beginPath();
-        axes.forEach((_, index) => {
-          const p = point(index, scale);
-          if (index === 0) context.moveTo(p.x, p.y);
-          else context.lineTo(p.x, p.y);
-        });
-        context.closePath();
-        context.strokeStyle = "rgba(129,145,152,.28)";
-        context.lineWidth = 1;
-        context.stroke();
-      });
-      axes.forEach((axis, index) => {
-        const outer = point(index, 1);
-        context.beginPath(); context.moveTo(cx, cy); context.lineTo(outer.x, outer.y); context.strokeStyle = "rgba(129,145,152,.24)"; context.stroke();
-        const label = point(index, 1.24);
-        context.fillStyle = "#819198"; context.font = "10px Cascadia Mono, monospace";
-        context.textAlign = label.x < cx - 4 ? "right" : label.x > cx + 4 ? "left" : "center";
-        context.fillText(axis.name, label.x, label.y + 3);
-      });
-      context.beginPath();
-      axes.forEach((axis, index) => {
-        const p = point(index, axis.count / 4);
-        if (index === 0) context.moveTo(p.x, p.y);
-        else context.lineTo(p.x, p.y);
-      });
-      context.closePath(); context.fillStyle = "rgba(78,229,212,.18)"; context.strokeStyle = "#4ee5d4"; context.lineWidth = 1.5; context.fill(); context.stroke();
-    };
-    draw();
-    const observer = new ResizeObserver(draw);
-    observer.observe(canvas);
-    return () => observer.disconnect();
-  }, [axes]);
-  return <canvas ref={ref} role="img" aria-label={`${capability?.tool_name || "工具"}能力覆盖雷达`} />;
+function dedupeItems(items: FeedItem[]) {
+  const seen = new Set<string>();
+  return items.filter((item) => {
+    const key = `${item.vendor}|${item.title}`.toLowerCase();
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+}
+
+function sortByTime(items: FeedItem[]) {
+  return [...items].sort((a, b) => new Date(b.time || 0).getTime() - new Date(a.time || 0).getTime());
+}
+
+function eventToItem(event: EventRecord): FeedItem | null {
+  if (!isHttpUrl(event.source_url)) return null;
+  const kind: ItemKind =
+    event.type === "release" ? "agent" : event.type === "deprecation" ? "notice" : "model";
+  if (kind === "notice" && !isConcreteNotice(event.title)) return null;
+  const vendor = vendorOf(event.item_name, event.provider);
+  const product = event.item_name || vendor.label;
+  return {
+    id: event.id,
+    vendor: vendor.label,
+    vendorKey: vendor.key,
+    title: displayTitle(event.title),
+    note: writeNote(kind, { product, href: event.source_url, title: event.title }),
+    time: event.occurred_at,
+    href: event.source_url,
+  };
+}
+
+function openOfficialLink(url: string) {
+  if (!isHttpUrl(url)) return false;
+  try {
+    const opened = window.open(url, "_blank", "noopener,noreferrer");
+    if (opened) return true;
+  } catch {
+    // fallback
+  }
+  window.location.assign(url);
+  return true;
 }
 
 export function AgentPulseClient() {
-  const [current, setCurrent] = useState<CurrentData>(emptyData);
+  const [current, setCurrent] = useState<CurrentData>(emptyCurrent);
   const [events, setEvents] = useState<EventRecord[]>([]);
-  const [snapshots, setSnapshots] = useState<SnapshotSeries[]>([]);
-  const [capabilities, setCapabilities] = useState<Capability[]>([]);
-  const [filter, setFilter] = useState("all");
-  const [range, setRange] = useState(30);
-  const [activeTool, setActiveTool] = useState("codex");
+  const [ready, setReady] = useState(false);
+  const [tab, setTab] = useState<TabId>("models");
+  const [toast, setToast] = useState<string | null>(null);
 
   useEffect(() => {
     Promise.all([
-      fetch(dataPath("current.json")).then((response) => response.ok ? response.json() : Promise.reject()),
-      fetch(dataPath("events.json")).then((response) => response.ok ? response.json() : []),
-      fetch(dataPath("snapshots.json")).then((response) => response.ok ? response.json() : []),
-      fetch(dataPath("capabilities.json")).then((response) => response.ok ? response.json() : []),
-    ]).then(([nextCurrent, nextEvents, nextSnapshots, nextCapabilities]) => {
-      setCurrent(nextCurrent); setEvents(nextEvents); setSnapshots(nextSnapshots); setCapabilities(nextCapabilities);
-    }).catch(() => undefined);
+      fetch(dataPath("current.json")).then((response) => (response.ok ? response.json() : Promise.reject())),
+      fetch(dataPath("events.json")).then((response) => (response.ok ? response.json() : [])),
+    ])
+      .then(([nextCurrent, nextEvents]) => {
+        setCurrent(nextCurrent);
+        setEvents(Array.isArray(nextEvents) ? nextEvents : []);
+      })
+      .catch(() => undefined)
+      .finally(() => setReady(true));
   }, []);
 
-  const visibleEvents = useMemo(() => events.filter((event) => filter === "all" || (filter === "model" ? event.type === "model" || event.type === "deprecation" : event.item_id === filter)).slice(0, 6), [events, filter]);
-  const activeCapability = capabilities.find((capability) => capability.tool_id === activeTool) || capabilities[0];
-  const highestMomentum = current.tools.filter((tool) => tool.stars_delta_24h !== null).sort((a, b) => (b.stars_delta_24h || 0) - (a.stars_delta_24h || 0))[0];
-  const latestModel = current.models.filter((model) => model.occurred_at).sort((a, b) => new Date(b.occurred_at || 0).getTime() - new Date(a.occurred_at || 0).getTime())[0];
+  useEffect(() => {
+    if (!toast) return;
+    const timer = window.setTimeout(() => setToast(null), 2200);
+    return () => window.clearTimeout(timer);
+  }, [toast]);
 
-  return <main className="pulse-shell"><div className="pulse-page">
-    <header className="topline"><a className="brand" href="#overview" aria-label="Agent Pulse 首页"><span className="brand-mark" />AGENT PULSE</a><div className="topline-right"><div className="source-state"><span className={`state-dot ${current.status === "ok" ? "" : current.status === "error" ? "error" : "warn"}`} /><span>{statusLabel(current.status)}</span></div></div></header>
-    <section className="hero" id="overview"><div><p className="eyebrow">AI / AGENT INTELLIGENCE DESK</p><h1>不是热搜。<br />是<span>可验证的脉冲。</span></h1><p className="hero-copy">追踪 GPT、Claude、Gemini 和四个核心 Agent 工具的发布、热度与能力覆盖。每个变化都保留来源、时间与健康状态。</p></div><div className="hero-signal"><div className="signal-label">LAST SUCCESSFUL COLLECTION</div><div className="signal-number">{relativeTime(current.generated_at)}</div><div className="signal-detail">以北京时间呈现，原始快照统一使用 UTC。数据变化才会写入仓库历史。</div></div></section>
-    <section className="insight-grid" aria-label="今日情报概览"><Insight label="新发布" value={events.filter((event) => event.type === "release").length} copy="已归档的工具版本事件" /><Insight label="24H 动量" value={highestMomentum?.name || "待采集"} copy={highestMomentum?.stars_delta_24h ? `+${formatCount(highestMomentum.stars_delta_24h)} stars` : "等待第一个完整快照"} /><Insight label="最近模型信号" value={latestModel?.name || "待采集"} copy={latestModel ? formatDate(latestModel.occurred_at) : "官方说明页会被定时检查"} /><Insight label="采集覆盖" value={`${current.tools.filter((tool) => tool.status === "ok").length}/${current.tools.length}`} copy="工具来源当前健康" /></section>
-    <section><div className="section-heading"><div><div className="section-kicker">LIVE TOOL TRACKER</div><h2>工具脉冲</h2></div><div className="time-switch" aria-label="图表时间范围">{[7, 30, 90].map((value) => <button key={value} aria-pressed={range === value} onClick={() => setRange(value)}>{value}D</button>)}</div></div><div className="tool-grid">{current.tools.map((tool, index) => { const series = snapshots.find((snapshot) => snapshot.tool_id === tool.id)?.points || []; return <ToolCard key={tool.id} tool={tool} color={accent[index]} values={series.slice(-Math.max(2, range)).map((point) => point.stars)} onSelect={() => setActiveTool(tool.id)} />; })}</div></section>
-    <section className="lower-grid"><div className="events-panel"><div className="section-heading"><div><div className="section-kicker">VERIFIED EVENT STREAM</div><h2>更新流</h2></div><div className="filter-row" aria-label="更新流筛选">{[["all", "全部"], ["model", "模型"], ["codex", "Codex"], ["claude-code", "Claude"], ["agy", "AGY"], ["openclaw", "OpenClaw"]].map(([id, label]) => <button key={id} aria-pressed={filter === id} onClick={() => setFilter(id)}>{label}</button>)}</div></div><ol className="event-list">{visibleEvents.length ? visibleEvents.map((event) => <li className="event-item" key={event.id}><span className="event-type">{event.type === "release" ? "RELEASE" : event.type === "model" ? "MODEL" : event.type.toUpperCase()}</span><a className="event-title" href={event.source_url} target="_blank" rel="noreferrer">{event.title}</a><time className="event-time">{formatDate(event.occurred_at)}</time></li>) : <li className="empty-state">首次采集完成后，经过验证的发布事件会出现在这里。</li>}</ol></div><div className="radar-panel"><div className="section-kicker">AUDITABLE CAPABILITY COVERAGE</div><div className="capability-heading"><h2>{activeCapability?.tool_name || "能力雷达"}</h2><select value={activeTool} onChange={(event) => setActiveTool(event.target.value)} aria-label="选择工具">{current.tools.map((tool) => <option key={tool.id} value={tool.id}>{tool.name}</option>)}</select></div><div className="radar-wrap"><RadarCanvas capability={activeCapability} /></div><div className="capability-list">{activeCapability?.axes.map((axis) => <div className="capability-line" key={axis.id}><span className="capability-name">{axis.name}</span><span className="capability-meter">{[0, 1, 2, 3].map((index) => <span className={`capability-segment ${index < axis.count ? "active" : ""}`} key={index} />)}</span></div>)}</div></div></section>
-    <section className="model-section"><div className="section-heading"><div><div className="section-kicker">OFFICIAL MODEL WATCH</div><h2>模型发布与迁移提醒</h2></div></div><div className="model-grid">{current.models.map((model) => <a className="model-panel" key={model.id} href={model.source_url} target="_blank" rel="noreferrer"><div className="model-provider">{model.provider}</div><div className="model-title">{model.title || "官方来源正在等待首次解析"}</div><div className="model-date">{formatDate(model.occurred_at)}</div></a>)}</div><div className="x-watch-panel"><div className="x-watch"><div><div className="section-kicker">X WATCH DESK</div><div className="x-watch-copy">不采集、不转载、不规避平台限制。这里仅保留官方账号与精确搜索入口，用于你自己核验最快信号。</div></div><a href="https://x.com/search?q=%28from%3AOpenAI%20OR%20from%3AAnthropicAI%20OR%20from%3AGoogleAI%29%20%28Codex%20OR%20Claude%20OR%20Antigravity%29&f=live" target="_blank" rel="noreferrer">OPEN X WATCH ↗</a></div></div></section>
-  </div></main>;
+  const models = useMemo(() => {
+    const fromEvents = events.filter((event) => event.type === "model").map(eventToItem).filter(Boolean) as FeedItem[];
+    const fromCurrent = (current.models || []).flatMap((model) => {
+      const signal = model.latest_model;
+      const href = signal?.source_url || model.source_url;
+      if (!signal?.title || !isHttpUrl(href)) return [];
+      const vendor = vendorOf(model.name, model.provider);
+      return [{
+        id: `current-model-${model.id}`,
+        vendor: vendor.label,
+        vendorKey: vendor.key,
+        title: displayTitle(signal.title),
+        note: writeNote("model", { product: model.name, href }),
+        time: signal.occurred_at || model.occurred_at,
+        href,
+      } satisfies FeedItem];
+    });
+    return sortByTime(dedupeItems([...fromEvents, ...fromCurrent])).slice(0, 16);
+  }, [events, current.models]);
+
+  const agents = useMemo(() => {
+    const fromEvents = events.filter((event) => event.type === "release").map(eventToItem).filter(Boolean) as FeedItem[];
+    const fromTools = (current.tools || []).flatMap((tool) => {
+      if (!tool.latest_release || !isHttpUrl(tool.latest_release.url)) return [];
+      const vendor = vendorOf(tool.name);
+      const version = tool.latest_release.title || tool.latest_release.tag;
+      return [{
+        id: `current-tool-${tool.id}`,
+        vendor: vendor.label === "其他" ? tool.name : vendor.label,
+        vendorKey: vendor.key,
+        title: `${tool.name} ${version}`,
+        note: writeNote("agent", {
+          product: tool.name,
+          href: tool.latest_release.url,
+          version: tool.latest_release.tag,
+        }),
+        time: tool.latest_release.published_at,
+        href: tool.latest_release.url,
+      } satisfies FeedItem];
+    });
+    return sortByTime(dedupeItems([...fromEvents, ...fromTools])).slice(0, 16);
+  }, [events, current.tools]);
+
+  const notices = OFFICIAL_NOTICES;
+  const activeItems = tab === "models" ? models : tab === "agents" ? agents : notices;
+
+  const activeMeta = tab === "models"
+    ? {
+        kicker: "官方模型动态",
+        title: "新模型",
+        tone: "tone-model",
+        empty: "暂时没有解析到新模型，稍后再采集。",
+        hint: null as string | null,
+      }
+    : tab === "agents"
+      ? {
+          kicker: "编程助手与工具",
+          title: "Agent 工具",
+          tone: "tone-agent",
+          empty: "暂时没有工具发版记录。",
+          hint: null,
+        }
+      : {
+          kicker: "生命周期 · 迁移 · API · 政策",
+          title: "官方提醒",
+          tone: "tone-policy",
+          empty: "暂无入口。",
+          hint: "这一栏不是自动摘要。下面每条都是各厂长期维护的说明页：模型状态、迁移替换、API 变更、使用政策都在里面——不只有下线。",
+        };
+
+  const handleOpen = (item: FeedItem) => {
+    if (!isHttpUrl(item.href)) {
+      setToast("这条没有可用链接");
+      return;
+    }
+    openOfficialLink(item.href);
+  };
+
+  if (!ready) {
+    return (
+      <div className="desk">
+        <div className="desk-bg" />
+        <div className="loading">正在加载更新清单…</div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="desk">
+      <div className="desk-bg" />
+      <div className="desk-noise" />
+
+      <div className="desk-shell">
+        <header className="topbar">
+          <div className="brand">
+            <span className="brand-mark" aria-hidden />
+            <div>
+              <div className="brand-text">脉搏速递</div>
+              <div className="brand-sub">新模型 · 工具 · 官方提醒</div>
+            </div>
+          </div>
+          <div className="top-meta">
+            <div className="pill glass">
+              <span className={`dot ${current.status === "ok" ? "" : current.status === "error" ? "bad" : "warn"}`} />
+              {statusText(current.status)}
+            </div>
+            <div className="pill glass">{relativeTime(current.generated_at)}</div>
+          </div>
+        </header>
+
+        <section className="hero glass">
+          <div className="hero-kicker glass">
+            <strong>免费</strong>
+            点任意一条，直接打开官网原文
+          </div>
+          <h1>先知道变化，再决定要不要跟</h1>
+          <div className="hero-nav">
+            <button type="button" className={`nav-chip ${tab === "models" ? "solid" : "glass"}`} onClick={() => setTab("models")}>
+              新模型（{models.length}）
+            </button>
+            <button type="button" className={`nav-chip ${tab === "agents" ? "solid" : "glass"}`} onClick={() => setTab("agents")}>
+              Agent 工具（{agents.length}）
+            </button>
+            <button type="button" className={`nav-chip ${tab === "notices" ? "solid" : "glass"}`} onClick={() => setTab("notices")}>
+              官方提醒（{notices.length}）
+            </button>
+          </div>
+        </section>
+
+        <div className="board">
+          <section className="section glass" aria-live="polite">
+            <div className="section-head">
+              <div>
+                <p className="section-label">{activeMeta.kicker}</p>
+                <h2 className="section-title">{activeMeta.title}</h2>
+              </div>
+              <div className="section-count">
+                {tab === "notices" ? `${notices.length} 个官网入口` : `${activeItems.length} 条`}
+              </div>
+            </div>
+
+            {activeMeta.hint ? <p className="panel-hint">{activeMeta.hint}</p> : null}
+
+            <div className="feed">
+              {activeItems.length ? activeItems.map((item) => (
+                <button
+                  key={item.id}
+                  type="button"
+                  className={`item ${activeMeta.tone}`}
+                  onClick={() => handleOpen(item)}
+                  title={item.href}
+                >
+                  <div className="card-left">
+                    <span className={`vendor ${item.vendorKey}`}>{item.vendor}</span>
+                    {item.topic ? <span className="topic-pill">{item.topic}</span> : null}
+                  </div>
+                  <div className="item-main">
+                    <p className="item-title">{item.title}</p>
+                    <p className="item-sub">{item.note}</p>
+                    <p className="item-time">{item.isPortal ? "点进官网查看最新" : formatDate(item.time)}</p>
+                  </div>
+                  <div className="item-side">
+                    <span className="item-go">{item.isPortal ? "去官网" : "打开原文"}</span>
+                  </div>
+                </button>
+              )) : (
+                <div className="empty">{activeMeta.empty}</div>
+              )}
+            </div>
+          </section>
+        </div>
+
+        <footer className="footer">
+          新模型、工具发版会自动汇总；官方提醒是整理好的官网入口，避免乱摘要。
+          <br />
+          若内置预览打不开外链，请用系统浏览器访问本页后再点。
+        </footer>
+      </div>
+
+      {toast ? <div className="toast glass">{toast}</div> : null}
+    </div>
+  );
 }
-
-function Insight({ label, value, copy }: { label: string; value: string | number; copy: string }) { return <div className="insight"><div className="card-label">{label}</div><div className="insight-value">{value}</div><div className="insight-copy">{copy}</div></div>; }
-
-function ToolCard({ tool, color, values, onSelect }: { tool: ToolRecord; color: string; values: number[]; onSelect: () => void }) {
-  return <article className="tool-card" onMouseEnter={onSelect} onFocus={onSelect} tabIndex={0}><div className="tool-card-top"><span className="tool-meta">{tool.repo}</span><span className={`state-dot ${tool.status === "ok" ? "" : "warn"}`} /></div><h3 className="tool-name">{tool.name}</h3><div className="tool-version">{tool.latest_release?.tag || tool.npm?.version || "等待发布信号"}</div><div className="spark-wrap">{values.length > 1 ? <Sparkline values={values} color={color} label={`${tool.name} 星标趋势`} /> : <div className="empty-state">等待两个以上星数快照</div>}</div><div className="metric-row"><Metric label="STARS" value={formatCount(tool.stars)} /><Metric label="24H" value={tool.stars_delta_24h === null ? "--" : `+${formatCount(tool.stars_delta_24h)}`} positive /><Metric label="30D 发布" value={tool.release_cadence_30d.count || "--"} /></div><div className="tool-card-bottom"><div className="source-links"><a href={tool.repo_url} target="_blank" rel="noreferrer">GITHUB ↗</a><a href={tool.official_url} target="_blank" rel="noreferrer">SOURCE ↗</a><a href={tool.x_url} target="_blank" rel="noreferrer">X ↗</a></div></div></article>;
-}
-
-function Metric({ label, value, positive = false }: { label: string; value: string | number; positive?: boolean }) { return <div><div className="metric-label">{label}</div><div className={`metric-value ${positive ? "delta-positive" : "delta-muted"}`}>{value}</div></div>; }
