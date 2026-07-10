@@ -11,7 +11,6 @@ type ItemKind = "model" | "agent" | "notice";
 type FeedItem = {
   id: string;
   vendor: string;
-  vendorKey: string;
   title: string;
   note: string;
   time: string | null;
@@ -26,10 +25,9 @@ const OFFICIAL_NOTICES: FeedItem[] = [
   {
     id: "notice-openai-lifecycle",
     vendor: "OpenAI",
-    vendorKey: "openai",
     topic: "生命周期",
     title: "模型与接口：哪些在淘汰、建议换成什么",
-    note: "不只有停用日期，也有推荐替代。做迁移时先看这里。",
+    note: "停用日期和推荐替代都在这页，做迁移时先看它。",
     time: null,
     href: "https://developers.openai.com/api/docs/deprecations",
     isPortal: true,
@@ -37,10 +35,9 @@ const OFFICIAL_NOTICES: FeedItem[] = [
   {
     id: "notice-openai-release-notes",
     vendor: "OpenAI",
-    vendorKey: "openai",
     topic: "产品变更",
     title: "ChatGPT / 模型发布说明",
-    note: "默认模型切换、功能调整、个别型号退役，常先写在这里。",
+    note: "默认模型切换、功能调整，常先出现在帮助中心。",
     time: null,
     href: "https://help.openai.com/en/articles/9624314-model-release-notes",
     isPortal: true,
@@ -48,10 +45,9 @@ const OFFICIAL_NOTICES: FeedItem[] = [
   {
     id: "notice-openai-changelog",
     vendor: "OpenAI",
-    vendorKey: "openai",
     topic: "API 变更",
     title: "API 更新日志",
-    note: "新能力、参数调整、开发者侧变更，比新闻稿更细。",
+    note: "开发者侧能力与参数变化，比新闻稿更细。",
     time: null,
     href: "https://developers.openai.com/api/docs/changelog",
     isPortal: true,
@@ -59,10 +55,9 @@ const OFFICIAL_NOTICES: FeedItem[] = [
   {
     id: "notice-openai-usage",
     vendor: "OpenAI",
-    vendorKey: "openai",
     topic: "使用政策",
-    title: "使用政策（Usage Policies）",
-    note: "能做什么、不能做什么；改版不频繁，但一改就影响合规。",
+    title: "使用政策",
+    note: "能做什么、不能做什么；改版不频，但一改就重要。",
     time: null,
     href: "https://openai.com/policies/usage-policies/",
     isPortal: true,
@@ -70,10 +65,9 @@ const OFFICIAL_NOTICES: FeedItem[] = [
   {
     id: "notice-anthropic-lifecycle",
     vendor: "Anthropic",
-    vendorKey: "anthropic",
     topic: "生命周期",
-    title: "Claude 模型状态：在用 / 过渡 / 准备退役",
-    note: "官方用 Active、Legacy、Deprecated 描述状态，并给替换建议。",
+    title: "Claude 模型状态与替换建议",
+    note: "看 Active / Legacy / Deprecated，以及官方推荐怎么换。",
     time: null,
     href: "https://platform.claude.com/docs/en/about-claude/model-deprecations",
     isPortal: true,
@@ -81,10 +75,9 @@ const OFFICIAL_NOTICES: FeedItem[] = [
   {
     id: "notice-anthropic-platform",
     vendor: "Anthropic",
-    vendorKey: "anthropic",
     topic: "平台更新",
     title: "Claude 平台更新说明",
-    note: "API、控制台、SDK 和模型迁移通知，经常混在同一页。",
+    note: "API、控制台、SDK 与模型相关通知常写在同一页。",
     time: null,
     href: "https://platform.claude.com/docs/en/release-notes/overview",
     isPortal: true,
@@ -92,10 +85,9 @@ const OFFICIAL_NOTICES: FeedItem[] = [
   {
     id: "notice-google-deprecations",
     vendor: "Google",
-    vendorKey: "google",
     topic: "生命周期",
     title: "Gemini 弃用时间表",
-    note: "预览版、图像/视频模型何时停，官方集中列在这。",
+    note: "预览版和部分生成模型何时停，集中列在这里。",
     time: null,
     href: "https://ai.google.dev/gemini-api/docs/deprecations",
     isPortal: true,
@@ -103,10 +95,9 @@ const OFFICIAL_NOTICES: FeedItem[] = [
   {
     id: "notice-google-changelog",
     vendor: "Google",
-    vendorKey: "google",
     topic: "API 变更",
     title: "Gemini API 更新日志",
-    note: "上新、能力调整和弃用公告，很多会先出现在 changelog。",
+    note: "上新、能力调整和弃用公告，很多会先写进 changelog。",
     time: null,
     href: "https://ai.google.dev/gemini-api/docs/changelog",
     isPortal: true,
@@ -114,10 +105,9 @@ const OFFICIAL_NOTICES: FeedItem[] = [
   {
     id: "notice-google-models",
     vendor: "Google",
-    vendorKey: "google",
     topic: "模型目录",
     title: "当前可用模型一览",
-    note: "看现在能调哪些模型、预览版限制，比零散新闻清楚。",
+    note: "现在能调哪些、预览版限制如何，比零散新闻清楚。",
     time: null,
     href: "https://ai.google.dev/gemini-api/docs/models",
     isPortal: true,
@@ -171,11 +161,11 @@ function isConcreteNotice(title: string) {
 
 function vendorOf(name: string, provider?: string | null) {
   const text = `${provider || ""} ${name}`.toLowerCase();
-  if (text.includes("openai") || text.includes("gpt") || text.includes("codex")) return { label: "OpenAI", key: "openai" };
-  if (text.includes("anthropic") || text.includes("claude")) return { label: "Anthropic", key: "anthropic" };
-  if (text.includes("google") || text.includes("gemini") || text.includes("agy")) return { label: "Google", key: "google" };
-  if (text.includes("openclaw")) return { label: "OpenClaw", key: "other" };
-  return { label: provider || name || "其他", key: "other" };
+  if (text.includes("openai") || text.includes("gpt") || text.includes("codex")) return { label: "OpenAI" };
+  if (text.includes("anthropic") || text.includes("claude")) return { label: "Anthropic" };
+  if (text.includes("google") || text.includes("gemini") || text.includes("agy")) return { label: "Google" };
+  if (text.includes("openclaw")) return { label: "OpenClaw" };
+  return { label: provider || name || "其他" };
 }
 
 function whereFrom(url: string) {
@@ -188,17 +178,11 @@ function whereFrom(url: string) {
   return "官网";
 }
 
-function writeNote(kind: ItemKind, opts: { product: string; href: string; version?: string | null; title?: string }) {
+function writeNote(kind: ItemKind, opts: { product: string; href: string; version?: string | null }) {
   const from = whereFrom(opts.href);
   if (kind === "agent") {
     if (opts.version) return `${opts.product} 出了新版本 ${opts.version}，详情在 ${from}`;
     return `${opts.product} 有新版本，可到 ${from} 查看`;
-  }
-  if (kind === "notice") {
-    const title = opts.title || "";
-    if (/(retir|shutdown|shut down|sunset|下线|退役)/i.test(title)) return "和停用、退役有关，点开看日期和替代";
-    if (/(migrat|replacement|替代|迁移)/i.test(title)) return "和迁移、替换有关，看官方建议怎么换";
-    return `相关说明在 ${from}`;
   }
   if (from === "官网新闻") return `${opts.product} 的公开模型消息，来自新闻稿`;
   if (from === "更新日志") return `${opts.product} 在更新日志里提到的模型变化`;
@@ -206,7 +190,7 @@ function writeNote(kind: ItemKind, opts: { product: string; href: string; versio
 }
 
 function formatDate(value: string | null | undefined) {
-  if (!value) return "点进官网查看最新";
+  if (!value) return "官网入口";
   return new Intl.DateTimeFormat("zh-CN", {
     month: "numeric",
     day: "numeric",
@@ -218,19 +202,19 @@ function formatDate(value: string | null | undefined) {
 }
 
 function relativeTime(value: string | null) {
-  if (!value) return "尚未更新";
+  if (!value) return "尚未同步";
   const mins = Math.max(0, Math.round((Date.now() - new Date(value).getTime()) / 60_000));
   if (mins < 1) return "刚刚同步";
-  if (mins < 60) return `${mins} 分钟前同步`;
+  if (mins < 60) return `${mins} 分钟前`;
   const hours = Math.round(mins / 60);
-  if (hours < 48) return `${hours} 小时前同步`;
-  return `${Math.floor(hours / 24)} 天前同步`;
+  if (hours < 48) return `${hours} 小时前`;
+  return `${Math.floor(hours / 24)} 天前`;
 }
 
 function statusText(status: string) {
-  if (status === "ok") return "数据正常";
-  if (status === "stale") return "部分源延迟";
-  if (status === "error") return "部分源异常";
+  if (status === "ok") return "正常";
+  if (status === "stale") return "部分延迟";
+  if (status === "error") return "部分异常";
   return "准备中";
 }
 
@@ -262,9 +246,8 @@ function eventToItem(event: EventRecord): FeedItem | null {
   return {
     id: event.id,
     vendor: vendor.label,
-    vendorKey: vendor.key,
     title: displayTitle(event.title),
-    note: writeNote(kind, { product, href: event.source_url, title: event.title }),
+    note: writeNote(kind, { product, href: event.source_url }),
     time: event.occurred_at,
     href: event.source_url,
   };
@@ -280,6 +263,14 @@ function openOfficialLink(url: string) {
   }
   window.location.assign(url);
   return true;
+}
+
+function ArrowIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" aria-hidden>
+      <path d="M7 17L17 7M17 7H9M17 7V15" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
 }
 
 export function AgentPulseClient() {
@@ -318,7 +309,6 @@ export function AgentPulseClient() {
       return [{
         id: `current-model-${model.id}`,
         vendor: vendor.label,
-        vendorKey: vendor.key,
         title: displayTitle(signal.title),
         note: writeNote("model", { product: model.name, href }),
         time: signal.occurred_at || model.occurred_at,
@@ -337,7 +327,6 @@ export function AgentPulseClient() {
       return [{
         id: `current-tool-${tool.id}`,
         vendor: vendor.label === "其他" ? tool.name : vendor.label,
-        vendorKey: vendor.key,
         title: `${tool.name} ${version}`,
         note: writeNote("agent", {
           product: tool.name,
@@ -355,27 +344,13 @@ export function AgentPulseClient() {
   const activeItems = tab === "models" ? models : tab === "agents" ? agents : notices;
 
   const activeMeta = tab === "models"
-    ? {
-        kicker: "官方模型动态",
-        title: "新模型",
-        tone: "tone-model",
-        empty: "暂时没有解析到新模型，稍后再采集。",
-        hint: null as string | null,
-      }
+    ? { title: "新模型", empty: "暂时还没有模型更新。", hint: null as string | null }
     : tab === "agents"
-      ? {
-          kicker: "编程助手与工具",
-          title: "Agent 工具",
-          tone: "tone-agent",
-          empty: "暂时没有工具发版记录。",
-          hint: null,
-        }
+      ? { title: "Agent 工具", empty: "暂时还没有工具发版。", hint: null }
       : {
-          kicker: "生命周期 · 迁移 · API · 政策",
           title: "官方提醒",
-          tone: "tone-policy",
           empty: "暂无入口。",
-          hint: "这一栏不是自动摘要。下面每条都是各厂长期维护的说明页：模型状态、迁移替换、API 变更、使用政策都在里面——不只有下线。",
+          hint: "生命周期、迁移、API 变更、使用政策——直接打开各厂说明页。",
         };
 
   const handleOpen = (item: FeedItem) => {
@@ -387,107 +362,96 @@ export function AgentPulseClient() {
   };
 
   if (!ready) {
-    return (
-      <div className="desk">
-        <div className="desk-bg" />
-        <div className="loading">正在加载更新清单…</div>
-      </div>
-    );
+    return <div className="loading">加载中…</div>;
   }
 
   return (
-    <div className="desk">
-      <div className="desk-bg" />
-      <div className="desk-noise" />
-
-      <div className="desk-shell">
-        <header className="topbar">
+    <div className="page">
+      <div className="shell">
+        <header className="top">
           <div className="brand">
-            <span className="brand-mark" aria-hidden />
+            <div className="brand-mark glass" aria-hidden>
+              <i />
+            </div>
             <div>
-              <div className="brand-text">脉搏速递</div>
-              <div className="brand-sub">新模型 · 工具 · 官方提醒</div>
+              <div className="brand-name">脉搏速递</div>
+              <div className="brand-sub">大厂模型 · 工具 · 官方提醒</div>
             </div>
           </div>
-          <div className="top-meta">
-            <div className="pill glass">
-              <span className={`dot ${current.status === "ok" ? "" : current.status === "error" ? "bad" : "warn"}`} />
-              {statusText(current.status)}
-            </div>
-            <div className="pill glass">{relativeTime(current.generated_at)}</div>
+          <div className="status glass">
+            <span className={`dot ${current.status === "ok" ? "" : current.status === "error" ? "bad" : "warn"}`} />
+            {statusText(current.status)} · {relativeTime(current.generated_at)}
           </div>
         </header>
 
         <section className="hero glass">
-          <div className="hero-kicker glass">
-            <strong>免费</strong>
-            点任意一条，直接打开官网原文
+          <div className="hero-badge glass">
+            <b>Live</b>
+            点一条，打开官网原文
           </div>
           <h1>先知道变化，再决定要不要跟</h1>
-          <div className="hero-nav">
-            <button type="button" className={`nav-chip ${tab === "models" ? "solid" : "glass"}`} onClick={() => setTab("models")}>
-              新模型（{models.length}）
+          <p>新模型、Agent 发版和官方说明入口，收成一份能点开的清单。</p>
+          <div className="tabs" role="tablist" aria-label="内容分类">
+            <button type="button" className={`tab ${tab === "models" ? "is-on" : ""}`} onClick={() => setTab("models")}>
+              新模型 {models.length}
             </button>
-            <button type="button" className={`nav-chip ${tab === "agents" ? "solid" : "glass"}`} onClick={() => setTab("agents")}>
-              Agent 工具（{agents.length}）
+            <button type="button" className={`tab ${tab === "agents" ? "is-on" : ""}`} onClick={() => setTab("agents")}>
+              工具 {agents.length}
             </button>
-            <button type="button" className={`nav-chip ${tab === "notices" ? "solid" : "glass"}`} onClick={() => setTab("notices")}>
-              官方提醒（{notices.length}）
+            <button type="button" className={`tab ${tab === "notices" ? "is-on" : ""}`} onClick={() => setTab("notices")}>
+              官方提醒 {notices.length}
             </button>
           </div>
         </section>
 
-        <div className="board">
-          <section className="section glass" aria-live="polite">
-            <div className="section-head">
-              <div>
-                <p className="section-label">{activeMeta.kicker}</p>
-                <h2 className="section-title">{activeMeta.title}</h2>
-              </div>
-              <div className="section-count">
-                {tab === "notices" ? `${notices.length} 个官网入口` : `${activeItems.length} 条`}
-              </div>
-            </div>
+        <section className="panel glass" aria-live="polite">
+          <div className="panel-head">
+            <h2 className="panel-title">{activeMeta.title}</h2>
+            <div className="panel-count">{activeItems.length} 条</div>
+          </div>
+          {activeMeta.hint ? <p className="panel-hint">{activeMeta.hint}</p> : null}
 
-            {activeMeta.hint ? <p className="panel-hint">{activeMeta.hint}</p> : null}
+          <div className="list">
+            {activeItems.length ? activeItems.map((item) => (
+              <button
+                key={item.id}
+                type="button"
+                className="row"
+                onClick={() => handleOpen(item)}
+                title={item.href}
+              >
+                <div>
+                  <div className="row-top">
+                    <span className="vendor">{item.vendor}</span>
+                    {item.topic ? (
+                      <>
+                        <span className="sep" aria-hidden />
+                        <span className="meta">{item.topic}</span>
+                      </>
+                    ) : null}
+                    <span className="sep" aria-hidden />
+                    <span className="meta">{item.isPortal ? "官网" : formatDate(item.time)}</span>
+                  </div>
+                  <p className="row-title">{item.title}</p>
+                  <p className="row-note">{item.note}</p>
+                </div>
+                <span className="row-cta">
+                  打开
+                  <ArrowIcon />
+                </span>
+              </button>
+            )) : (
+              <div className="empty">{activeMeta.empty}</div>
+            )}
+          </div>
+        </section>
 
-            <div className="feed">
-              {activeItems.length ? activeItems.map((item) => (
-                <button
-                  key={item.id}
-                  type="button"
-                  className={`item ${activeMeta.tone}`}
-                  onClick={() => handleOpen(item)}
-                  title={item.href}
-                >
-                  <div className="card-left">
-                    <span className={`vendor ${item.vendorKey}`}>{item.vendor}</span>
-                    {item.topic ? <span className="topic-pill">{item.topic}</span> : null}
-                  </div>
-                  <div className="item-main">
-                    <p className="item-title">{item.title}</p>
-                    <p className="item-sub">{item.note}</p>
-                    <p className="item-time">{item.isPortal ? "点进官网查看最新" : formatDate(item.time)}</p>
-                  </div>
-                  <div className="item-side">
-                    <span className="item-go">{item.isPortal ? "去官网" : "打开原文"}</span>
-                  </div>
-                </button>
-              )) : (
-                <div className="empty">{activeMeta.empty}</div>
-              )}
-            </div>
-          </section>
-        </div>
-
-        <footer className="footer">
-          新模型、工具发版会自动汇总；官方提醒是整理好的官网入口，避免乱摘要。
-          <br />
-          若内置预览打不开外链，请用系统浏览器访问本页后再点。
+        <footer className="foot">
+          模型与工具自动汇总 · 官方提醒为整理好的入口
         </footer>
       </div>
 
-      {toast ? <div className="toast glass">{toast}</div> : null}
+      {toast ? <div className="toast">{toast}</div> : null}
     </div>
   );
 }
