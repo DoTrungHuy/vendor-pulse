@@ -1,5 +1,149 @@
 [
   {
+    "id": "deprecation:claude:deprecations:2027-05-28T00:00:00.000Z:53e1e7afc9",
+    "item_id": "claude",
+    "item_name": "Claude",
+    "type": "deprecation",
+    "title": "Claude: Current and recently retired models are listed in the following table with their status: API model name Current state Deprecated Tentative retirement date claude-opus-4-8 Active N/A Not sooner than May 28, 2027",
+    "occurred_at": "2027-05-28T00:00:00.000Z",
+    "source_url": "https://platform.claude.com/docs/en/about-claude/model-deprecations",
+    "provider": "Anthropic",
+    "feed_id": "deprecations",
+    "confidence": "verified"
+  },
+  {
+    "id": "source:gpt:api-changelog:57b95f3474",
+    "item_id": "gpt",
+    "item_name": "GPT",
+    "type": "source_changed",
+    "title": "GPT API Changelog 内容变化，待核验",
+    "occurred_at": "2026-07-10T08:32:33.633Z",
+    "source_url": "https://developers.openai.com/api/docs/changelog",
+    "provider": "OpenAI",
+    "feed_id": "api-changelog",
+    "confidence": "needs_review"
+  },
+  {
+    "id": "deprecation:claude:deprecations:2026-07-10T08:32:32.432Z:a5dc7a0436",
+    "item_id": "claude",
+    "item_name": "Claude",
+    "type": "deprecation",
+    "title": "Claude: As safer and more capable models launch, Anthropic regularly retires older ones. Applications relying on Anthropic models may need occasional updates to keep working. Impacted customers will always be notified by email a",
+    "occurred_at": "2026-07-10T08:32:32.432Z",
+    "source_url": "https://platform.claude.com/docs/en/about-claude/model-deprecations",
+    "provider": "Anthropic",
+    "feed_id": "deprecations",
+    "confidence": "needs_review"
+  },
+  {
+    "id": "deprecation:claude:deprecations:2026-07-10T08:32:32.432Z:4968c38a88",
+    "item_id": "claude",
+    "item_name": "Claude",
+    "type": "deprecation",
+    "title": "Claude: To help measure the performance of replacement models on your tasks, consider thorough testing of your applications with the new models well before the retirement date. For specific instructions on migrating to the lates",
+    "occurred_at": "2026-07-10T08:32:32.432Z",
+    "source_url": "https://platform.claude.com/docs/en/about-claude/model-deprecations",
+    "provider": "Anthropic",
+    "feed_id": "deprecations",
+    "confidence": "needs_review"
+  },
+  {
+    "id": "deprecation:claude:deprecations:2026-07-10T08:32:32.431Z:cc852d42a8",
+    "item_id": "claude",
+    "item_name": "Claude",
+    "type": "deprecation",
+    "title": "Claude: Model deprecations - Claude Platform Docs Claude Platform Docs Messages",
+    "occurred_at": "2026-07-10T08:32:32.431Z",
+    "source_url": "https://platform.claude.com/docs/en/about-claude/model-deprecations",
+    "provider": "Anthropic",
+    "feed_id": "deprecations",
+    "confidence": "needs_review"
+  },
+  {
+    "id": "model:claude:news:2026-07-10T08:32:31.676Z:f6e5bfef45",
+    "item_id": "claude",
+    "item_name": "Claude",
+    "type": "model",
+    "title": "Claude: Introducing Claude Sonnet 5",
+    "occurred_at": "2026-07-10T08:32:31.676Z",
+    "source_url": "https://www.anthropic.com/news",
+    "provider": "Anthropic",
+    "feed_id": "news",
+    "confidence": "needs_review"
+  },
+  {
+    "id": "deprecation:gemini:models-page:2026-07-10T08:32:31.411Z:a7941fe74b",
+    "item_id": "gemini",
+    "item_name": "Gemini",
+    "type": "deprecation",
+    "title": "Gemini: Gemini 2.0 Flash Shut down Our second generation workhorse model, with next-gen features and improved capabilities, including superior speed, native tool use, and a 1M token context window. restore",
+    "occurred_at": "2026-07-10T08:32:31.411Z",
+    "source_url": "https://ai.google.dev/gemini-api/docs/models",
+    "provider": "Google AI",
+    "feed_id": "models-page",
+    "confidence": "needs_review"
+  },
+  {
+    "id": "deprecation:gemini:models-page:2026-07-10T08:32:31.410Z:ed633e3282",
+    "item_id": "gemini",
+    "item_name": "Gemini",
+    "type": "deprecation",
+    "title": "Gemini: Imagen 4 Deprecated Text-to-image model yet, featuring fast and ultra-fast generation and exceptional clarity up to 2K resolution. Music generation models",
+    "occurred_at": "2026-07-10T08:32:31.410Z",
+    "source_url": "https://ai.google.dev/gemini-api/docs/models",
+    "provider": "Google AI",
+    "feed_id": "models-page",
+    "confidence": "needs_review"
+  },
+  {
+    "id": "deprecation:gemini:models-page:2026-07-10T08:32:31.410Z:f484edab5b",
+    "item_id": "gemini",
+    "item_name": "Gemini",
+    "type": "deprecation",
+    "title": "Gemini: These models are deprecated and will be shut down soon; migrate to newer models to prevent service interruptions. history Gemini 2.0 Flash Shut down",
+    "occurred_at": "2026-07-10T08:32:31.410Z",
+    "source_url": "https://ai.google.dev/gemini-api/docs/models",
+    "provider": "Google AI",
+    "feed_id": "models-page",
+    "confidence": "needs_review"
+  },
+  {
+    "id": "deprecation:gemini:models-page:2026-07-10T08:32:31.410Z:f7e977760a",
+    "item_id": "gemini",
+    "item_name": "Gemini",
+    "type": "deprecation",
+    "title": "Gemini: history Gemini 2.0 Flash Shut down Our second generation workhorse model, with next-gen features and improved capabilities, including superior speed, native tool use, and a 1M token context window.",
+    "occurred_at": "2026-07-10T08:32:31.410Z",
+    "source_url": "https://ai.google.dev/gemini-api/docs/models",
+    "provider": "Google AI",
+    "feed_id": "models-page",
+    "confidence": "needs_review"
+  },
+  {
+    "id": "deprecation:gemini:models-page:2026-07-10T08:32:31.409Z:c4fecb002d",
+    "item_id": "gemini",
+    "item_name": "Gemini",
+    "type": "deprecation",
+    "title": "Gemini: Migrate to Gen AI SDK Migrate to Interactions API Interactions breaking changes (May 2026)",
+    "occurred_at": "2026-07-10T08:32:31.409Z",
+    "source_url": "https://ai.google.dev/gemini-api/docs/models",
+    "provider": "Google AI",
+    "feed_id": "models-page",
+    "confidence": "needs_review"
+  },
+  {
+    "id": "deprecation:gemini:models-page:2026-07-10T08:32:31.409Z:da5aa8aa53",
+    "item_id": "gemini",
+    "item_name": "Gemini",
+    "type": "deprecation",
+    "title": "Gemini: Migrate to Interactions API Interactions breaking changes (May 2026) Rate limits",
+    "occurred_at": "2026-07-10T08:32:31.409Z",
+    "source_url": "https://ai.google.dev/gemini-api/docs/models",
+    "provider": "Google AI",
+    "feed_id": "models-page",
+    "confidence": "needs_review"
+  },
+  {
     "id": "source:gpt:cf68f1c9eb24",
     "item_id": "gpt",
     "item_name": "GPT",
@@ -15,7 +159,10 @@
     "type": "release",
     "title": "AGY 1.1.1",
     "occurred_at": "2026-07-10T03:40:13Z",
-    "source_url": "https://github.com/google-antigravity/antigravity-cli/releases/tag/1.1.1"
+    "source_url": "https://github.com/google-antigravity/antigravity-cli/releases/tag/1.1.1",
+    "provider": null,
+    "feed_id": null,
+    "confidence": "verified"
   },
   {
     "id": "release:claude-code:351694341",
@@ -24,7 +171,10 @@
     "type": "release",
     "title": "Claude Code v2.1.206",
     "occurred_at": "2026-07-10T01:45:26Z",
-    "source_url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.206"
+    "source_url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.206",
+    "provider": null,
+    "feed_id": null,
+    "confidence": "verified"
   },
   {
     "id": "release:codex:351836174",
@@ -33,7 +183,10 @@
     "type": "release",
     "title": "Codex 0.145.0-alpha.2",
     "occurred_at": "2026-07-10T00:09:39Z",
-    "source_url": "https://github.com/openai/codex/releases/tag/rust-v0.145.0-alpha.2"
+    "source_url": "https://github.com/openai/codex/releases/tag/rust-v0.145.0-alpha.2",
+    "provider": null,
+    "feed_id": null,
+    "confidence": "verified"
   },
   {
     "id": "release:codex:351819708",
@@ -42,7 +195,10 @@
     "type": "release",
     "title": "Codex 0.144.1",
     "occurred_at": "2026-07-09T23:02:40Z",
-    "source_url": "https://github.com/openai/codex/releases/tag/rust-v0.144.1"
+    "source_url": "https://github.com/openai/codex/releases/tag/rust-v0.144.1",
+    "provider": null,
+    "feed_id": null,
+    "confidence": "verified"
   },
   {
     "id": "release:codex:351803152",
@@ -51,7 +207,10 @@
     "type": "release",
     "title": "Codex 0.145.0-alpha.1",
     "occurred_at": "2026-07-09T22:03:09Z",
-    "source_url": "https://github.com/openai/codex/releases/tag/rust-v0.145.0-alpha.1"
+    "source_url": "https://github.com/openai/codex/releases/tag/rust-v0.145.0-alpha.1",
+    "provider": null,
+    "feed_id": null,
+    "confidence": "verified"
   },
   {
     "id": "release:codex:351657410",
@@ -60,7 +219,10 @@
     "type": "release",
     "title": "Codex 0.144.0",
     "occurred_at": "2026-07-09T16:47:12Z",
-    "source_url": "https://github.com/openai/codex/releases/tag/rust-v0.144.0"
+    "source_url": "https://github.com/openai/codex/releases/tag/rust-v0.144.0",
+    "provider": null,
+    "feed_id": null,
+    "confidence": "verified"
   },
   {
     "id": "model:gpt:2026-07-09T13:00:00.000Z:a1c1c68a58",
@@ -72,13 +234,52 @@
     "source_url": "https://openai.com/index/gpt-5-6-preferred-model-microsoft-365-copilot"
   },
   {
+    "id": "model:gpt:news-rss:2026-07-09T13:00:00.000Z:a1c1c68a58",
+    "item_id": "gpt",
+    "item_name": "GPT",
+    "type": "model",
+    "title": "GPT: GPT-5.6 is now the preferred model in Microsoft 365 Copilot",
+    "occurred_at": "2026-07-09T13:00:00.000Z",
+    "source_url": "https://openai.com/index/gpt-5-6-preferred-model-microsoft-365-copilot",
+    "provider": "OpenAI",
+    "feed_id": "news-rss",
+    "confidence": "verified"
+  },
+  {
+    "id": "model:gpt:news-rss:2026-07-09T10:00:00.000Z:4321ca21a8",
+    "item_id": "gpt",
+    "item_name": "GPT",
+    "type": "model",
+    "title": "GPT: GPT-5.5 Bio Bug Bounty",
+    "occurred_at": "2026-07-09T10:00:00.000Z",
+    "source_url": "https://openai.com/index/bio-bug-bounty",
+    "provider": "OpenAI",
+    "feed_id": "news-rss",
+    "confidence": "verified"
+  },
+  {
+    "id": "model:gpt:news-rss:2026-07-09T10:00:00.000Z:f5a90d35a0",
+    "item_id": "gpt",
+    "item_name": "GPT",
+    "type": "model",
+    "title": "GPT: GPT-5.6: Frontier intelligence that scales with your ambition",
+    "occurred_at": "2026-07-09T10:00:00.000Z",
+    "source_url": "https://openai.com/index/gpt-5-6",
+    "provider": "OpenAI",
+    "feed_id": "news-rss",
+    "confidence": "verified"
+  },
+  {
     "id": "release:codex:351294812",
     "item_id": "codex",
     "item_name": "Codex",
     "type": "release",
     "title": "Codex 0.144.0-alpha.4",
     "occurred_at": "2026-07-09T04:33:34Z",
-    "source_url": "https://github.com/openai/codex/releases/tag/rust-v0.144.0-alpha.4"
+    "source_url": "https://github.com/openai/codex/releases/tag/rust-v0.144.0-alpha.4",
+    "provider": null,
+    "feed_id": null,
+    "confidence": "verified"
   },
   {
     "id": "release:codex:351195282",
@@ -87,7 +288,10 @@
     "type": "release",
     "title": "Codex 0.144.0-alpha.2",
     "occurred_at": "2026-07-08T21:46:00Z",
-    "source_url": "https://github.com/openai/codex/releases/tag/rust-v0.144.0-alpha.2"
+    "source_url": "https://github.com/openai/codex/releases/tag/rust-v0.144.0-alpha.2",
+    "provider": null,
+    "feed_id": null,
+    "confidence": "verified"
   },
   {
     "id": "release:claude-code:351140412",
@@ -96,7 +300,10 @@
     "type": "release",
     "title": "Claude Code v2.1.205",
     "occurred_at": "2026-07-08T21:22:06Z",
-    "source_url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.205"
+    "source_url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.205",
+    "provider": null,
+    "feed_id": null,
+    "confidence": "verified"
   },
   {
     "id": "release:codex:351157760",
@@ -105,7 +312,10 @@
     "type": "release",
     "title": "Codex 0.144.0-alpha.1",
     "occurred_at": "2026-07-08T20:13:50Z",
-    "source_url": "https://github.com/openai/codex/releases/tag/rust-v0.144.0-alpha.1"
+    "source_url": "https://github.com/openai/codex/releases/tag/rust-v0.144.0-alpha.1",
+    "provider": null,
+    "feed_id": null,
+    "confidence": "verified"
   },
   {
     "id": "release:agy:350661502",
@@ -114,7 +324,10 @@
     "type": "release",
     "title": "AGY 1.1.0",
     "occurred_at": "2026-07-08T03:25:54Z",
-    "source_url": "https://github.com/google-antigravity/antigravity-cli/releases/tag/1.1.0"
+    "source_url": "https://github.com/google-antigravity/antigravity-cli/releases/tag/1.1.0",
+    "provider": null,
+    "feed_id": null,
+    "confidence": "verified"
   },
   {
     "id": "release:codex:350650561",
@@ -123,7 +336,10 @@
     "type": "release",
     "title": "Codex 0.143.0",
     "occurred_at": "2026-07-08T01:31:10Z",
-    "source_url": "https://github.com/openai/codex/releases/tag/rust-v0.143.0"
+    "source_url": "https://github.com/openai/codex/releases/tag/rust-v0.143.0",
+    "provider": null,
+    "feed_id": null,
+    "confidence": "verified"
   },
   {
     "id": "release:claude-code:350631599",
@@ -132,7 +348,22 @@
     "type": "release",
     "title": "Claude Code v2.1.204",
     "occurred_at": "2026-07-08T00:27:50Z",
-    "source_url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.204"
+    "source_url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.204",
+    "provider": null,
+    "feed_id": null,
+    "confidence": "verified"
+  },
+  {
+    "id": "model:gpt:news-rss:2026-07-08T00:00:00.000Z:f1c739eb8d",
+    "item_id": "gpt",
+    "item_name": "GPT",
+    "type": "model",
+    "title": "GPT: Introducing GPT-Live",
+    "occurred_at": "2026-07-08T00:00:00.000Z",
+    "source_url": "https://openai.com/index/introducing-gpt-live",
+    "provider": "OpenAI",
+    "feed_id": "news-rss",
+    "confidence": "verified"
   },
   {
     "id": "release:codex:350629032",
@@ -141,7 +372,10 @@
     "type": "release",
     "title": "Codex 0.143.0-alpha.39",
     "occurred_at": "2026-07-07T23:52:33Z",
-    "source_url": "https://github.com/openai/codex/releases/tag/rust-v0.143.0-alpha.39"
+    "source_url": "https://github.com/openai/codex/releases/tag/rust-v0.143.0-alpha.39",
+    "provider": null,
+    "feed_id": null,
+    "confidence": "verified"
   },
   {
     "id": "release:claude-code:350481879",
@@ -150,7 +384,10 @@
     "type": "release",
     "title": "Claude Code v2.1.203",
     "occurred_at": "2026-07-07T21:06:12Z",
-    "source_url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.203"
+    "source_url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.203",
+    "provider": null,
+    "feed_id": null,
+    "confidence": "verified"
   },
   {
     "id": "release:codex:350019984",
@@ -159,7 +396,22 @@
     "type": "release",
     "title": "Codex 0.143.0-alpha.38",
     "occurred_at": "2026-07-07T04:34:39Z",
-    "source_url": "https://github.com/openai/codex/releases/tag/rust-v0.143.0-alpha.38"
+    "source_url": "https://github.com/openai/codex/releases/tag/rust-v0.143.0-alpha.38",
+    "provider": null,
+    "feed_id": null,
+    "confidence": "verified"
+  },
+  {
+    "id": "model:gpt:news-rss:2026-07-07T00:00:00.000Z:0c0b5ed651",
+    "item_id": "gpt",
+    "item_name": "GPT",
+    "type": "model",
+    "title": "GPT: Australian Payments Plus moves faster with ChatGPT and Codex",
+    "occurred_at": "2026-07-07T00:00:00.000Z",
+    "source_url": "https://openai.com/index/australian-payments-plus",
+    "provider": "OpenAI",
+    "feed_id": "news-rss",
+    "confidence": "verified"
   },
   {
     "id": "release:claude-code:349856235",
@@ -168,7 +420,10 @@
     "type": "release",
     "title": "Claude Code v2.1.202",
     "occurred_at": "2026-07-06T22:51:16Z",
-    "source_url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.202"
+    "source_url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.202",
+    "provider": null,
+    "feed_id": null,
+    "confidence": "verified"
   },
   {
     "id": "release:codex:349731959",
@@ -177,7 +432,10 @@
     "type": "release",
     "title": "Codex 0.143.0-alpha.37",
     "occurred_at": "2026-07-06T18:11:30Z",
-    "source_url": "https://github.com/openai/codex/releases/tag/rust-v0.143.0-alpha.37"
+    "source_url": "https://github.com/openai/codex/releases/tag/rust-v0.143.0-alpha.37",
+    "provider": null,
+    "feed_id": null,
+    "confidence": "verified"
   },
   {
     "id": "release:openclaw:349127622",
@@ -186,7 +444,10 @@
     "type": "release",
     "title": "OpenClaw openclaw 2026.7.1-beta.2",
     "occurred_at": "2026-07-05T09:10:09Z",
-    "source_url": "https://github.com/openclaw/openclaw/releases/tag/v2026.7.1-beta.2"
+    "source_url": "https://github.com/openclaw/openclaw/releases/tag/v2026.7.1-beta.2",
+    "provider": null,
+    "feed_id": null,
+    "confidence": "verified"
   },
   {
     "id": "release:codex:349067591",
@@ -195,7 +456,10 @@
     "type": "release",
     "title": "Codex 0.143.0-alpha.36",
     "occurred_at": "2026-07-05T01:02:44Z",
-    "source_url": "https://github.com/openai/codex/releases/tag/rust-v0.143.0-alpha.36"
+    "source_url": "https://github.com/openai/codex/releases/tag/rust-v0.143.0-alpha.36",
+    "provider": null,
+    "feed_id": null,
+    "confidence": "verified"
   },
   {
     "id": "release:claude-code:348791299",
@@ -204,7 +468,10 @@
     "type": "release",
     "title": "Claude Code v2.1.201",
     "occurred_at": "2026-07-03T23:50:35Z",
-    "source_url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.201"
+    "source_url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.201",
+    "provider": null,
+    "feed_id": null,
+    "confidence": "verified"
   },
   {
     "id": "release:claude-code:348415228",
@@ -213,7 +480,10 @@
     "type": "release",
     "title": "Claude Code v2.1.200",
     "occurred_at": "2026-07-03T16:52:33Z",
-    "source_url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.200"
+    "source_url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.200",
+    "provider": null,
+    "feed_id": null,
+    "confidence": "verified"
   },
   {
     "id": "release:codex:348382857",
@@ -222,7 +492,10 @@
     "type": "release",
     "title": "Codex 0.143.0-alpha.35",
     "occurred_at": "2026-07-03T02:33:31Z",
-    "source_url": "https://github.com/openai/codex/releases/tag/rust-v0.143.0-alpha.35"
+    "source_url": "https://github.com/openai/codex/releases/tag/rust-v0.143.0-alpha.35",
+    "provider": null,
+    "feed_id": null,
+    "confidence": "verified"
   },
   {
     "id": "release:claude-code:348195313",
@@ -231,7 +504,10 @@
     "type": "release",
     "title": "Claude Code v2.1.199",
     "occurred_at": "2026-07-02T23:35:18Z",
-    "source_url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.199"
+    "source_url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.199",
+    "provider": null,
+    "feed_id": null,
+    "confidence": "verified"
   },
   {
     "id": "release:codex:348304200",
@@ -240,7 +516,10 @@
     "type": "release",
     "title": "Codex 0.143.0-alpha.34",
     "occurred_at": "2026-07-02T21:42:01Z",
-    "source_url": "https://github.com/openai/codex/releases/tag/rust-v0.143.0-alpha.34"
+    "source_url": "https://github.com/openai/codex/releases/tag/rust-v0.143.0-alpha.34",
+    "provider": null,
+    "feed_id": null,
+    "confidence": "verified"
   },
   {
     "id": "release:agy:348223196",
@@ -249,7 +528,10 @@
     "type": "release",
     "title": "AGY 1.0.16",
     "occurred_at": "2026-07-02T18:37:15Z",
-    "source_url": "https://github.com/google-antigravity/antigravity-cli/releases/tag/1.0.16"
+    "source_url": "https://github.com/google-antigravity/antigravity-cli/releases/tag/1.0.16",
+    "provider": null,
+    "feed_id": null,
+    "confidence": "verified"
   },
   {
     "id": "release:openclaw:347886870",
@@ -258,7 +540,10 @@
     "type": "release",
     "title": "OpenClaw openclaw 2026.7.1-beta.1",
     "occurred_at": "2026-07-02T07:25:49Z",
-    "source_url": "https://github.com/openclaw/openclaw/releases/tag/v2026.7.1-beta.1"
+    "source_url": "https://github.com/openclaw/openclaw/releases/tag/v2026.7.1-beta.1",
+    "provider": null,
+    "feed_id": null,
+    "confidence": "verified"
   },
   {
     "id": "release:codex:347793055",
@@ -267,7 +552,10 @@
     "type": "release",
     "title": "Codex 0.143.0-alpha.33",
     "occurred_at": "2026-07-02T01:58:50Z",
-    "source_url": "https://github.com/openai/codex/releases/tag/rust-v0.143.0-alpha.33"
+    "source_url": "https://github.com/openai/codex/releases/tag/rust-v0.143.0-alpha.33",
+    "provider": null,
+    "feed_id": null,
+    "confidence": "verified"
   },
   {
     "id": "release:agy:347753138",
@@ -276,7 +564,10 @@
     "type": "release",
     "title": "AGY 1.0.15",
     "occurred_at": "2026-07-01T22:59:00Z",
-    "source_url": "https://github.com/google-antigravity/antigravity-cli/releases/tag/1.0.15"
+    "source_url": "https://github.com/google-antigravity/antigravity-cli/releases/tag/1.0.15",
+    "provider": null,
+    "feed_id": null,
+    "confidence": "verified"
   },
   {
     "id": "release:claude-code:347599701",
@@ -285,7 +576,10 @@
     "type": "release",
     "title": "Claude Code v2.1.198",
     "occurred_at": "2026-07-01T20:45:36Z",
-    "source_url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.198"
+    "source_url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.198",
+    "provider": null,
+    "feed_id": null,
+    "confidence": "verified"
   },
   {
     "id": "release:codex:347219743",
@@ -294,7 +588,10 @@
     "type": "release",
     "title": "Codex 0.143.0-alpha.32",
     "occurred_at": "2026-07-01T03:47:46Z",
-    "source_url": "https://github.com/openai/codex/releases/tag/rust-v0.143.0-alpha.32"
+    "source_url": "https://github.com/openai/codex/releases/tag/rust-v0.143.0-alpha.32",
+    "provider": null,
+    "feed_id": null,
+    "confidence": "verified"
   },
   {
     "id": "release:codex:347177984",
@@ -303,7 +600,10 @@
     "type": "release",
     "title": "Codex 0.142.5",
     "occurred_at": "2026-07-01T01:15:44Z",
-    "source_url": "https://github.com/openai/codex/releases/tag/rust-v0.142.5"
+    "source_url": "https://github.com/openai/codex/releases/tag/rust-v0.142.5",
+    "provider": null,
+    "feed_id": null,
+    "confidence": "verified"
   },
   {
     "id": "release:claude-code:346856026",
@@ -312,7 +612,10 @@
     "type": "release",
     "title": "Claude Code v2.1.197",
     "occurred_at": "2026-06-30T17:56:37Z",
-    "source_url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.197"
+    "source_url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.197",
+    "provider": null,
+    "feed_id": null,
+    "confidence": "verified"
   },
   {
     "id": "release:openclaw:346952441",
@@ -321,7 +624,10 @@
     "type": "release",
     "title": "OpenClaw openclaw 2026.6.11",
     "occurred_at": "2026-06-30T16:06:39Z",
-    "source_url": "https://github.com/openclaw/openclaw/releases/tag/v2026.6.11"
+    "source_url": "https://github.com/openclaw/openclaw/releases/tag/v2026.6.11",
+    "provider": null,
+    "feed_id": null,
+    "confidence": "verified"
   },
   {
     "id": "release:agy:346586203",
@@ -330,7 +636,10 @@
     "type": "release",
     "title": "AGY 1.0.14",
     "occurred_at": "2026-06-30T02:28:33Z",
-    "source_url": "https://github.com/google-antigravity/antigravity-cli/releases/tag/1.0.14"
+    "source_url": "https://github.com/google-antigravity/antigravity-cli/releases/tag/1.0.14",
+    "provider": null,
+    "feed_id": null,
+    "confidence": "verified"
   },
   {
     "id": "model:gemini:2026-06-30T00:00:00.000Z:144c657174",
@@ -342,13 +651,76 @@
     "source_url": "https://ai.google.dev/gemini-api/docs/changelog"
   },
   {
+    "id": "model:gpt:news-rss:2026-06-30T00:00:00.000Z:95818a3770",
+    "item_id": "gpt",
+    "item_name": "GPT",
+    "type": "model",
+    "title": "GPT: Introducing GeneBench-Pro",
+    "occurred_at": "2026-06-30T00:00:00.000Z",
+    "source_url": "https://openai.com/index/introducing-genebench-pro",
+    "provider": "OpenAI",
+    "feed_id": "news-rss",
+    "confidence": "verified"
+  },
+  {
+    "id": "model:claude:platform-notes:2026-06-30T00:00:00.000Z:aff810baf9",
+    "item_id": "claude",
+    "item_name": "Claude",
+    "type": "model",
+    "title": "Claude: We&#x27;ve launched Claude Sonnet 5 ( claude-sonnet-5 ), the next generation of our Sonnet model family, at introductory pricing of $2 / $10 per MTok through August 31, 2026 (standard $3 / $15 thereafter).",
+    "occurred_at": "2026-06-30T00:00:00.000Z",
+    "source_url": "https://platform.claude.com/docs/en/release-notes/overview",
+    "provider": "Anthropic",
+    "feed_id": "platform-notes",
+    "confidence": "verified"
+  },
+  {
+    "id": "deprecation:claude:deprecations:2026-06-30T00:00:00.000Z:0f0c5190c4",
+    "item_id": "claude",
+    "item_name": "Claude",
+    "type": "deprecation",
+    "title": "Claude: Model status Claude Mythos Preview ( claude-mythos-preview ) will be retired on June 30, 2026. To migrate to Claude Mythos 5 ( claude-mythos-5 ), see the migration guide .",
+    "occurred_at": "2026-06-30T00:00:00.000Z",
+    "source_url": "https://platform.claude.com/docs/en/about-claude/model-deprecations",
+    "provider": "Anthropic",
+    "feed_id": "deprecations",
+    "confidence": "verified"
+  },
+  {
+    "id": "deprecation:claude:deprecations:2026-06-30T00:00:00.000Z:554808409b",
+    "item_id": "claude",
+    "item_name": "Claude",
+    "type": "deprecation",
+    "title": "Claude: Claude Mythos Preview ( claude-mythos-preview ) will be retired on June 30, 2026. To migrate to Claude Mythos 5 ( claude-mythos-5 ), see the migration guide . Current and recently retired models are listed in the followi",
+    "occurred_at": "2026-06-30T00:00:00.000Z",
+    "source_url": "https://platform.claude.com/docs/en/about-claude/model-deprecations",
+    "provider": "Anthropic",
+    "feed_id": "deprecations",
+    "confidence": "verified"
+  },
+  {
+    "id": "model:gemini:api-changelog:2026-06-30T00:00:00.000Z:23d36a7184",
+    "item_id": "gemini",
+    "item_name": "Gemini",
+    "type": "model",
+    "title": "Gemini: Gemini Omni Flash in public preview : Released gemini-omni-flash-preview ,",
+    "occurred_at": "2026-06-30T00:00:00.000Z",
+    "source_url": "https://ai.google.dev/gemini-api/docs/changelog",
+    "provider": "Google AI",
+    "feed_id": "api-changelog",
+    "confidence": "verified"
+  },
+  {
     "id": "release:claude-code:346482381",
     "item_id": "claude-code",
     "item_name": "Claude Code",
     "type": "release",
     "title": "Claude Code v2.1.196",
     "occurred_at": "2026-06-29T23:27:32Z",
-    "source_url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.196"
+    "source_url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.196",
+    "provider": null,
+    "feed_id": null,
+    "confidence": "verified"
   },
   {
     "id": "release:codex:346546144",
@@ -357,7 +729,10 @@
     "type": "release",
     "title": "Codex 0.143.0-alpha.31",
     "occurred_at": "2026-06-29T23:21:34Z",
-    "source_url": "https://github.com/openai/codex/releases/tag/rust-v0.143.0-alpha.31"
+    "source_url": "https://github.com/openai/codex/releases/tag/rust-v0.143.0-alpha.31",
+    "provider": null,
+    "feed_id": null,
+    "confidence": "verified"
   },
   {
     "id": "release:codex:346071760",
@@ -366,7 +741,10 @@
     "type": "release",
     "title": "Codex 0.142.4",
     "occurred_at": "2026-06-29T05:04:25Z",
-    "source_url": "https://github.com/openai/codex/releases/tag/rust-v0.142.4"
+    "source_url": "https://github.com/openai/codex/releases/tag/rust-v0.142.4",
+    "provider": null,
+    "feed_id": null,
+    "confidence": "verified"
   },
   {
     "id": "release:openclaw:346008953",
@@ -375,7 +753,10 @@
     "type": "release",
     "title": "OpenClaw openclaw 2026.6.11-beta.2",
     "occurred_at": "2026-06-28T23:19:35Z",
-    "source_url": "https://github.com/openclaw/openclaw/releases/tag/v2026.6.11-beta.2"
+    "source_url": "https://github.com/openclaw/openclaw/releases/tag/v2026.6.11-beta.2",
+    "provider": null,
+    "feed_id": null,
+    "confidence": "verified"
   },
   {
     "id": "release:codex:345811213",
@@ -384,7 +765,10 @@
     "type": "release",
     "title": "Codex 0.143.0-alpha.29",
     "occurred_at": "2026-06-28T00:30:41Z",
-    "source_url": "https://github.com/openai/codex/releases/tag/rust-v0.143.0-alpha.29"
+    "source_url": "https://github.com/openai/codex/releases/tag/rust-v0.143.0-alpha.29",
+    "provider": null,
+    "feed_id": null,
+    "confidence": "verified"
   },
   {
     "id": "release:agy:345594988",
@@ -393,7 +777,10 @@
     "type": "release",
     "title": "AGY 1.0.13",
     "occurred_at": "2026-06-27T01:58:53Z",
-    "source_url": "https://github.com/google-antigravity/antigravity-cli/releases/tag/1.0.13"
+    "source_url": "https://github.com/google-antigravity/antigravity-cli/releases/tag/1.0.13",
+    "provider": null,
+    "feed_id": null,
+    "confidence": "verified"
   },
   {
     "id": "release:claude-code:345467919",
@@ -402,7 +789,22 @@
     "type": "release",
     "title": "Claude Code v2.1.195",
     "occurred_at": "2026-06-26T21:29:42Z",
-    "source_url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.195"
+    "source_url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.195",
+    "provider": null,
+    "feed_id": null,
+    "confidence": "verified"
+  },
+  {
+    "id": "model:gpt:news-rss:2026-06-26T10:00:00.000Z:d0a4c9f682",
+    "item_id": "gpt",
+    "item_name": "GPT",
+    "type": "model",
+    "title": "GPT: Previewing GPT-5.6 Sol: a next-generation model",
+    "occurred_at": "2026-06-26T10:00:00.000Z",
+    "source_url": "https://openai.com/index/previewing-gpt-5-6-sol",
+    "provider": "OpenAI",
+    "feed_id": "news-rss",
+    "confidence": "verified"
   },
   {
     "id": "release:claude-code:344922230",
@@ -411,7 +813,22 @@
     "type": "release",
     "title": "Claude Code v2.1.193",
     "occurred_at": "2026-06-25T21:45:57Z",
-    "source_url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.193"
+    "source_url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.193",
+    "provider": null,
+    "feed_id": null,
+    "confidence": "verified"
+  },
+  {
+    "id": "deprecation:claude:platform-notes:2026-06-25T00:00:00.000Z:ac6d3e5714",
+    "item_id": "claude",
+    "item_name": "Claude",
+    "type": "deprecation",
+    "title": "Claude: We&#x27;ve deprecated fast mode for Claude Opus 4.7, with removal on July 24, 2026.",
+    "occurred_at": "2026-06-25T00:00:00.000Z",
+    "source_url": "https://platform.claude.com/docs/en/release-notes/overview",
+    "provider": "Anthropic",
+    "feed_id": "platform-notes",
+    "confidence": "verified"
   },
   {
     "id": "release:openclaw:344412480",
@@ -420,7 +837,10 @@
     "type": "release",
     "title": "OpenClaw openclaw 2026.6.11-beta.1",
     "occurred_at": "2026-06-24T23:37:32Z",
-    "source_url": "https://github.com/openclaw/openclaw/releases/tag/v2026.6.11-beta.1"
+    "source_url": "https://github.com/openclaw/openclaw/releases/tag/v2026.6.11-beta.1",
+    "provider": null,
+    "feed_id": null,
+    "confidence": "verified"
   },
   {
     "id": "release:agy:344407158",
@@ -429,7 +849,10 @@
     "type": "release",
     "title": "AGY 1.0.12",
     "occurred_at": "2026-06-24T23:17:33Z",
-    "source_url": "https://github.com/google-antigravity/antigravity-cli/releases/tag/1.0.12"
+    "source_url": "https://github.com/google-antigravity/antigravity-cli/releases/tag/1.0.12",
+    "provider": null,
+    "feed_id": null,
+    "confidence": "verified"
   },
   {
     "id": "release:claude-code:344307226",
@@ -438,7 +861,10 @@
     "type": "release",
     "title": "Claude Code v2.1.191",
     "occurred_at": "2026-06-24T21:58:12Z",
-    "source_url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.191"
+    "source_url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.191",
+    "provider": null,
+    "feed_id": null,
+    "confidence": "verified"
   },
   {
     "id": "release:claude-code:344172504",
@@ -447,7 +873,10 @@
     "type": "release",
     "title": "Claude Code v2.1.190",
     "occurred_at": "2026-06-24T15:53:56Z",
-    "source_url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.190"
+    "source_url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.190",
+    "provider": null,
+    "feed_id": null,
+    "confidence": "verified"
   },
   {
     "id": "release:agy:343894723",
@@ -456,7 +885,10 @@
     "type": "release",
     "title": "AGY 1.0.11",
     "occurred_at": "2026-06-24T05:30:00Z",
-    "source_url": "https://github.com/google-antigravity/antigravity-cli/releases/tag/1.0.11"
+    "source_url": "https://github.com/google-antigravity/antigravity-cli/releases/tag/1.0.11",
+    "provider": null,
+    "feed_id": null,
+    "confidence": "verified"
   },
   {
     "id": "release:openclaw:343861248",
@@ -465,7 +897,22 @@
     "type": "release",
     "title": "OpenClaw openclaw 2026.6.10",
     "occurred_at": "2026-06-24T03:06:38Z",
-    "source_url": "https://github.com/openclaw/openclaw/releases/tag/v2026.6.10"
+    "source_url": "https://github.com/openclaw/openclaw/releases/tag/v2026.6.10",
+    "provider": null,
+    "feed_id": null,
+    "confidence": "verified"
+  },
+  {
+    "id": "model:gemini:api-changelog:2026-06-24T00:00:00.000Z:00d46cd9ef",
+    "item_id": "gemini",
+    "item_name": "Gemini",
+    "type": "model",
+    "title": "Gemini: Computer Use : Launched public preview support for the",
+    "occurred_at": "2026-06-24T00:00:00.000Z",
+    "source_url": "https://ai.google.dev/gemini-api/docs/changelog",
+    "provider": "Google AI",
+    "feed_id": "api-changelog",
+    "confidence": "verified"
   },
   {
     "id": "release:claude-code:343665388",
@@ -474,7 +921,22 @@
     "type": "release",
     "title": "Claude Code v2.1.187",
     "occurred_at": "2026-06-23T21:03:48Z",
-    "source_url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.187"
+    "source_url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.187",
+    "provider": null,
+    "feed_id": null,
+    "confidence": "verified"
+  },
+  {
+    "id": "model:gpt:news-rss:2026-06-23T17:00:00.000Z:7507ac23bd",
+    "item_id": "gpt",
+    "item_name": "GPT",
+    "type": "model",
+    "title": "GPT: How GPT-5 helped immunologist Derya Unutmaz solve a 3-year-old mystery",
+    "occurred_at": "2026-06-23T17:00:00.000Z",
+    "source_url": "https://openai.com/index/gpt-5-immunology-mystery",
+    "provider": "OpenAI",
+    "feed_id": "news-rss",
+    "confidence": "verified"
   },
   {
     "id": "release:claude-code:343079393",
@@ -483,7 +945,10 @@
     "type": "release",
     "title": "Claude Code v2.1.186",
     "occurred_at": "2026-06-22T20:37:34Z",
-    "source_url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.186"
+    "source_url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.186",
+    "provider": null,
+    "feed_id": null,
+    "confidence": "verified"
   },
   {
     "id": "release:openclaw:342799104",
@@ -492,7 +957,22 @@
     "type": "release",
     "title": "OpenClaw openclaw 2026.6.10-beta.2",
     "occurred_at": "2026-06-22T09:36:28Z",
-    "source_url": "https://github.com/openclaw/openclaw/releases/tag/v2026.6.10-beta.2"
+    "source_url": "https://github.com/openclaw/openclaw/releases/tag/v2026.6.10-beta.2",
+    "provider": null,
+    "feed_id": null,
+    "confidence": "verified"
+  },
+  {
+    "id": "deprecation:claude:platform-notes:2026-06-22T00:00:00.000Z:f3c762df55",
+    "item_id": "claude",
+    "item_name": "Claude",
+    "type": "deprecation",
+    "title": "Claude: The previous surface remains available during a migration window.",
+    "occurred_at": "2026-06-22T00:00:00.000Z",
+    "source_url": "https://platform.claude.com/docs/en/release-notes/overview",
+    "provider": "Anthropic",
+    "feed_id": "platform-notes",
+    "confidence": "verified"
   },
   {
     "id": "release:openclaw:342490787",
@@ -501,7 +981,10 @@
     "type": "release",
     "title": "OpenClaw openclaw 2026.6.10-beta.1",
     "occurred_at": "2026-06-21T09:12:41Z",
-    "source_url": "https://github.com/openclaw/openclaw/releases/tag/v2026.6.10-beta.1"
+    "source_url": "https://github.com/openclaw/openclaw/releases/tag/v2026.6.10-beta.1",
+    "provider": null,
+    "feed_id": null,
+    "confidence": "verified"
   },
   {
     "id": "release:openclaw:342436998",
@@ -510,7 +993,10 @@
     "type": "release",
     "title": "OpenClaw openclaw 2026.6.9",
     "occurred_at": "2026-06-21T01:44:28Z",
-    "source_url": "https://github.com/openclaw/openclaw/releases/tag/v2026.6.9"
+    "source_url": "https://github.com/openclaw/openclaw/releases/tag/v2026.6.9",
+    "provider": null,
+    "feed_id": null,
+    "confidence": "verified"
   },
   {
     "id": "release:claude-code:342367004",
@@ -519,7 +1005,10 @@
     "type": "release",
     "title": "Claude Code v2.1.185",
     "occurred_at": "2026-06-20T20:59:19Z",
-    "source_url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.185"
+    "source_url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.185",
+    "provider": null,
+    "feed_id": null,
+    "confidence": "verified"
   },
   {
     "id": "release:openclaw:341758423",
@@ -528,7 +1017,10 @@
     "type": "release",
     "title": "OpenClaw openclaw 2026.6.9-beta.1",
     "occurred_at": "2026-06-19T05:52:39Z",
-    "source_url": "https://github.com/openclaw/openclaw/releases/tag/v2026.6.9-beta.1"
+    "source_url": "https://github.com/openclaw/openclaw/releases/tag/v2026.6.9-beta.1",
+    "provider": null,
+    "feed_id": null,
+    "confidence": "verified"
   },
   {
     "id": "release:agy:341751201",
@@ -537,7 +1029,10 @@
     "type": "release",
     "title": "AGY 1.0.10",
     "occurred_at": "2026-06-19T04:36:23Z",
-    "source_url": "https://github.com/google-antigravity/antigravity-cli/releases/tag/1.0.10"
+    "source_url": "https://github.com/google-antigravity/antigravity-cli/releases/tag/1.0.10",
+    "provider": null,
+    "feed_id": null,
+    "confidence": "verified"
   },
   {
     "id": "release:claude-code:341696059",
@@ -546,7 +1041,22 @@
     "type": "release",
     "title": "Claude Code v2.1.183",
     "occurred_at": "2026-06-19T01:20:50Z",
-    "source_url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.183"
+    "source_url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.183",
+    "provider": null,
+    "feed_id": null,
+    "confidence": "verified"
+  },
+  {
+    "id": "model:claude:platform-notes:2026-06-18T00:00:00.000Z:eaf34ecc93",
+    "item_id": "claude",
+    "item_name": "Claude",
+    "type": "model",
+    "title": "Claude: It&#x27;s available on Claude Fable 5, Claude Mythos 5, Claude Opus 4.5 and newer, and Claude Sonnet 4.5 and newer; see the model compatibility table .",
+    "occurred_at": "2026-06-18T00:00:00.000Z",
+    "source_url": "https://platform.claude.com/docs/en/release-notes/overview",
+    "provider": "Anthropic",
+    "feed_id": "platform-notes",
+    "confidence": "verified"
   },
   {
     "id": "release:claude-code:340975229",
@@ -555,7 +1065,10 @@
     "type": "release",
     "title": "Claude Code v2.1.181",
     "occurred_at": "2026-06-17T22:07:41Z",
-    "source_url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.181"
+    "source_url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.181",
+    "provider": null,
+    "feed_id": null,
+    "confidence": "verified"
   },
   {
     "id": "release:agy:340499709",
@@ -564,7 +1077,10 @@
     "type": "release",
     "title": "AGY 1.0.9",
     "occurred_at": "2026-06-17T02:48:46Z",
-    "source_url": "https://github.com/google-antigravity/antigravity-cli/releases/tag/1.0.9"
+    "source_url": "https://github.com/google-antigravity/antigravity-cli/releases/tag/1.0.9",
+    "provider": null,
+    "feed_id": null,
+    "confidence": "verified"
   },
   {
     "id": "release:openclaw:340261721",
@@ -573,7 +1089,10 @@
     "type": "release",
     "title": "OpenClaw openclaw 2026.6.8",
     "occurred_at": "2026-06-16T16:32:26Z",
-    "source_url": "https://github.com/openclaw/openclaw/releases/tag/v2026.6.8"
+    "source_url": "https://github.com/openclaw/openclaw/releases/tag/v2026.6.8",
+    "provider": null,
+    "feed_id": null,
+    "confidence": "verified"
   },
   {
     "id": "release:openclaw:339869694",
@@ -582,7 +1101,34 @@
     "type": "release",
     "title": "OpenClaw openclaw 2026.6.8-beta.2",
     "occurred_at": "2026-06-16T01:50:19Z",
-    "source_url": "https://github.com/openclaw/openclaw/releases/tag/v2026.6.8-beta.2"
+    "source_url": "https://github.com/openclaw/openclaw/releases/tag/v2026.6.8-beta.2",
+    "provider": null,
+    "feed_id": null,
+    "confidence": "verified"
+  },
+  {
+    "id": "deprecation:claude:platform-notes:2026-06-15T00:00:00.000Z:6d8634d951",
+    "item_id": "claude",
+    "item_name": "Claude",
+    "type": "deprecation",
+    "title": "Claude: We&#x27;ve retired the Claude Sonnet 4 model ( claude-sonnet-4-20250514 ) and the Claude Opus 4 model ( claude-opus-4-20250514 ).",
+    "occurred_at": "2026-06-15T00:00:00.000Z",
+    "source_url": "https://platform.claude.com/docs/en/release-notes/overview",
+    "provider": "Anthropic",
+    "feed_id": "platform-notes",
+    "confidence": "verified"
+  },
+  {
+    "id": "deprecation:gemini:api-changelog:2026-06-15T00:00:00.000Z:4376e796b6",
+    "item_id": "gemini",
+    "item_name": "Gemini",
+    "type": "deprecation",
+    "title": "Gemini: Deprecation announcement : The following image generation models are",
+    "occurred_at": "2026-06-15T00:00:00.000Z",
+    "source_url": "https://ai.google.dev/gemini-api/docs/changelog",
+    "provider": "Google AI",
+    "feed_id": "api-changelog",
+    "confidence": "verified"
   },
   {
     "id": "release:openclaw:339054463",
@@ -591,7 +1137,10 @@
     "type": "release",
     "title": "OpenClaw openclaw 2026.6.8-beta.1",
     "occurred_at": "2026-06-14T22:45:33Z",
-    "source_url": "https://github.com/openclaw/openclaw/releases/tag/v2026.6.8-beta.1"
+    "source_url": "https://github.com/openclaw/openclaw/releases/tag/v2026.6.8-beta.1",
+    "provider": null,
+    "feed_id": null,
+    "confidence": "verified"
   },
   {
     "id": "release:openclaw:338942142",
@@ -600,7 +1149,10 @@
     "type": "release",
     "title": "OpenClaw openclaw 2026.6.7-beta.1",
     "occurred_at": "2026-06-13T09:42:35Z",
-    "source_url": "https://github.com/openclaw/openclaw/releases/tag/v2026.6.7-beta.1"
+    "source_url": "https://github.com/openclaw/openclaw/releases/tag/v2026.6.7-beta.1",
+    "provider": null,
+    "feed_id": null,
+    "confidence": "verified"
   },
   {
     "id": "release:agy:338837814",
@@ -609,7 +1161,10 @@
     "type": "release",
     "title": "AGY 1.0.8",
     "occurred_at": "2026-06-12T22:56:40Z",
-    "source_url": "https://github.com/google-antigravity/antigravity-cli/releases/tag/1.0.8"
+    "source_url": "https://github.com/google-antigravity/antigravity-cli/releases/tag/1.0.8",
+    "provider": null,
+    "feed_id": null,
+    "confidence": "verified"
   },
   {
     "id": "release:openclaw:338523978",
@@ -618,7 +1173,10 @@
     "type": "release",
     "title": "OpenClaw openclaw 2026.6.6",
     "occurred_at": "2026-06-12T11:04:42Z",
-    "source_url": "https://github.com/openclaw/openclaw/releases/tag/v2026.6.6"
+    "source_url": "https://github.com/openclaw/openclaw/releases/tag/v2026.6.6",
+    "provider": null,
+    "feed_id": null,
+    "confidence": "verified"
   },
   {
     "id": "release:openclaw:338357959",
@@ -627,7 +1185,46 @@
     "type": "release",
     "title": "OpenClaw openclaw 2026.6.6-beta.2",
     "occurred_at": "2026-06-12T03:32:42Z",
-    "source_url": "https://github.com/openclaw/openclaw/releases/tag/v2026.6.6-beta.2"
+    "source_url": "https://github.com/openclaw/openclaw/releases/tag/v2026.6.6-beta.2",
+    "provider": null,
+    "feed_id": null,
+    "confidence": "verified"
+  },
+  {
+    "id": "deprecation:gpt:deprecations:2026-06-11T00:00:00.000Z:f08867164c",
+    "item_id": "gpt",
+    "item_name": "GPT",
+    "type": "deprecation",
+    "title": "GPT: Upcoming deprecations Upcoming deprecations are listed below, with the most recent announcements at the top. 2026-06-11: GPT-5 and o3 model deprecations",
+    "occurred_at": "2026-06-11T00:00:00.000Z",
+    "source_url": "https://developers.openai.com/api/docs/deprecations",
+    "provider": "OpenAI",
+    "feed_id": "deprecations",
+    "confidence": "verified"
+  },
+  {
+    "id": "deprecation:gpt:deprecations:2026-06-11T00:00:00.000Z:24d8baf7dc",
+    "item_id": "gpt",
+    "item_name": "GPT",
+    "type": "deprecation",
+    "title": "GPT: Upcoming deprecations are listed below, with the most recent announcements at the top. 2026-06-11: GPT-5 and o3 model deprecations On June 11, 2026, we notified developers using older GPT-5 and o3 model snapshots of thei",
+    "occurred_at": "2026-06-11T00:00:00.000Z",
+    "source_url": "https://developers.openai.com/api/docs/deprecations",
+    "provider": "OpenAI",
+    "feed_id": "deprecations",
+    "confidence": "verified"
+  },
+  {
+    "id": "deprecation:gpt:deprecations:2026-06-11T00:00:00.000Z:b87863ce8b",
+    "item_id": "gpt",
+    "item_name": "GPT",
+    "type": "deprecation",
+    "title": "GPT: 2026-06-11: GPT-5 and o3 model deprecations On June 11, 2026, we notified developers using older GPT-5 and o3 model snapshots of their deprecation and removal from the API on December 11, 2026. Shutdown date Model / syst",
+    "occurred_at": "2026-06-11T00:00:00.000Z",
+    "source_url": "https://developers.openai.com/api/docs/deprecations",
+    "provider": "OpenAI",
+    "feed_id": "deprecations",
+    "confidence": "verified"
   },
   {
     "id": "release:openclaw:337480044",
@@ -636,7 +1233,10 @@
     "type": "release",
     "title": "OpenClaw OpenClaw 2026.6.6-beta.1",
     "occurred_at": "2026-06-10T19:33:39Z",
-    "source_url": "https://github.com/openclaw/openclaw/releases/tag/v2026.6.6-beta.1"
+    "source_url": "https://github.com/openclaw/openclaw/releases/tag/v2026.6.6-beta.1",
+    "provider": null,
+    "feed_id": null,
+    "confidence": "verified"
   },
   {
     "id": "release:agy:336860539",
@@ -645,7 +1245,10 @@
     "type": "release",
     "title": "AGY 1.0.7",
     "occurred_at": "2026-06-09T20:40:53Z",
-    "source_url": "https://github.com/google-antigravity/antigravity-cli/releases/tag/1.0.7"
+    "source_url": "https://github.com/google-antigravity/antigravity-cli/releases/tag/1.0.7",
+    "provider": null,
+    "feed_id": null,
+    "confidence": "verified"
   },
   {
     "id": "release:openclaw:336789241",
@@ -654,7 +1257,10 @@
     "type": "release",
     "title": "OpenClaw openclaw 2026.6.5",
     "occurred_at": "2026-06-09T18:13:20Z",
-    "source_url": "https://github.com/openclaw/openclaw/releases/tag/v2026.6.5"
+    "source_url": "https://github.com/openclaw/openclaw/releases/tag/v2026.6.5",
+    "provider": null,
+    "feed_id": null,
+    "confidence": "verified"
   },
   {
     "id": "release:openclaw:336456628",
@@ -663,7 +1269,10 @@
     "type": "release",
     "title": "OpenClaw openclaw 2026.6.5-beta.6",
     "occurred_at": "2026-06-09T08:43:04Z",
-    "source_url": "https://github.com/openclaw/openclaw/releases/tag/v2026.6.5-beta.6"
+    "source_url": "https://github.com/openclaw/openclaw/releases/tag/v2026.6.5-beta.6",
+    "provider": null,
+    "feed_id": null,
+    "confidence": "verified"
   },
   {
     "id": "release:openclaw:336270460",
@@ -672,7 +1281,10 @@
     "type": "release",
     "title": "OpenClaw openclaw 2026.6.5-beta.5",
     "occurred_at": "2026-06-08T22:49:14Z",
-    "source_url": "https://github.com/openclaw/openclaw/releases/tag/v2026.6.5-beta.5"
+    "source_url": "https://github.com/openclaw/openclaw/releases/tag/v2026.6.5-beta.5",
+    "provider": null,
+    "feed_id": null,
+    "confidence": "verified"
   },
   {
     "id": "release:agy:335256748",
@@ -681,7 +1293,10 @@
     "type": "release",
     "title": "AGY 1.0.6",
     "occurred_at": "2026-06-06T00:43:00Z",
-    "source_url": "https://github.com/google-antigravity/antigravity-cli/releases/tag/1.0.6"
+    "source_url": "https://github.com/google-antigravity/antigravity-cli/releases/tag/1.0.6",
+    "provider": null,
+    "feed_id": null,
+    "confidence": "verified"
   },
   {
     "id": "release:agy:334013553",
@@ -690,7 +1305,10 @@
     "type": "release",
     "title": "AGY 1.0.5",
     "occurred_at": "2026-06-03T21:37:06Z",
-    "source_url": "https://github.com/google-antigravity/antigravity-cli/releases/tag/1.0.5"
+    "source_url": "https://github.com/google-antigravity/antigravity-cli/releases/tag/1.0.5",
+    "provider": null,
+    "feed_id": null,
+    "confidence": "verified"
   },
   {
     "id": "release:agy:332818727",
@@ -699,6 +1317,69 @@
     "type": "release",
     "title": "AGY 1.0.4",
     "occurred_at": "2026-06-01T23:14:20Z",
-    "source_url": "https://github.com/google-antigravity/antigravity-cli/releases/tag/1.0.4"
+    "source_url": "https://github.com/google-antigravity/antigravity-cli/releases/tag/1.0.4",
+    "provider": null,
+    "feed_id": null,
+    "confidence": "verified"
+  },
+  {
+    "id": "deprecation:gemini:api-changelog:2026-06-01T00:00:00.000Z:2b8f263125",
+    "item_id": "gemini",
+    "item_name": "Gemini",
+    "type": "deprecation",
+    "title": "Gemini: The following Gemini 2.0 models are now shut down :",
+    "occurred_at": "2026-06-01T00:00:00.000Z",
+    "source_url": "https://ai.google.dev/gemini-api/docs/changelog",
+    "provider": "Google AI",
+    "feed_id": "api-changelog",
+    "confidence": "verified"
+  },
+  {
+    "id": "model:gemini:api-changelog:2026-05-28T00:00:00.000Z:67b4f3b406",
+    "item_id": "gemini",
+    "item_name": "Gemini",
+    "type": "model",
+    "title": "Gemini: Released gemini-3.1-flash-image (Nano Banana 2) and gemini-3-pro-image",
+    "occurred_at": "2026-05-28T00:00:00.000Z",
+    "source_url": "https://ai.google.dev/gemini-api/docs/changelog",
+    "provider": "Google AI",
+    "feed_id": "api-changelog",
+    "confidence": "verified"
+  },
+  {
+    "id": "deprecation:gpt:deprecations:2025-08-07T00:00:00.000Z:2fb484efe1",
+    "item_id": "gpt",
+    "item_name": "GPT",
+    "type": "deprecation",
+    "title": "GPT: On June 11, 2026, we notified developers using older GPT-5 and o3 model snapshots of their deprecation and removal from the API on December 11, 2026. Shutdown date Model / system Recommended replacement Dec 11, 2026 gpt-",
+    "occurred_at": "2025-08-07T00:00:00.000Z",
+    "source_url": "https://developers.openai.com/api/docs/deprecations",
+    "provider": "OpenAI",
+    "feed_id": "deprecations",
+    "confidence": "verified"
+  },
+  {
+    "id": "deprecation:gpt:deprecations:2025-08-07T00:00:00.000Z:4ba6ba312e",
+    "item_id": "gpt",
+    "item_name": "GPT",
+    "type": "deprecation",
+    "title": "GPT: Shutdown date Model / system Recommended replacement Dec 11, 2026 gpt-5-2025-08-07 gpt-5.5 Dec 11, 2026 gpt-5-mini-2025-08-07 gpt-5.4-mini",
+    "occurred_at": "2025-08-07T00:00:00.000Z",
+    "source_url": "https://developers.openai.com/api/docs/deprecations",
+    "provider": "OpenAI",
+    "feed_id": "deprecations",
+    "confidence": "verified"
+  },
+  {
+    "id": "deprecation:gpt:deprecations:2025-06-10T00:00:00.000Z:4228e30dc8",
+    "item_id": "gpt",
+    "item_name": "GPT",
+    "type": "deprecation",
+    "title": "GPT: Dec 11, 2026 o3-pro-2025-06-10 gpt-5.5-pro 2026-06-03: Reusable prompts On June 3, 2026, we notified developers using reusable prompts in the dashboard and API that reusable prompt objects are being deprecated.",
+    "occurred_at": "2025-06-10T00:00:00.000Z",
+    "source_url": "https://developers.openai.com/api/docs/deprecations",
+    "provider": "OpenAI",
+    "feed_id": "deprecations",
+    "confidence": "verified"
   }
 ]

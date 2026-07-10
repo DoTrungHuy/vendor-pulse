@@ -1,7 +1,7 @@
 {
-  "generated_at": "2026-07-10T07:10:56.193Z",
+  "generated_at": "2026-07-10T08:32:27.606Z",
   "timezone": "Asia/Shanghai",
-  "status": "ok",
+  "status": "stale",
   "tools": [
     {
       "id": "codex",
@@ -10,7 +10,7 @@
       "repo_url": "https://github.com/openai/codex",
       "official_url": "https://developers.openai.com/codex",
       "x_url": "https://x.com/OpenAI",
-      "stars": 96798,
+      "stars": 96832,
       "stars_delta_24h": null,
       "stars_delta_7d": null,
       "latest_release": {
@@ -37,7 +37,7 @@
       "repo_url": "https://github.com/anthropics/claude-code",
       "official_url": "https://code.claude.com/docs",
       "x_url": "https://x.com/AnthropicAI",
-      "stars": 137128,
+      "stars": 137216,
       "stars_delta_24h": null,
       "stars_delta_7d": null,
       "latest_release": {
@@ -64,7 +64,7 @@
       "repo_url": "https://github.com/google-antigravity/antigravity-cli",
       "official_url": "https://www.antigravity.google/docs/cli-using",
       "x_url": "https://x.com/GoogleAI",
-      "stars": 1540,
+      "stars": 1543,
       "stars_delta_24h": null,
       "stars_delta_7d": null,
       "latest_release": {
@@ -87,7 +87,7 @@
       "repo_url": "https://github.com/openclaw/openclaw",
       "official_url": "https://openclaw.ai",
       "x_url": "https://x.com/openclaw",
-      "stars": 382406,
+      "stars": 382424,
       "stars_delta_24h": null,
       "stars_delta_7d": null,
       "latest_release": {
@@ -113,28 +113,157 @@
       "id": "gpt",
       "name": "GPT",
       "provider": "OpenAI",
-      "source_url": "https://openai.com/news/",
+      "source_url": "https://openai.com/index/gpt-5-6-preferred-model-microsoft-365-copilot",
       "title": "GPT-5.6 is now the preferred model in Microsoft 365 Copilot",
       "occurred_at": "2026-07-09T13:00:00.000Z",
-      "status": "ok"
+      "status": "stale",
+      "latest_model": {
+        "title": "GPT-5.6 is now the preferred model in Microsoft 365 Copilot",
+        "occurred_at": "2026-07-09T13:00:00.000Z",
+        "source_url": "https://openai.com/index/gpt-5-6-preferred-model-microsoft-365-copilot",
+        "feed_id": "news-rss",
+        "confidence": "verified"
+      },
+      "latest_policy": {
+        "title": "Upcoming deprecations Upcoming deprecations are listed below, with the most recent announcements at the top. 2026-06-11: GPT-5 and o3 model deprecations",
+        "occurred_at": "2026-06-11T00:00:00.000Z",
+        "source_url": "https://developers.openai.com/api/docs/deprecations",
+        "feed_id": "deprecations",
+        "confidence": "verified"
+      },
+      "feeds": [
+        {
+          "id": "news-rss",
+          "label": "News RSS",
+          "kind": "model",
+          "url": "https://openai.com/news/rss.xml",
+          "status": "ok",
+          "checked_at": "2026-07-10T08:32:31.500Z",
+          "error": null
+        },
+        {
+          "id": "model-release-notes",
+          "label": "Model Release Notes",
+          "kind": "model",
+          "url": "https://help.openai.com/en/articles/9624314-model-release-notes",
+          "status": "error",
+          "checked_at": "2026-07-10T08:32:33.447Z",
+          "error": "403 Forbidden"
+        },
+        {
+          "id": "deprecations",
+          "label": "API Deprecations",
+          "kind": "deprecation",
+          "url": "https://developers.openai.com/api/docs/deprecations",
+          "status": "ok",
+          "checked_at": "2026-07-10T08:32:33.584Z",
+          "error": null
+        },
+        {
+          "id": "api-changelog",
+          "label": "API Changelog",
+          "kind": "model",
+          "url": "https://developers.openai.com/api/docs/changelog",
+          "status": "ok",
+          "checked_at": "2026-07-10T08:32:33.625Z",
+          "error": null
+        }
+      ]
     },
     {
       "id": "claude",
       "name": "Claude",
       "provider": "Anthropic",
-      "source_url": "https://docs.anthropic.com/en/release-notes/overview",
-      "title": "官方发布说明页已建立基线",
-      "occurred_at": null,
-      "status": "ok"
+      "source_url": "https://www.anthropic.com/news",
+      "title": "Introducing Claude Sonnet 5",
+      "occurred_at": "2026-07-10T08:32:31.676Z",
+      "status": "ok",
+      "latest_model": {
+        "title": "Introducing Claude Sonnet 5",
+        "occurred_at": "2026-07-10T08:32:31.676Z",
+        "source_url": "https://www.anthropic.com/news",
+        "feed_id": "news",
+        "confidence": "needs_review"
+      },
+      "latest_policy": {
+        "title": "Current and recently retired models are listed in the following table with their status: API model name Current state Deprecated Tentative retirement date claude-opus-4-8 Active N/A Not sooner than May 28, 2027",
+        "occurred_at": "2027-05-28T00:00:00.000Z",
+        "source_url": "https://platform.claude.com/docs/en/about-claude/model-deprecations",
+        "feed_id": "deprecations",
+        "confidence": "verified"
+      },
+      "feeds": [
+        {
+          "id": "news",
+          "label": "Anthropic News",
+          "kind": "model",
+          "url": "https://www.anthropic.com/news",
+          "status": "ok",
+          "checked_at": "2026-07-10T08:32:31.674Z",
+          "error": null
+        },
+        {
+          "id": "platform-notes",
+          "label": "Platform Release Notes",
+          "kind": "model",
+          "url": "https://platform.claude.com/docs/en/release-notes/overview",
+          "status": "ok",
+          "checked_at": "2026-07-10T08:32:32.050Z",
+          "error": null
+        },
+        {
+          "id": "deprecations",
+          "label": "Model Deprecations",
+          "kind": "deprecation",
+          "url": "https://platform.claude.com/docs/en/about-claude/model-deprecations",
+          "status": "ok",
+          "checked_at": "2026-07-10T08:32:32.426Z",
+          "error": null
+        }
+      ]
     },
     {
       "id": "gemini",
       "name": "Gemini",
       "provider": "Google AI",
       "source_url": "https://ai.google.dev/gemini-api/docs/changelog",
-      "title": "Gemini Omni Flash in public preview : Released gemini-omni-flash-preview ,\na high-performance multimodal model designed for high-speed video generation\nand conversational video editing.",
+      "title": "Gemini Omni Flash in public preview : Released gemini-omni-flash-preview ,",
       "occurred_at": "2026-06-30T00:00:00.000Z",
-      "status": "ok"
+      "status": "ok",
+      "latest_model": {
+        "title": "Gemini Omni Flash in public preview : Released gemini-omni-flash-preview ,",
+        "occurred_at": "2026-06-30T00:00:00.000Z",
+        "source_url": "https://ai.google.dev/gemini-api/docs/changelog",
+        "feed_id": "api-changelog",
+        "confidence": "verified"
+      },
+      "latest_policy": {
+        "title": "Deprecation announcement : The following image generation models are",
+        "occurred_at": "2026-06-15T00:00:00.000Z",
+        "source_url": "https://ai.google.dev/gemini-api/docs/changelog",
+        "feed_id": "api-changelog",
+        "confidence": "verified"
+      },
+      "feeds": [
+        {
+          "id": "api-changelog",
+          "label": "Gemini API Changelog",
+          "kind": "model",
+          "url": "https://ai.google.dev/gemini-api/docs/changelog",
+          "status": "ok",
+          "checked_at": "2026-07-10T08:32:31.179Z",
+          "error": null
+        },
+        {
+          "id": "models-page",
+          "label": "Models Page",
+          "kind": "deprecation",
+          "url": "https://ai.google.dev/gemini-api/docs/models",
+          "status": "ok",
+          "checked_at": "2026-07-10T08:32:31.403Z",
+          "error": null
+        }
+      ]
     }
   ]
 }
