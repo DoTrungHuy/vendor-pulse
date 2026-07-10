@@ -1,0 +1,134 @@
+{
+  "latest_success_at": "2026-07-10T05:52:08.322Z",
+  "sources": {
+    "github:openclaw:repo": {
+      "status": "error",
+      "checked_at": "2026-07-10T05:52:10.795Z",
+      "etag": "W/\"fcc77640c28a8b85d2500e270fdfd2ddf1445e767f6e25a646991edb698f1264\"",
+      "last_modified": "Fri, 10 Jul 2026 05:45:27 GMT",
+      "content_hash": "fa560427989f3c3d55c268198f6da58779d580a2d6dc1bfcbe83f65a6592207e",
+      "previous_hash": "fa560427989f3c3d55c268198f6da58779d580a2d6dc1bfcbe83f65a6592207e",
+      "error": "403 rate limit exceeded"
+    },
+    "github:claude-code:repo": {
+      "status": "error",
+      "checked_at": "2026-07-10T05:52:10.798Z",
+      "etag": "W/\"8c954057b5c6bf5879378b8d0b0eb7d92e44962b71c5560df22ddcc8482bbd98\"",
+      "last_modified": "Fri, 10 Jul 2026 05:42:24 GMT",
+      "content_hash": "16ea6cdc66b5e481c1d40f758d96e5c66cfaa9fd3954c28db4163523c16efb1e",
+      "previous_hash": "16ea6cdc66b5e481c1d40f758d96e5c66cfaa9fd3954c28db4163523c16efb1e",
+      "error": "403 rate limit exceeded"
+    },
+    "github:codex:repo": {
+      "status": "error",
+      "checked_at": "2026-07-10T05:52:10.798Z",
+      "etag": "W/\"1044ac48465359df79e9cafa7a2822016e0cfab285560fc19374ff7d216282ce\"",
+      "last_modified": "Fri, 10 Jul 2026 05:36:53 GMT",
+      "content_hash": "6db2cc2018daa1b3536827cafce185c52b47ffcc074ec55640357810f28e3951",
+      "previous_hash": "6db2cc2018daa1b3536827cafce185c52b47ffcc074ec55640357810f28e3951",
+      "error": "403 rate limit exceeded"
+    },
+    "github:agy:repo": {
+      "status": "error",
+      "checked_at": "2026-07-10T05:52:10.799Z",
+      "etag": "W/\"6177d4b749de817a83a2c1c49856516a60d3ca067cd0108dfbb316956131b37e\"",
+      "last_modified": "Fri, 10 Jul 2026 04:30:26 GMT",
+      "content_hash": "4417fd960fe8e06024b6dc0f2bbf52c3586e683d8e4e7870ab9b98c40d37edba",
+      "previous_hash": "4417fd960fe8e06024b6dc0f2bbf52c3586e683d8e4e7870ab9b98c40d37edba",
+      "error": "403 rate limit exceeded"
+    },
+    "github:agy:releases": {
+      "status": "error",
+      "checked_at": "2026-07-10T05:52:12.930Z",
+      "etag": "W/\"2fb4d2e8bda5cf8986320b1da2cb2de1b2231cefb5db2434ef829dec258bae9d\"",
+      "last_modified": null,
+      "content_hash": "4dd3c66969cf20b4e299953c7e8a041a79b92b13f486fd71c37f1b48d3035041",
+      "previous_hash": "4dd3c66969cf20b4e299953c7e8a041a79b92b13f486fd71c37f1b48d3035041",
+      "error": "403 rate limit exceeded"
+    },
+    "github:claude-code:releases": {
+      "status": "error",
+      "checked_at": "2026-07-10T05:52:13.215Z",
+      "etag": "W/\"fe3356ebd2f7dfac75977037e17902743b02db97619bfedb05b8e1506f9d3f33\"",
+      "last_modified": null,
+      "content_hash": "0a784866cda464a2bcf9dbe00d5045569b0a3a922df384a0abd977040190b0e9",
+      "previous_hash": "0a784866cda464a2bcf9dbe00d5045569b0a3a922df384a0abd977040190b0e9",
+      "error": "403 rate limit exceeded"
+    },
+    "github:openclaw:releases": {
+      "status": "error",
+      "checked_at": "2026-07-10T05:52:13.209Z",
+      "etag": "W/\"eca4e9de647687e0b9af9fd74447fdedbc27ec28399b015e19bc95e87c36f8f7\"",
+      "last_modified": null,
+      "content_hash": "f1a9619e845350127f0218ffd7c152714e12ebec7886282642174d8253093f16",
+      "previous_hash": "f1a9619e845350127f0218ffd7c152714e12ebec7886282642174d8253093f16",
+      "error": "403 rate limit exceeded"
+    },
+    "npm:claude-code": {
+      "status": "ok",
+      "checked_at": "2026-07-10T05:52:13.917Z",
+      "etag": null,
+      "last_modified": null,
+      "content_hash": "1e420bc22b751ef2cbdf41c99e0ece86e3af51a5bc8c745c8b091e4d63dda727",
+      "previous_hash": "1e420bc22b751ef2cbdf41c99e0ece86e3af51a5bc8c745c8b091e4d63dda727",
+      "error": null
+    },
+    "npm:openclaw": {
+      "status": "ok",
+      "checked_at": "2026-07-10T05:52:13.763Z",
+      "etag": null,
+      "last_modified": "Fri, 10 Jul 2026 05:51:14 GMT",
+      "content_hash": "a04724d9d445e012807e5d0cd3f99541928a7f57ef311238694e514a1e84e552",
+      "previous_hash": "a04724d9d445e012807e5d0cd3f99541928a7f57ef311238694e514a1e84e552",
+      "error": null
+    },
+    "github:codex:releases": {
+      "status": "error",
+      "checked_at": "2026-07-10T05:52:12.938Z",
+      "etag": "W/\"80a77dc052906eee58410a836bf9e58ce9ac9c9f2d8d6e155d27551b3796b79b\"",
+      "last_modified": null,
+      "content_hash": "b8e3ca1979cbedb4383da0f8cf7e7143ebd4a3b96057a64b4493255576605f96",
+      "previous_hash": "b8e3ca1979cbedb4383da0f8cf7e7143ebd4a3b96057a64b4493255576605f96",
+      "error": "403 rate limit exceeded"
+    },
+    "npm:codex": {
+      "status": "ok",
+      "checked_at": "2026-07-10T05:52:13.851Z",
+      "etag": null,
+      "last_modified": null,
+      "content_hash": "5316720761a4e3fd97995650430e71a546605216fdfb8430a75af10eb0ae35b9",
+      "previous_hash": "5316720761a4e3fd97995650430e71a546605216fdfb8430a75af10eb0ae35b9",
+      "error": null
+    },
+    "model:gemini": {
+      "status": "ok",
+      "checked_at": "2026-07-10T05:52:14.829Z",
+      "etag": null,
+      "last_modified": "Thu, 09 Jul 2026 23:04:22 GMT",
+      "content_hash": "8cc360354b7119018afc42314f8d6626334fe98b645766ef671b232db679deb8",
+      "previous_hash": "8cc360354b7119018afc42314f8d6626334fe98b645766ef671b232db679deb8",
+      "error": null,
+      "normalized": true
+    },
+    "model:gpt": {
+      "status": "ok",
+      "checked_at": "2026-07-10T05:52:15.305Z",
+      "etag": null,
+      "last_modified": null,
+      "content_hash": "7749a389f8549177d8206919f70e64f33814c0dc1a6139a0e642503ca0f223aa",
+      "previous_hash": null,
+      "error": null,
+      "normalized": true
+    },
+    "model:claude": {
+      "status": "ok",
+      "checked_at": "2026-07-10T05:52:17.197Z",
+      "etag": null,
+      "last_modified": null,
+      "content_hash": "d53bc571ff4b51385de8869f31965efccb748aaa5b9f445adf93677e8ca6f797",
+      "previous_hash": "d53bc571ff4b51385de8869f31965efccb748aaa5b9f445adf93677e8ca6f797",
+      "error": null,
+      "normalized": true
+    }
+  }
+}

@@ -1,0 +1,140 @@
+{
+  "generated_at": "2026-07-10T05:52:08.322Z",
+  "timezone": "Asia/Shanghai",
+  "status": "stale",
+  "tools": [
+    {
+      "id": "codex",
+      "name": "Codex",
+      "repo": "openai/codex",
+      "repo_url": "https://github.com/openai/codex",
+      "official_url": "https://developers.openai.com/codex",
+      "x_url": "https://x.com/OpenAI",
+      "stars": 96766,
+      "stars_delta_24h": null,
+      "stars_delta_7d": null,
+      "latest_release": {
+        "tag": "rust-v0.144.1",
+        "title": "0.144.1",
+        "published_at": "2026-07-09T23:02:40Z",
+        "url": "https://github.com/openai/codex/releases/tag/rust-v0.144.1"
+      },
+      "release_cadence_30d": {
+        "count": 20,
+        "median_days": 0.8040972222222222
+      },
+      "npm": {
+        "package": "@openai/codex",
+        "version": "0.144.1",
+        "weekly_downloads": 10625797
+      },
+      "status": "error"
+    },
+    {
+      "id": "claude-code",
+      "name": "Claude Code",
+      "repo": "anthropics/claude-code",
+      "repo_url": "https://github.com/anthropics/claude-code",
+      "official_url": "https://code.claude.com/docs",
+      "x_url": "https://x.com/AnthropicAI",
+      "stars": 137111,
+      "stars_delta_24h": null,
+      "stars_delta_7d": null,
+      "latest_release": {
+        "tag": "v2.1.206",
+        "title": "v2.1.206",
+        "published_at": "2026-07-10T01:45:26Z",
+        "url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.206"
+      },
+      "release_cadence_30d": {
+        "count": 20,
+        "median_days": 0.9914930555555556
+      },
+      "npm": {
+        "package": "@anthropic-ai/claude-code",
+        "version": "2.1.206",
+        "weekly_downloads": 11482894
+      },
+      "status": "error"
+    },
+    {
+      "id": "agy",
+      "name": "AGY",
+      "repo": "google-antigravity/antigravity-cli",
+      "repo_url": "https://github.com/google-antigravity/antigravity-cli",
+      "official_url": "https://www.antigravity.google/docs/cli-using",
+      "x_url": "https://x.com/GoogleAI",
+      "stars": 1540,
+      "stars_delta_24h": null,
+      "stars_delta_7d": null,
+      "latest_release": {
+        "tag": "1.1.1",
+        "title": "1.1.1",
+        "published_at": "2026-07-10T03:40:13Z",
+        "url": "https://github.com/google-antigravity/antigravity-cli/releases/tag/1.1.1"
+      },
+      "release_cadence_30d": {
+        "count": 11,
+        "median_days": 2
+      },
+      "npm": null,
+      "status": "error"
+    },
+    {
+      "id": "openclaw",
+      "name": "OpenClaw",
+      "repo": "openclaw/openclaw",
+      "repo_url": "https://github.com/openclaw/openclaw",
+      "official_url": "https://openclaw.ai",
+      "x_url": "https://x.com/openclaw",
+      "stars": 382392,
+      "stars_delta_24h": null,
+      "stars_delta_7d": null,
+      "latest_release": {
+        "tag": "v2026.7.1-beta.2",
+        "title": "openclaw 2026.7.1-beta.2",
+        "published_at": "2026-07-05T09:10:09Z",
+        "url": "https://github.com/openclaw/openclaw/releases/tag/v2026.7.1-beta.2"
+      },
+      "release_cadence_30d": {
+        "count": 17,
+        "median_days": 1
+      },
+      "npm": {
+        "package": "openclaw",
+        "version": "2026.6.11",
+        "weekly_downloads": 2676988
+      },
+      "status": "error"
+    }
+  ],
+  "models": [
+    {
+      "id": "gpt",
+      "name": "GPT",
+      "provider": "OpenAI",
+      "source_url": "https://openai.com/news/",
+      "title": "GPT-5.6 is now the preferred model in Microsoft 365 Copilot",
+      "occurred_at": "2026-07-09T13:00:00.000Z",
+      "status": "ok"
+    },
+    {
+      "id": "claude",
+      "name": "Claude",
+      "provider": "Anthropic",
+      "source_url": "https://docs.anthropic.com/en/release-notes/overview",
+      "title": "官方发布说明页已建立基线",
+      "occurred_at": null,
+      "status": "ok"
+    },
+    {
+      "id": "gemini",
+      "name": "Gemini",
+      "provider": "Google AI",
+      "source_url": "https://ai.google.dev/gemini-api/docs/changelog",
+      "title": "Gemini Omni Flash in public preview : Released gemini-omni-flash-preview ,\na high-performance multimodal model designed for high-speed video generation\nand conversational video editing.",
+      "occurred_at": "2026-06-30T00:00:00.000Z",
+      "status": "ok"
+    }
+  ]
+}

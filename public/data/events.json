@@ -1,0 +1,695 @@
+[
+  {
+    "id": "release:agy:351885150",
+    "item_id": "agy",
+    "item_name": "AGY",
+    "type": "release",
+    "title": "AGY 1.1.1",
+    "occurred_at": "2026-07-10T03:40:13Z",
+    "source_url": "https://github.com/google-antigravity/antigravity-cli/releases/tag/1.1.1"
+  },
+  {
+    "id": "release:claude-code:351694341",
+    "item_id": "claude-code",
+    "item_name": "Claude Code",
+    "type": "release",
+    "title": "Claude Code v2.1.206",
+    "occurred_at": "2026-07-10T01:45:26Z",
+    "source_url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.206"
+  },
+  {
+    "id": "release:codex:351836174",
+    "item_id": "codex",
+    "item_name": "Codex",
+    "type": "release",
+    "title": "Codex 0.145.0-alpha.2",
+    "occurred_at": "2026-07-10T00:09:39Z",
+    "source_url": "https://github.com/openai/codex/releases/tag/rust-v0.145.0-alpha.2"
+  },
+  {
+    "id": "release:codex:351819708",
+    "item_id": "codex",
+    "item_name": "Codex",
+    "type": "release",
+    "title": "Codex 0.144.1",
+    "occurred_at": "2026-07-09T23:02:40Z",
+    "source_url": "https://github.com/openai/codex/releases/tag/rust-v0.144.1"
+  },
+  {
+    "id": "release:codex:351803152",
+    "item_id": "codex",
+    "item_name": "Codex",
+    "type": "release",
+    "title": "Codex 0.145.0-alpha.1",
+    "occurred_at": "2026-07-09T22:03:09Z",
+    "source_url": "https://github.com/openai/codex/releases/tag/rust-v0.145.0-alpha.1"
+  },
+  {
+    "id": "release:codex:351657410",
+    "item_id": "codex",
+    "item_name": "Codex",
+    "type": "release",
+    "title": "Codex 0.144.0",
+    "occurred_at": "2026-07-09T16:47:12Z",
+    "source_url": "https://github.com/openai/codex/releases/tag/rust-v0.144.0"
+  },
+  {
+    "id": "model:gpt:2026-07-09T13:00:00.000Z:a1c1c68a58",
+    "item_id": "gpt",
+    "item_name": "GPT",
+    "type": "model",
+    "title": "GPT: GPT-5.6 is now the preferred model in Microsoft 365 Copilot",
+    "occurred_at": "2026-07-09T13:00:00.000Z",
+    "source_url": "https://openai.com/index/gpt-5-6-preferred-model-microsoft-365-copilot"
+  },
+  {
+    "id": "release:codex:351294812",
+    "item_id": "codex",
+    "item_name": "Codex",
+    "type": "release",
+    "title": "Codex 0.144.0-alpha.4",
+    "occurred_at": "2026-07-09T04:33:34Z",
+    "source_url": "https://github.com/openai/codex/releases/tag/rust-v0.144.0-alpha.4"
+  },
+  {
+    "id": "release:codex:351195282",
+    "item_id": "codex",
+    "item_name": "Codex",
+    "type": "release",
+    "title": "Codex 0.144.0-alpha.2",
+    "occurred_at": "2026-07-08T21:46:00Z",
+    "source_url": "https://github.com/openai/codex/releases/tag/rust-v0.144.0-alpha.2"
+  },
+  {
+    "id": "release:claude-code:351140412",
+    "item_id": "claude-code",
+    "item_name": "Claude Code",
+    "type": "release",
+    "title": "Claude Code v2.1.205",
+    "occurred_at": "2026-07-08T21:22:06Z",
+    "source_url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.205"
+  },
+  {
+    "id": "release:codex:351157760",
+    "item_id": "codex",
+    "item_name": "Codex",
+    "type": "release",
+    "title": "Codex 0.144.0-alpha.1",
+    "occurred_at": "2026-07-08T20:13:50Z",
+    "source_url": "https://github.com/openai/codex/releases/tag/rust-v0.144.0-alpha.1"
+  },
+  {
+    "id": "release:agy:350661502",
+    "item_id": "agy",
+    "item_name": "AGY",
+    "type": "release",
+    "title": "AGY 1.1.0",
+    "occurred_at": "2026-07-08T03:25:54Z",
+    "source_url": "https://github.com/google-antigravity/antigravity-cli/releases/tag/1.1.0"
+  },
+  {
+    "id": "release:codex:350650561",
+    "item_id": "codex",
+    "item_name": "Codex",
+    "type": "release",
+    "title": "Codex 0.143.0",
+    "occurred_at": "2026-07-08T01:31:10Z",
+    "source_url": "https://github.com/openai/codex/releases/tag/rust-v0.143.0"
+  },
+  {
+    "id": "release:claude-code:350631599",
+    "item_id": "claude-code",
+    "item_name": "Claude Code",
+    "type": "release",
+    "title": "Claude Code v2.1.204",
+    "occurred_at": "2026-07-08T00:27:50Z",
+    "source_url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.204"
+  },
+  {
+    "id": "release:codex:350629032",
+    "item_id": "codex",
+    "item_name": "Codex",
+    "type": "release",
+    "title": "Codex 0.143.0-alpha.39",
+    "occurred_at": "2026-07-07T23:52:33Z",
+    "source_url": "https://github.com/openai/codex/releases/tag/rust-v0.143.0-alpha.39"
+  },
+  {
+    "id": "release:claude-code:350481879",
+    "item_id": "claude-code",
+    "item_name": "Claude Code",
+    "type": "release",
+    "title": "Claude Code v2.1.203",
+    "occurred_at": "2026-07-07T21:06:12Z",
+    "source_url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.203"
+  },
+  {
+    "id": "release:codex:350019984",
+    "item_id": "codex",
+    "item_name": "Codex",
+    "type": "release",
+    "title": "Codex 0.143.0-alpha.38",
+    "occurred_at": "2026-07-07T04:34:39Z",
+    "source_url": "https://github.com/openai/codex/releases/tag/rust-v0.143.0-alpha.38"
+  },
+  {
+    "id": "release:claude-code:349856235",
+    "item_id": "claude-code",
+    "item_name": "Claude Code",
+    "type": "release",
+    "title": "Claude Code v2.1.202",
+    "occurred_at": "2026-07-06T22:51:16Z",
+    "source_url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.202"
+  },
+  {
+    "id": "release:codex:349731959",
+    "item_id": "codex",
+    "item_name": "Codex",
+    "type": "release",
+    "title": "Codex 0.143.0-alpha.37",
+    "occurred_at": "2026-07-06T18:11:30Z",
+    "source_url": "https://github.com/openai/codex/releases/tag/rust-v0.143.0-alpha.37"
+  },
+  {
+    "id": "release:openclaw:349127622",
+    "item_id": "openclaw",
+    "item_name": "OpenClaw",
+    "type": "release",
+    "title": "OpenClaw openclaw 2026.7.1-beta.2",
+    "occurred_at": "2026-07-05T09:10:09Z",
+    "source_url": "https://github.com/openclaw/openclaw/releases/tag/v2026.7.1-beta.2"
+  },
+  {
+    "id": "release:codex:349067591",
+    "item_id": "codex",
+    "item_name": "Codex",
+    "type": "release",
+    "title": "Codex 0.143.0-alpha.36",
+    "occurred_at": "2026-07-05T01:02:44Z",
+    "source_url": "https://github.com/openai/codex/releases/tag/rust-v0.143.0-alpha.36"
+  },
+  {
+    "id": "release:claude-code:348791299",
+    "item_id": "claude-code",
+    "item_name": "Claude Code",
+    "type": "release",
+    "title": "Claude Code v2.1.201",
+    "occurred_at": "2026-07-03T23:50:35Z",
+    "source_url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.201"
+  },
+  {
+    "id": "release:claude-code:348415228",
+    "item_id": "claude-code",
+    "item_name": "Claude Code",
+    "type": "release",
+    "title": "Claude Code v2.1.200",
+    "occurred_at": "2026-07-03T16:52:33Z",
+    "source_url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.200"
+  },
+  {
+    "id": "release:codex:348382857",
+    "item_id": "codex",
+    "item_name": "Codex",
+    "type": "release",
+    "title": "Codex 0.143.0-alpha.35",
+    "occurred_at": "2026-07-03T02:33:31Z",
+    "source_url": "https://github.com/openai/codex/releases/tag/rust-v0.143.0-alpha.35"
+  },
+  {
+    "id": "release:claude-code:348195313",
+    "item_id": "claude-code",
+    "item_name": "Claude Code",
+    "type": "release",
+    "title": "Claude Code v2.1.199",
+    "occurred_at": "2026-07-02T23:35:18Z",
+    "source_url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.199"
+  },
+  {
+    "id": "release:codex:348304200",
+    "item_id": "codex",
+    "item_name": "Codex",
+    "type": "release",
+    "title": "Codex 0.143.0-alpha.34",
+    "occurred_at": "2026-07-02T21:42:01Z",
+    "source_url": "https://github.com/openai/codex/releases/tag/rust-v0.143.0-alpha.34"
+  },
+  {
+    "id": "release:agy:348223196",
+    "item_id": "agy",
+    "item_name": "AGY",
+    "type": "release",
+    "title": "AGY 1.0.16",
+    "occurred_at": "2026-07-02T18:37:15Z",
+    "source_url": "https://github.com/google-antigravity/antigravity-cli/releases/tag/1.0.16"
+  },
+  {
+    "id": "release:openclaw:347886870",
+    "item_id": "openclaw",
+    "item_name": "OpenClaw",
+    "type": "release",
+    "title": "OpenClaw openclaw 2026.7.1-beta.1",
+    "occurred_at": "2026-07-02T07:25:49Z",
+    "source_url": "https://github.com/openclaw/openclaw/releases/tag/v2026.7.1-beta.1"
+  },
+  {
+    "id": "release:codex:347793055",
+    "item_id": "codex",
+    "item_name": "Codex",
+    "type": "release",
+    "title": "Codex 0.143.0-alpha.33",
+    "occurred_at": "2026-07-02T01:58:50Z",
+    "source_url": "https://github.com/openai/codex/releases/tag/rust-v0.143.0-alpha.33"
+  },
+  {
+    "id": "release:agy:347753138",
+    "item_id": "agy",
+    "item_name": "AGY",
+    "type": "release",
+    "title": "AGY 1.0.15",
+    "occurred_at": "2026-07-01T22:59:00Z",
+    "source_url": "https://github.com/google-antigravity/antigravity-cli/releases/tag/1.0.15"
+  },
+  {
+    "id": "release:claude-code:347599701",
+    "item_id": "claude-code",
+    "item_name": "Claude Code",
+    "type": "release",
+    "title": "Claude Code v2.1.198",
+    "occurred_at": "2026-07-01T20:45:36Z",
+    "source_url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.198"
+  },
+  {
+    "id": "release:codex:347219743",
+    "item_id": "codex",
+    "item_name": "Codex",
+    "type": "release",
+    "title": "Codex 0.143.0-alpha.32",
+    "occurred_at": "2026-07-01T03:47:46Z",
+    "source_url": "https://github.com/openai/codex/releases/tag/rust-v0.143.0-alpha.32"
+  },
+  {
+    "id": "release:codex:347177984",
+    "item_id": "codex",
+    "item_name": "Codex",
+    "type": "release",
+    "title": "Codex 0.142.5",
+    "occurred_at": "2026-07-01T01:15:44Z",
+    "source_url": "https://github.com/openai/codex/releases/tag/rust-v0.142.5"
+  },
+  {
+    "id": "release:claude-code:346856026",
+    "item_id": "claude-code",
+    "item_name": "Claude Code",
+    "type": "release",
+    "title": "Claude Code v2.1.197",
+    "occurred_at": "2026-06-30T17:56:37Z",
+    "source_url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.197"
+  },
+  {
+    "id": "release:openclaw:346952441",
+    "item_id": "openclaw",
+    "item_name": "OpenClaw",
+    "type": "release",
+    "title": "OpenClaw openclaw 2026.6.11",
+    "occurred_at": "2026-06-30T16:06:39Z",
+    "source_url": "https://github.com/openclaw/openclaw/releases/tag/v2026.6.11"
+  },
+  {
+    "id": "release:agy:346586203",
+    "item_id": "agy",
+    "item_name": "AGY",
+    "type": "release",
+    "title": "AGY 1.0.14",
+    "occurred_at": "2026-06-30T02:28:33Z",
+    "source_url": "https://github.com/google-antigravity/antigravity-cli/releases/tag/1.0.14"
+  },
+  {
+    "id": "model:gemini:2026-06-30T00:00:00.000Z:144c657174",
+    "item_id": "gemini",
+    "item_name": "Gemini",
+    "type": "model",
+    "title": "Gemini: Gemini Omni Flash in public preview : Released gemini-omni-flash-preview ,\na high-performance multimodal model designed for high-speed video generation\nand conversational video editing.",
+    "occurred_at": "2026-06-30T00:00:00.000Z",
+    "source_url": "https://ai.google.dev/gemini-api/docs/changelog"
+  },
+  {
+    "id": "release:claude-code:346482381",
+    "item_id": "claude-code",
+    "item_name": "Claude Code",
+    "type": "release",
+    "title": "Claude Code v2.1.196",
+    "occurred_at": "2026-06-29T23:27:32Z",
+    "source_url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.196"
+  },
+  {
+    "id": "release:codex:346546144",
+    "item_id": "codex",
+    "item_name": "Codex",
+    "type": "release",
+    "title": "Codex 0.143.0-alpha.31",
+    "occurred_at": "2026-06-29T23:21:34Z",
+    "source_url": "https://github.com/openai/codex/releases/tag/rust-v0.143.0-alpha.31"
+  },
+  {
+    "id": "release:codex:346071760",
+    "item_id": "codex",
+    "item_name": "Codex",
+    "type": "release",
+    "title": "Codex 0.142.4",
+    "occurred_at": "2026-06-29T05:04:25Z",
+    "source_url": "https://github.com/openai/codex/releases/tag/rust-v0.142.4"
+  },
+  {
+    "id": "release:openclaw:346008953",
+    "item_id": "openclaw",
+    "item_name": "OpenClaw",
+    "type": "release",
+    "title": "OpenClaw openclaw 2026.6.11-beta.2",
+    "occurred_at": "2026-06-28T23:19:35Z",
+    "source_url": "https://github.com/openclaw/openclaw/releases/tag/v2026.6.11-beta.2"
+  },
+  {
+    "id": "release:codex:345811213",
+    "item_id": "codex",
+    "item_name": "Codex",
+    "type": "release",
+    "title": "Codex 0.143.0-alpha.29",
+    "occurred_at": "2026-06-28T00:30:41Z",
+    "source_url": "https://github.com/openai/codex/releases/tag/rust-v0.143.0-alpha.29"
+  },
+  {
+    "id": "release:agy:345594988",
+    "item_id": "agy",
+    "item_name": "AGY",
+    "type": "release",
+    "title": "AGY 1.0.13",
+    "occurred_at": "2026-06-27T01:58:53Z",
+    "source_url": "https://github.com/google-antigravity/antigravity-cli/releases/tag/1.0.13"
+  },
+  {
+    "id": "release:claude-code:345467919",
+    "item_id": "claude-code",
+    "item_name": "Claude Code",
+    "type": "release",
+    "title": "Claude Code v2.1.195",
+    "occurred_at": "2026-06-26T21:29:42Z",
+    "source_url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.195"
+  },
+  {
+    "id": "release:claude-code:344922230",
+    "item_id": "claude-code",
+    "item_name": "Claude Code",
+    "type": "release",
+    "title": "Claude Code v2.1.193",
+    "occurred_at": "2026-06-25T21:45:57Z",
+    "source_url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.193"
+  },
+  {
+    "id": "release:openclaw:344412480",
+    "item_id": "openclaw",
+    "item_name": "OpenClaw",
+    "type": "release",
+    "title": "OpenClaw openclaw 2026.6.11-beta.1",
+    "occurred_at": "2026-06-24T23:37:32Z",
+    "source_url": "https://github.com/openclaw/openclaw/releases/tag/v2026.6.11-beta.1"
+  },
+  {
+    "id": "release:agy:344407158",
+    "item_id": "agy",
+    "item_name": "AGY",
+    "type": "release",
+    "title": "AGY 1.0.12",
+    "occurred_at": "2026-06-24T23:17:33Z",
+    "source_url": "https://github.com/google-antigravity/antigravity-cli/releases/tag/1.0.12"
+  },
+  {
+    "id": "release:claude-code:344307226",
+    "item_id": "claude-code",
+    "item_name": "Claude Code",
+    "type": "release",
+    "title": "Claude Code v2.1.191",
+    "occurred_at": "2026-06-24T21:58:12Z",
+    "source_url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.191"
+  },
+  {
+    "id": "release:claude-code:344172504",
+    "item_id": "claude-code",
+    "item_name": "Claude Code",
+    "type": "release",
+    "title": "Claude Code v2.1.190",
+    "occurred_at": "2026-06-24T15:53:56Z",
+    "source_url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.190"
+  },
+  {
+    "id": "release:agy:343894723",
+    "item_id": "agy",
+    "item_name": "AGY",
+    "type": "release",
+    "title": "AGY 1.0.11",
+    "occurred_at": "2026-06-24T05:30:00Z",
+    "source_url": "https://github.com/google-antigravity/antigravity-cli/releases/tag/1.0.11"
+  },
+  {
+    "id": "release:openclaw:343861248",
+    "item_id": "openclaw",
+    "item_name": "OpenClaw",
+    "type": "release",
+    "title": "OpenClaw openclaw 2026.6.10",
+    "occurred_at": "2026-06-24T03:06:38Z",
+    "source_url": "https://github.com/openclaw/openclaw/releases/tag/v2026.6.10"
+  },
+  {
+    "id": "release:claude-code:343665388",
+    "item_id": "claude-code",
+    "item_name": "Claude Code",
+    "type": "release",
+    "title": "Claude Code v2.1.187",
+    "occurred_at": "2026-06-23T21:03:48Z",
+    "source_url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.187"
+  },
+  {
+    "id": "release:claude-code:343079393",
+    "item_id": "claude-code",
+    "item_name": "Claude Code",
+    "type": "release",
+    "title": "Claude Code v2.1.186",
+    "occurred_at": "2026-06-22T20:37:34Z",
+    "source_url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.186"
+  },
+  {
+    "id": "release:openclaw:342799104",
+    "item_id": "openclaw",
+    "item_name": "OpenClaw",
+    "type": "release",
+    "title": "OpenClaw openclaw 2026.6.10-beta.2",
+    "occurred_at": "2026-06-22T09:36:28Z",
+    "source_url": "https://github.com/openclaw/openclaw/releases/tag/v2026.6.10-beta.2"
+  },
+  {
+    "id": "release:openclaw:342490787",
+    "item_id": "openclaw",
+    "item_name": "OpenClaw",
+    "type": "release",
+    "title": "OpenClaw openclaw 2026.6.10-beta.1",
+    "occurred_at": "2026-06-21T09:12:41Z",
+    "source_url": "https://github.com/openclaw/openclaw/releases/tag/v2026.6.10-beta.1"
+  },
+  {
+    "id": "release:openclaw:342436998",
+    "item_id": "openclaw",
+    "item_name": "OpenClaw",
+    "type": "release",
+    "title": "OpenClaw openclaw 2026.6.9",
+    "occurred_at": "2026-06-21T01:44:28Z",
+    "source_url": "https://github.com/openclaw/openclaw/releases/tag/v2026.6.9"
+  },
+  {
+    "id": "release:claude-code:342367004",
+    "item_id": "claude-code",
+    "item_name": "Claude Code",
+    "type": "release",
+    "title": "Claude Code v2.1.185",
+    "occurred_at": "2026-06-20T20:59:19Z",
+    "source_url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.185"
+  },
+  {
+    "id": "release:openclaw:341758423",
+    "item_id": "openclaw",
+    "item_name": "OpenClaw",
+    "type": "release",
+    "title": "OpenClaw openclaw 2026.6.9-beta.1",
+    "occurred_at": "2026-06-19T05:52:39Z",
+    "source_url": "https://github.com/openclaw/openclaw/releases/tag/v2026.6.9-beta.1"
+  },
+  {
+    "id": "release:agy:341751201",
+    "item_id": "agy",
+    "item_name": "AGY",
+    "type": "release",
+    "title": "AGY 1.0.10",
+    "occurred_at": "2026-06-19T04:36:23Z",
+    "source_url": "https://github.com/google-antigravity/antigravity-cli/releases/tag/1.0.10"
+  },
+  {
+    "id": "release:claude-code:341696059",
+    "item_id": "claude-code",
+    "item_name": "Claude Code",
+    "type": "release",
+    "title": "Claude Code v2.1.183",
+    "occurred_at": "2026-06-19T01:20:50Z",
+    "source_url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.183"
+  },
+  {
+    "id": "release:claude-code:340975229",
+    "item_id": "claude-code",
+    "item_name": "Claude Code",
+    "type": "release",
+    "title": "Claude Code v2.1.181",
+    "occurred_at": "2026-06-17T22:07:41Z",
+    "source_url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.181"
+  },
+  {
+    "id": "release:agy:340499709",
+    "item_id": "agy",
+    "item_name": "AGY",
+    "type": "release",
+    "title": "AGY 1.0.9",
+    "occurred_at": "2026-06-17T02:48:46Z",
+    "source_url": "https://github.com/google-antigravity/antigravity-cli/releases/tag/1.0.9"
+  },
+  {
+    "id": "release:openclaw:340261721",
+    "item_id": "openclaw",
+    "item_name": "OpenClaw",
+    "type": "release",
+    "title": "OpenClaw openclaw 2026.6.8",
+    "occurred_at": "2026-06-16T16:32:26Z",
+    "source_url": "https://github.com/openclaw/openclaw/releases/tag/v2026.6.8"
+  },
+  {
+    "id": "release:openclaw:339869694",
+    "item_id": "openclaw",
+    "item_name": "OpenClaw",
+    "type": "release",
+    "title": "OpenClaw openclaw 2026.6.8-beta.2",
+    "occurred_at": "2026-06-16T01:50:19Z",
+    "source_url": "https://github.com/openclaw/openclaw/releases/tag/v2026.6.8-beta.2"
+  },
+  {
+    "id": "release:openclaw:339054463",
+    "item_id": "openclaw",
+    "item_name": "OpenClaw",
+    "type": "release",
+    "title": "OpenClaw openclaw 2026.6.8-beta.1",
+    "occurred_at": "2026-06-14T22:45:33Z",
+    "source_url": "https://github.com/openclaw/openclaw/releases/tag/v2026.6.8-beta.1"
+  },
+  {
+    "id": "release:openclaw:338942142",
+    "item_id": "openclaw",
+    "item_name": "OpenClaw",
+    "type": "release",
+    "title": "OpenClaw openclaw 2026.6.7-beta.1",
+    "occurred_at": "2026-06-13T09:42:35Z",
+    "source_url": "https://github.com/openclaw/openclaw/releases/tag/v2026.6.7-beta.1"
+  },
+  {
+    "id": "release:agy:338837814",
+    "item_id": "agy",
+    "item_name": "AGY",
+    "type": "release",
+    "title": "AGY 1.0.8",
+    "occurred_at": "2026-06-12T22:56:40Z",
+    "source_url": "https://github.com/google-antigravity/antigravity-cli/releases/tag/1.0.8"
+  },
+  {
+    "id": "release:openclaw:338523978",
+    "item_id": "openclaw",
+    "item_name": "OpenClaw",
+    "type": "release",
+    "title": "OpenClaw openclaw 2026.6.6",
+    "occurred_at": "2026-06-12T11:04:42Z",
+    "source_url": "https://github.com/openclaw/openclaw/releases/tag/v2026.6.6"
+  },
+  {
+    "id": "release:openclaw:338357959",
+    "item_id": "openclaw",
+    "item_name": "OpenClaw",
+    "type": "release",
+    "title": "OpenClaw openclaw 2026.6.6-beta.2",
+    "occurred_at": "2026-06-12T03:32:42Z",
+    "source_url": "https://github.com/openclaw/openclaw/releases/tag/v2026.6.6-beta.2"
+  },
+  {
+    "id": "release:openclaw:337480044",
+    "item_id": "openclaw",
+    "item_name": "OpenClaw",
+    "type": "release",
+    "title": "OpenClaw OpenClaw 2026.6.6-beta.1",
+    "occurred_at": "2026-06-10T19:33:39Z",
+    "source_url": "https://github.com/openclaw/openclaw/releases/tag/v2026.6.6-beta.1"
+  },
+  {
+    "id": "release:agy:336860539",
+    "item_id": "agy",
+    "item_name": "AGY",
+    "type": "release",
+    "title": "AGY 1.0.7",
+    "occurred_at": "2026-06-09T20:40:53Z",
+    "source_url": "https://github.com/google-antigravity/antigravity-cli/releases/tag/1.0.7"
+  },
+  {
+    "id": "release:openclaw:336789241",
+    "item_id": "openclaw",
+    "item_name": "OpenClaw",
+    "type": "release",
+    "title": "OpenClaw openclaw 2026.6.5",
+    "occurred_at": "2026-06-09T18:13:20Z",
+    "source_url": "https://github.com/openclaw/openclaw/releases/tag/v2026.6.5"
+  },
+  {
+    "id": "release:openclaw:336456628",
+    "item_id": "openclaw",
+    "item_name": "OpenClaw",
+    "type": "release",
+    "title": "OpenClaw openclaw 2026.6.5-beta.6",
+    "occurred_at": "2026-06-09T08:43:04Z",
+    "source_url": "https://github.com/openclaw/openclaw/releases/tag/v2026.6.5-beta.6"
+  },
+  {
+    "id": "release:openclaw:336270460",
+    "item_id": "openclaw",
+    "item_name": "OpenClaw",
+    "type": "release",
+    "title": "OpenClaw openclaw 2026.6.5-beta.5",
+    "occurred_at": "2026-06-08T22:49:14Z",
+    "source_url": "https://github.com/openclaw/openclaw/releases/tag/v2026.6.5-beta.5"
+  },
+  {
+    "id": "release:agy:335256748",
+    "item_id": "agy",
+    "item_name": "AGY",
+    "type": "release",
+    "title": "AGY 1.0.6",
+    "occurred_at": "2026-06-06T00:43:00Z",
+    "source_url": "https://github.com/google-antigravity/antigravity-cli/releases/tag/1.0.6"
+  },
+  {
+    "id": "release:agy:334013553",
+    "item_id": "agy",
+    "item_name": "AGY",
+    "type": "release",
+    "title": "AGY 1.0.5",
+    "occurred_at": "2026-06-03T21:37:06Z",
+    "source_url": "https://github.com/google-antigravity/antigravity-cli/releases/tag/1.0.5"
+  },
+  {
+    "id": "release:agy:332818727",
+    "item_id": "agy",
+    "item_name": "AGY",
+    "type": "release",
+    "title": "AGY 1.0.4",
+    "occurred_at": "2026-06-01T23:14:20Z",
+    "source_url": "https://github.com/google-antigravity/antigravity-cli/releases/tag/1.0.4"
+  }
+]

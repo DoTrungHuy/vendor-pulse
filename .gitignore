@@ -1,0 +1,8 @@
+node_modules/
+dist/
+.wrangler/
+work/
+outputs/
+.env
+.env.*
+!.env.example

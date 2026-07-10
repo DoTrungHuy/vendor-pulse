@@ -1,0 +1,38 @@
+[
+  {
+    "tool_id": "codex",
+    "points": [
+      {
+        "captured_at": "2026-07-10T04:00:00.000Z",
+        "stars": 96760
+      }
+    ]
+  },
+  {
+    "tool_id": "claude-code",
+    "points": [
+      {
+        "captured_at": "2026-07-10T04:00:00.000Z",
+        "stars": 137110
+      }
+    ]
+  },
+  {
+    "tool_id": "agy",
+    "points": [
+      {
+        "captured_at": "2026-07-10T04:00:00.000Z",
+        "stars": 1540
+      }
+    ]
+  },
+  {
+    "tool_id": "openclaw",
+    "points": [
+      {
+        "captured_at": "2026-07-10T04:00:00.000Z",
+        "stars": 382388
+      }
+    ]
+  }
+]

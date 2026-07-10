@@ -1,0 +1,50 @@
+[
+  {
+    "tool_id": "codex",
+    "tool_name": "Codex",
+    "verified_at": "2026-07-10T00:00:00Z",
+    "axes": [
+      { "id": "surfaces", "name": "运行表面", "count": 4, "items": [{ "label": "CLI", "enabled": true, "source_url": "https://github.com/openai/codex" }, { "label": "IDE", "enabled": true, "source_url": "https://github.com/openai/codex" }, { "label": "桌面", "enabled": true, "source_url": "https://developers.openai.com/codex" }, { "label": "Web/Cloud", "enabled": true, "source_url": "https://github.com/openai/codex" }] },
+      { "id": "execution", "name": "执行能力", "count": 4, "items": [{ "label": "本地文件", "enabled": true, "source_url": "https://github.com/openai/codex" }, { "label": "沙箱", "enabled": true, "source_url": "https://developers.openai.com/codex" }, { "label": "远程任务", "enabled": true, "source_url": "https://developers.openai.com/codex" }, { "label": "浏览器", "enabled": true, "source_url": "https://developers.openai.com/codex" }] },
+      { "id": "orchestration", "name": "编排", "count": 3, "items": [{ "label": "子代理", "enabled": true, "source_url": "https://developers.openai.com/codex" }, { "label": "并行任务", "enabled": true, "source_url": "https://developers.openai.com/codex" }, { "label": "后台任务", "enabled": true, "source_url": "https://developers.openai.com/codex" }, { "label": "跨会话", "enabled": false, "source_url": "https://developers.openai.com/codex" }] },
+      { "id": "extensions", "name": "扩展", "count": 4, "items": [{ "label": "MCP", "enabled": true, "source_url": "https://developers.openai.com/codex" }, { "label": "技能", "enabled": true, "source_url": "https://developers.openai.com/codex" }, { "label": "Hooks", "enabled": true, "source_url": "https://developers.openai.com/codex" }, { "label": "连接器", "enabled": true, "source_url": "https://developers.openai.com/codex" }] },
+      { "id": "automation", "name": "自动化", "count": 3, "items": [{ "label": "CI", "enabled": true, "source_url": "https://github.com/openai/codex" }, { "label": "API", "enabled": true, "source_url": "https://developers.openai.com/codex" }, { "label": "定时", "enabled": true, "source_url": "https://developers.openai.com/codex" }, { "label": "审批", "enabled": false, "source_url": "https://developers.openai.com/codex" }] }
+    ]
+  },
+  {
+    "tool_id": "claude-code",
+    "tool_name": "Claude Code",
+    "verified_at": "2026-07-10T00:00:00Z",
+    "axes": [
+      { "id": "surfaces", "name": "运行表面", "count": 3, "items": [{ "label": "CLI", "enabled": true, "source_url": "https://code.claude.com/docs" }, { "label": "IDE", "enabled": true, "source_url": "https://code.claude.com/docs" }, { "label": "桌面", "enabled": false, "source_url": "https://code.claude.com/docs" }, { "label": "Web/Cloud", "enabled": true, "source_url": "https://code.claude.com/docs" }] },
+      { "id": "execution", "name": "执行能力", "count": 3, "items": [{ "label": "本地文件", "enabled": true, "source_url": "https://code.claude.com/docs" }, { "label": "沙箱", "enabled": true, "source_url": "https://code.claude.com/docs" }, { "label": "远程任务", "enabled": true, "source_url": "https://code.claude.com/docs" }, { "label": "浏览器", "enabled": false, "source_url": "https://code.claude.com/docs" }] },
+      { "id": "orchestration", "name": "编排", "count": 3, "items": [{ "label": "子代理", "enabled": true, "source_url": "https://code.claude.com/docs" }, { "label": "并行任务", "enabled": true, "source_url": "https://code.claude.com/docs" }, { "label": "后台任务", "enabled": true, "source_url": "https://code.claude.com/docs" }, { "label": "跨会话", "enabled": false, "source_url": "https://code.claude.com/docs" }] },
+      { "id": "extensions", "name": "扩展", "count": 3, "items": [{ "label": "MCP", "enabled": true, "source_url": "https://code.claude.com/docs" }, { "label": "插件", "enabled": true, "source_url": "https://code.claude.com/docs" }, { "label": "Hooks", "enabled": true, "source_url": "https://code.claude.com/docs" }, { "label": "连接器", "enabled": false, "source_url": "https://code.claude.com/docs" }] },
+      { "id": "automation", "name": "自动化", "count": 2, "items": [{ "label": "CI", "enabled": true, "source_url": "https://code.claude.com/docs" }, { "label": "API", "enabled": false, "source_url": "https://code.claude.com/docs" }, { "label": "定时", "enabled": false, "source_url": "https://code.claude.com/docs" }, { "label": "审批", "enabled": true, "source_url": "https://code.claude.com/docs" }] }
+    ]
+  },
+  {
+    "tool_id": "agy",
+    "tool_name": "AGY",
+    "verified_at": "2026-07-10T00:00:00Z",
+    "axes": [
+      { "id": "surfaces", "name": "运行表面", "count": 2, "items": [{ "label": "CLI", "enabled": true, "source_url": "https://www.antigravity.google/docs/cli-using" }, { "label": "IDE", "enabled": false, "source_url": "https://www.antigravity.google/docs/cli-using" }, { "label": "桌面", "enabled": true, "source_url": "https://developers.googleblog.com/en/build-with-google-antigravity-our-new-agentic-development-platform/" }, { "label": "Web/Cloud", "enabled": false, "source_url": "https://www.antigravity.google/docs/cli-using" }] },
+      { "id": "execution", "name": "执行能力", "count": 3, "items": [{ "label": "本地文件", "enabled": true, "source_url": "https://www.antigravity.google/docs/cli-using" }, { "label": "沙箱", "enabled": true, "source_url": "https://www.antigravity.google/docs/cli-using" }, { "label": "远程任务", "enabled": true, "source_url": "https://github.com/google-antigravity/antigravity-cli" }, { "label": "浏览器", "enabled": false, "source_url": "https://www.antigravity.google/docs/cli-using" }] },
+      { "id": "orchestration", "name": "编排", "count": 2, "items": [{ "label": "子代理", "enabled": true, "source_url": "https://github.com/google-antigravity/antigravity-cli" }, { "label": "并行任务", "enabled": false, "source_url": "https://github.com/google-antigravity/antigravity-cli" }, { "label": "后台任务", "enabled": true, "source_url": "https://github.com/google-antigravity/antigravity-cli" }, { "label": "跨会话", "enabled": false, "source_url": "https://www.antigravity.google/docs/cli-using" }] },
+      { "id": "extensions", "name": "扩展", "count": 2, "items": [{ "label": "MCP", "enabled": false, "source_url": "https://www.antigravity.google/docs/cli-using" }, { "label": "插件", "enabled": true, "source_url": "https://www.antigravity.google/docs/cli-using" }, { "label": "Hooks", "enabled": false, "source_url": "https://www.antigravity.google/docs/cli-using" }, { "label": "连接器", "enabled": true, "source_url": "https://www.antigravity.google/docs/cli-using" }] },
+      { "id": "automation", "name": "自动化", "count": 1, "items": [{ "label": "CI", "enabled": false, "source_url": "https://github.com/google-antigravity/antigravity-cli" }, { "label": "API", "enabled": false, "source_url": "https://github.com/google-antigravity/antigravity-cli" }, { "label": "定时", "enabled": false, "source_url": "https://github.com/google-antigravity/antigravity-cli" }, { "label": "审批", "enabled": true, "source_url": "https://www.antigravity.google/docs/cli-using" }] }
+    ]
+  },
+  {
+    "tool_id": "openclaw",
+    "tool_name": "OpenClaw",
+    "verified_at": "2026-07-10T00:00:00Z",
+    "axes": [
+      { "id": "surfaces", "name": "运行表面", "count": 3, "items": [{ "label": "CLI", "enabled": true, "source_url": "https://github.com/openclaw/openclaw" }, { "label": "IDE", "enabled": false, "source_url": "https://github.com/openclaw/openclaw" }, { "label": "桌面", "enabled": true, "source_url": "https://github.com/openclaw/openclaw" }, { "label": "Web/Cloud", "enabled": true, "source_url": "https://github.com/openclaw/openclaw" }] },
+      { "id": "execution", "name": "执行能力", "count": 3, "items": [{ "label": "本地文件", "enabled": true, "source_url": "https://github.com/openclaw/openclaw" }, { "label": "沙箱", "enabled": true, "source_url": "https://github.com/openclaw/openclaw" }, { "label": "远程任务", "enabled": true, "source_url": "https://github.com/openclaw/openclaw" }, { "label": "浏览器", "enabled": false, "source_url": "https://github.com/openclaw/openclaw" }] },
+      { "id": "orchestration", "name": "编排", "count": 3, "items": [{ "label": "子代理", "enabled": true, "source_url": "https://github.com/openclaw/openclaw" }, { "label": "并行任务", "enabled": true, "source_url": "https://github.com/openclaw/openclaw" }, { "label": "后台任务", "enabled": true, "source_url": "https://github.com/openclaw/openclaw" }, { "label": "跨会话", "enabled": false, "source_url": "https://github.com/openclaw/openclaw" }] },
+      { "id": "extensions", "name": "扩展", "count": 4, "items": [{ "label": "MCP", "enabled": true, "source_url": "https://github.com/openclaw/openclaw" }, { "label": "技能", "enabled": true, "source_url": "https://github.com/openclaw/openclaw" }, { "label": "Hooks", "enabled": true, "source_url": "https://github.com/openclaw/openclaw" }, { "label": "连接器", "enabled": true, "source_url": "https://github.com/openclaw/openclaw" }] },
+      { "id": "automation", "name": "自动化", "count": 3, "items": [{ "label": "CI", "enabled": true, "source_url": "https://github.com/openclaw/openclaw" }, { "label": "API", "enabled": true, "source_url": "https://github.com/openclaw/openclaw" }, { "label": "定时", "enabled": true, "source_url": "https://github.com/openclaw/openclaw" }, { "label": "审批", "enabled": false, "source_url": "https://github.com/openclaw/openclaw" }] }
+    ]
+  }
+]

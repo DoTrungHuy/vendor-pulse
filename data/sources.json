@@ -1,0 +1,13 @@
+{
+  "tools": [
+    { "id": "codex", "name": "Codex", "repo": "openai/codex", "npm": "@openai/codex", "official_url": "https://developers.openai.com/codex", "x_url": "https://x.com/OpenAI" },
+    { "id": "claude-code", "name": "Claude Code", "repo": "anthropics/claude-code", "npm": "@anthropic-ai/claude-code", "official_url": "https://code.claude.com/docs", "x_url": "https://x.com/AnthropicAI" },
+    { "id": "agy", "name": "AGY", "repo": "google-antigravity/antigravity-cli", "npm": null, "official_url": "https://www.antigravity.google/docs/cli-using", "x_url": "https://x.com/GoogleAI" },
+    { "id": "openclaw", "name": "OpenClaw", "repo": "openclaw/openclaw", "npm": "openclaw", "official_url": "https://openclaw.ai", "x_url": "https://x.com/openclaw" }
+  ],
+  "models": [
+    { "id": "gpt", "name": "GPT", "provider": "OpenAI", "source_url": "https://openai.com/news/", "fetch_url": "https://openai.com/news/rss.xml", "parser": "rss-model" },
+    { "id": "claude", "name": "Claude", "provider": "Anthropic", "source_url": "https://docs.anthropic.com/en/release-notes/overview", "parser": "generic" },
+    { "id": "gemini", "name": "Gemini", "provider": "Google AI", "source_url": "https://ai.google.dev/gemini-api/docs/changelog", "parser": "dated-headings" }
+  ]
+}
