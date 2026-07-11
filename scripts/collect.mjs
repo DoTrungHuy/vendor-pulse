@@ -18,9 +18,79 @@ export function getFiveHourSlot(date = new Date()) {
 }
 
 export function mergeEvents(existing, additions) {
-  const byId = new Map(existing.map((event) => [event.id, event]));
-  additions.forEach((event) => byId.set(event.id, event));
-  return [...byId.values()].sort((a, b) => new Date(b.occurred_at) - new Date(a.occurred_at));
+  const byKey = new Map();
+  for (const rawEvent of [...existing, ...additions]) {
+    const confidence = rawEvent.confidence === "verified" ? "verified" : "needs_review";
+    const canonicalKey = canonicalEventKey({ ...rawEvent, confidence });
+    const parsedEffectiveDate = rawEvent.type === "deprecation" ? extractEffectiveDateFromText(rawEvent.title) : null;
+    const event = {
+      ...rawEvent,
+      id: canonicalKey,
+      canonical_key: canonicalKey,
+      confidence,
+      published_at: rawEvent.published_at ?? ((rawEvent.type === "release" || rawEvent.type === "model") && confidence === "verified" ? rawEvent.occurred_at : null),
+      effective_at: rawEvent.type === "deprecation" ? parsedEffectiveDate?.toISOString() || null : rawEvent.effective_at || null,
+    };
+    const previous = byKey.get(canonicalKey);
+    if (!previous) {
+      byKey.set(canonicalKey, {
+        ...event,
+        first_seen_at: event.first_seen_at || event.occurred_at,
+        last_seen_at: event.last_seen_at || event.occurred_at,
+      });
+      continue;
+    }
+
+    const firstSeen = [previous.first_seen_at, event.first_seen_at, previous.occurred_at, event.occurred_at]
+      .filter(Boolean)
+      .sort((a, b) => new Date(a) - new Date(b))[0];
+    const lastSeen = [previous.last_seen_at, event.last_seen_at, previous.occurred_at, event.occurred_at]
+      .filter(Boolean)
+      .sort((a, b) => new Date(b) - new Date(a))[0];
+    const preferred = previous.confidence === "verified" || event.confidence !== "verified" ? previous : event;
+    byKey.set(canonicalKey, {
+      ...preferred,
+      id: canonicalKey,
+      canonical_key: canonicalKey,
+      first_seen_at: firstSeen,
+      last_seen_at: lastSeen,
+      occurred_at: preferred.confidence === "needs_review" ? firstSeen : preferred.occurred_at,
+    });
+  }
+  return [...byKey.values()].sort((a, b) => new Date(b.occurred_at) - new Date(a.occurred_at));
+}
+
+export function normalizeEventTitle(value) {
+  return String(value || "")
+    .replace(/&#x27;|&#39;/gi, "'")
+    .replace(/&quot;/gi, '"')
+    .replace(/&amp;/gi, "&")
+    .replace(/\s+/g, " ")
+    .trim()
+    .toLowerCase();
+}
+
+export function canonicalEventKey(event) {
+  let titleKey = normalizeEventTitle(event.title).replace(/^[^:]+:\s*/, "").replace(/^model status\s+/, "");
+  if (event.type === "deprecation") {
+    const lifecycleSubject = titleKey.match(/(.+?)\s+will be retired on/i)?.[1]
+      || titleKey.match(/fast mode for ([^,]+),\s*with removal/i)?.[1]
+      || titleKey.match(/we(?:'|’)ve retired the (.+?) model/i)?.[1];
+    if (lifecycleSubject) {
+      const effectiveDate = event.effective_at
+        || extractEffectiveDateFromText(event.title)?.toISOString()
+        || (event.confidence === "verified" ? event.occurred_at : null)
+        || "undated";
+      titleKey = `${lifecycleSubject}|${String(effectiveDate).slice(0, 10)}`;
+    }
+  }
+  return eventId([
+    "event",
+    event.type || "unknown",
+    event.item_id || "unknown",
+    event.feed_id || "primary",
+    shortHash(titleKey),
+  ]);
 }
 
 export function pruneSnapshots(points, now = new Date()) {
@@ -86,10 +156,14 @@ export function parseDatedModelEvents(content, { limit = 5 } = {}) {
         .map((entry) => entry.replace(/^[-•*#\s]+/, "").trim())
         .find((entry) => entry.length > 12 && RELEASE_SIGNAL_PATTERN.test(entry));
       if (!sentence) continue;
+      const type = classifyEventType(sentence);
+      const effectiveDate = type === "deprecation" ? extractEffectiveDateFromText(sentence) : null;
       events.push({
         occurred_at: date.toISOString(),
+        published_at: date.toISOString(),
+        effective_at: effectiveDate?.toISOString() || null,
         title: sentence.slice(0, 220),
-        type: classifyEventType(sentence),
+        type,
       });
       if (events.length >= limit) return events;
     }
@@ -120,11 +194,16 @@ export function parseRssModelEvents(content, { limit = 8 } = {}) {
     const url = decode(body.match(/<link>([\s\S]*?)<\/link>/i)?.[1] || "");
     if (!title || !published || !Number.isFinite(new Date(published).getTime())) continue;
     if (!RSS_SIGNAL_PATTERN.test(title)) continue;
+    const type = classifyEventType(title);
+    const publishedAt = new Date(published).toISOString();
+    const effectiveDate = type === "deprecation" ? extractEffectiveDateFromText(title) : null;
     events.push({
-      occurred_at: new Date(published).toISOString(),
+      occurred_at: publishedAt,
+      published_at: publishedAt,
+      effective_at: effectiveDate?.toISOString() || null,
       title,
       source_url: url || null,
-      type: classifyEventType(title),
+      type,
     });
     if (events.length >= limit) break;
   }
@@ -139,6 +218,12 @@ export function isConcreteDeprecation(title) {
   const noise = [
     /see which .* are active/i,
     /this page lists/i,
+    /current and recently retired models are listed/i,
+    /api model name current state deprecated/i,
+    /\bactive n\/a not sooner than\b/i,
+    /shutdown date model \/ system recommended replacement/i,
+    /upcoming deprecations(?:\s+upcoming deprecations|\s+are listed)/i,
+    /all deprecations are listed below/i,
     /anthropic uses the following terms/i,
     /the following terms to describe/i,
     /\bactive:\s*the model is fully supported/i,
@@ -185,12 +270,14 @@ export function parseDeprecationsPage(content) {
       .trim();
     if (!isConcreteDeprecation(compact)) continue;
 
-    const date = extractDateFromText(compact) || extractDateFromText(lines[index - 1] || "") || extractDateFromText(lines[index + 1] || "");
+    const date = extractEffectiveDateFromText(compact) || extractDateFromText(compact) || extractDateFromText(lines[index - 1] || "") || extractDateFromText(lines[index + 1] || "");
     const key = compact.toLowerCase().slice(0, 120);
     if (seen.has(key)) continue;
     seen.add(key);
     events.push({
       occurred_at: (date || new Date()).toISOString(),
+      published_at: null,
+      effective_at: date?.toISOString() || null,
       title: compact.slice(0, 220),
       type: "deprecation",
       confidence: date && modelIdPattern.test(compact) ? "verified" : "needs_review",
@@ -233,6 +320,8 @@ export function parseAnthropicNews(content) {
     seen.add(key);
     events.push({
       occurred_at: date.toISOString(),
+      published_at: date.toISOString(),
+      effective_at: null,
       title: title.slice(0, 220),
       type: classifyEventType(title),
     });
@@ -247,6 +336,8 @@ export function parseAnthropicNews(content) {
     if (fallback) {
       events.push({
         occurred_at: new Date().toISOString(),
+        published_at: null,
+        effective_at: null,
         title: fallback.slice(0, 220),
         type: "model",
         confidence: "needs_review",
@@ -315,6 +406,15 @@ function extractDateFromText(text) {
   const dayMonth = text.match(/\b((?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\s+\d{1,2},\s+\d{4})\b/i);
   if (dayMonth) return parseFlexibleDate(dayMonth[1]);
   return null;
+}
+
+function extractEffectiveDateFromText(text) {
+  if (!text) return null;
+  const datePattern = "((?:January|February|March|April|May|June|July|August|September|October|November|December)\\s+\\d{1,2},\\s+20\\d{2}|20\\d{2}-\\d{2}-\\d{2})";
+  const afterAction = new RegExp(`(?:shut\\s*down|retir(?:ed|ement)|remov(?:ed|al)|sunset|end of (?:life|support))[^.]{0,40}?(?:on\\s+)?${datePattern}`, "i").exec(text)?.[1];
+  if (afterAction) return parseFlexibleDate(afterAction);
+  const beforeAction = new RegExp(`${datePattern}[^.]{0,40}?(?:shut\\s*down|retir(?:ed|ement)|remov(?:ed|al)|sunset)`, "i").exec(text)?.[1];
+  return beforeAction ? parseFlexibleDate(beforeAction) : null;
 }
 
 function shortHash(value) {
@@ -467,6 +567,8 @@ async function collectTool(source, oldTool, sourceStatuses, now) {
       type: "release",
       title: `${source.name} ${release.name || release.tag_name}`,
       occurred_at: release.published_at,
+      published_at: release.published_at,
+      effective_at: null,
       source_url: release.html_url,
       provider: null,
       feed_id: null,
@@ -510,6 +612,8 @@ async function collectFeed(source, feed, sourceStatuses) {
     const reviewEvent = !parsed.length && changed
       ? {
           occurred_at: new Date().toISOString(),
+          published_at: null,
+          effective_at: null,
           title: `${source.name} ${feed.label} 内容变化，待核验`,
           type: "source_changed",
           source_url: feed.url,
@@ -576,6 +680,8 @@ async function collectModel(source, oldModel, sourceStatuses) {
       ? {
           title: latestModelSignal.title,
           occurred_at: latestModelSignal.occurred_at,
+          published_at: latestModelSignal.published_at || latestModelSignal.occurred_at,
+          effective_at: latestModelSignal.effective_at || null,
           source_url: latestModelSignal.source_url,
           feed_id: latestModelSignal.feed_id || null,
           confidence: latestModelSignal.confidence || "verified",
@@ -585,6 +691,8 @@ async function collectModel(source, oldModel, sourceStatuses) {
       ? {
           title: latestPolicySignal.title,
           occurred_at: latestPolicySignal.occurred_at,
+          published_at: latestPolicySignal.published_at || null,
+          effective_at: latestPolicySignal.effective_at || null,
           source_url: latestPolicySignal.source_url,
           feed_id: latestPolicySignal.feed_id || null,
           confidence: latestPolicySignal.confidence || "verified",
@@ -607,6 +715,8 @@ async function collectModel(source, oldModel, sourceStatuses) {
       type: signal.type,
       title: `${source.name}: ${signal.title}`,
       occurred_at: signal.occurred_at,
+      published_at: signal.published_at || (signal.type === "deprecation" ? null : signal.occurred_at),
+      effective_at: signal.effective_at || null,
       source_url: signal.source_url,
       provider: source.provider,
       feed_id: signal.feed_id || null,
@@ -619,6 +729,8 @@ async function collectModel(source, oldModel, sourceStatuses) {
       type: "source_changed",
       title: signal.title,
       occurred_at: signal.occurred_at,
+      published_at: null,
+      effective_at: null,
       source_url: signal.source_url,
       provider: source.provider,
       feed_id: signal.feed_id || null,
@@ -661,7 +773,7 @@ export async function main(now = new Date()) {
   const events = mergeEvents(oldEvents, [
     ...toolResults.flatMap((result) => result.events),
     ...modelResults.flatMap((result) => result.events),
-  ]);
+  ]).filter((event) => event.type !== "deprecation" || isConcreteDeprecation(event.title));
 
   const models = modelResults.map((result) => result.model);
   const allSourcesHealthy = tools.every((tool) => tool.status === "ok") && models.every((model) => model.status === "ok");

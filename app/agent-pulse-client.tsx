@@ -5,12 +5,44 @@ import type { CurrentData, EventRecord } from "./site-types";
 
 const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
 const dataPath = (name: string) => `${basePath}/data/${name}`;
+const remoteDataPath = (name: string) => `https://raw.githubusercontent.com/DoTrungHuy/vendor-pulse/main/public/data/${name}`;
+
+type SnapshotSource = "github" | "local";
+
+async function fetchSnapshot<T>(url: string, name: string, version: number): Promise<T> {
+  const response = await fetch(`${url}?v=${version}`, { cache: "no-store" });
+  if (!response.ok) throw new Error(`${name} unavailable (${response.status})`);
+  return response.json() as Promise<T>;
+}
+
+async function fetchSnapshotBundle(version: number, preferRemote = true) {
+  const candidates: Array<{ source: SnapshotSource; path: (name: string) => string }> = preferRemote
+    ? [{ source: "github", path: remoteDataPath }, { source: "local", path: dataPath }]
+    : [{ source: "local", path: dataPath }];
+  let lastError: Error | null = null;
+
+  for (const candidate of candidates) {
+    try {
+      const [current, events] = await Promise.all([
+        fetchSnapshot<CurrentData>(candidate.path("current.json"), "current.json", version),
+        fetchSnapshot<EventRecord[]>(candidate.path("events.json"), "events.json", version),
+      ]);
+      return { current, events, source: candidate.source };
+    } catch (error) {
+      lastError = error instanceof Error ? error : new Error(String(error));
+    }
+  }
+
+  throw lastError || new Error("snapshot bundle unavailable");
+}
 
 const HERO_VIDEO = "https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260418_080021_d598092b-c4c2-4e53-8e46-94cf9064cd50.mp4";
 const SIGNALS_VIDEO = "https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260418_094631_d30ab262-45ee-4b7d-99f3-5d5848c8ef13.mp4";
 
 type ItemKind = "model" | "agent" | "notice";
 type TabId = "models" | "agents" | "notices";
+type Confidence = "verified" | "needs_review";
+type ConfidenceView = Confidence;
 
 type FeedItem = {
   id: string;
@@ -19,8 +51,19 @@ type FeedItem = {
   note: string;
   time: string | null;
   href: string;
+  confidence: Confidence;
+  kind: ItemKind;
+  publishedAt?: string | null;
+  effectiveAt?: string | null;
   isPortal?: boolean;
   topic?: string;
+};
+
+type SnapshotHighlight = {
+  label: string;
+  item: FeedItem;
+  reason: string;
+  signal: string;
 };
 
 const OFFICIAL_NOTICES: FeedItem[] = [
@@ -32,6 +75,8 @@ const OFFICIAL_NOTICES: FeedItem[] = [
     note: "停用日期和推荐替代都在这页，做迁移时先看它。",
     time: null,
     href: "https://developers.openai.com/api/docs/deprecations",
+    confidence: "verified",
+    kind: "notice",
     isPortal: true,
   },
   {
@@ -42,6 +87,8 @@ const OFFICIAL_NOTICES: FeedItem[] = [
     note: "默认模型切换、功能调整，常先出现在帮助中心。",
     time: null,
     href: "https://help.openai.com/en/articles/9624314-model-release-notes",
+    confidence: "verified",
+    kind: "notice",
     isPortal: true,
   },
   {
@@ -52,6 +99,8 @@ const OFFICIAL_NOTICES: FeedItem[] = [
     note: "开发者侧能力与参数变化，比新闻稿更细。",
     time: null,
     href: "https://developers.openai.com/api/docs/changelog",
+    confidence: "verified",
+    kind: "notice",
     isPortal: true,
   },
   {
@@ -62,6 +111,8 @@ const OFFICIAL_NOTICES: FeedItem[] = [
     note: "能做什么、不能做什么；改版不频繁，但一改就重要。",
     time: null,
     href: "https://openai.com/policies/usage-policies/",
+    confidence: "verified",
+    kind: "notice",
     isPortal: true,
   },
   {
@@ -72,6 +123,8 @@ const OFFICIAL_NOTICES: FeedItem[] = [
     note: "看 Active / Legacy / Deprecated，以及官方推荐怎么换。",
     time: null,
     href: "https://platform.claude.com/docs/en/about-claude/model-deprecations",
+    confidence: "verified",
+    kind: "notice",
     isPortal: true,
   },
   {
@@ -82,6 +135,8 @@ const OFFICIAL_NOTICES: FeedItem[] = [
     note: "API、控制台、SDK 与模型相关通知常写在同一页。",
     time: null,
     href: "https://platform.claude.com/docs/en/release-notes/overview",
+    confidence: "verified",
+    kind: "notice",
     isPortal: true,
   },
   {
@@ -92,6 +147,8 @@ const OFFICIAL_NOTICES: FeedItem[] = [
     note: "预览版和部分生成模型何时停，集中列在这里。",
     time: null,
     href: "https://ai.google.dev/gemini-api/docs/deprecations",
+    confidence: "verified",
+    kind: "notice",
     isPortal: true,
   },
   {
@@ -102,6 +159,8 @@ const OFFICIAL_NOTICES: FeedItem[] = [
     note: "上新、能力调整和弃用公告，很多会先写进 changelog。",
     time: null,
     href: "https://ai.google.dev/gemini-api/docs/changelog",
+    confidence: "verified",
+    kind: "notice",
     isPortal: true,
   },
   {
@@ -112,6 +171,8 @@ const OFFICIAL_NOTICES: FeedItem[] = [
     note: "现在能调哪些、预览版限制如何，比零散新闻清楚。",
     time: null,
     href: "https://ai.google.dev/gemini-api/docs/models",
+    confidence: "verified",
+    kind: "notice",
     isPortal: true,
   },
 ];
@@ -126,10 +187,28 @@ const emptyCurrent: CurrentData = {
 
 function cleanTitle(raw: string) {
   return raw
-    .replace(/^[^:]+:\s*/, "")
+    .replace(/&#x27;|&#39;/gi, "'")
+    .replace(/&quot;/gi, '"')
+    .replace(/&amp;/gi, "&")
+    .replace(/^[^:]{1,40}:\s*(?=\S)/, "")
     .replace(/\s+/g, " ")
     .replace(/[\u0000-\u001F\u007F-\u009F\uE000-\uF8FF]/g, "")
     .trim();
+}
+
+function escapeRegExp(value: string) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+function removeRepeatedProduct(raw: string, product: string) {
+  const title = cleanTitle(raw);
+  const escaped = escapeRegExp(product);
+  return title.replace(new RegExp(`^${escaped}\\s+${escaped}\\b`, "i"), product);
+}
+
+function releaseTitle(product: string, raw: string) {
+  const title = removeRepeatedProduct(raw, product);
+  return new RegExp(`^${escapeRegExp(product)}\\b`, "i").test(title) ? title : `${product} ${title}`;
 }
 
 function displayTitle(raw: string, max = 100) {
@@ -140,12 +219,27 @@ function displayTitle(raw: string, max = 100) {
   return `${(pause > 36 ? cut.slice(0, pause) : cut).trim()}…`;
 }
 
+function policyDisplayTitle(raw: string) {
+  let title = cleanTitle(raw);
+  for (const marker of ["GPT-5 and o3 model deprecations", "Reusable prompts"]) {
+    const index = title.indexOf(marker);
+    if (index > 0) title = title.slice(index);
+  }
+  return displayTitle(title);
+}
+
 function isConcreteNotice(title: string) {
   const text = cleanTitle(title);
   if (text.length < 28 || text.length > 260) return false;
   const noise = [
     /see which .* are active/i,
     /this page lists/i,
+    /current and recently retired models are listed/i,
+    /api model name current state deprecated/i,
+    /\bactive n\/a not sooner than\b/i,
+    /shutdown date model \/ system recommended replacement/i,
+    /upcoming deprecations(?:\s+upcoming deprecations|\s+are listed)/i,
+    /all deprecations are listed below/i,
     /anthropic uses the following terms/i,
     /\bactive:\s*the model is fully supported/i,
     /\blegacy:\s*the model will no longer/i,
@@ -203,21 +297,68 @@ function formatDate(value: string | null | undefined) {
   }).format(new Date(value));
 }
 
-function relativeTime(value: string | null) {
-  if (!value) return "尚未同步";
-  const mins = Math.max(0, Math.round((Date.now() - new Date(value).getTime()) / 60_000));
-  if (mins < 1) return "刚刚同步";
+function formatCalendarDate(value: string | null | undefined) {
+  if (!value) return "日期待确认";
+  return new Intl.DateTimeFormat("zh-CN", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    timeZone: "Asia/Shanghai",
+  }).format(new Date(value));
+}
+
+function dateFromTitle(value: string) {
+  const text = cleanTitle(value);
+  const datePattern = "((?:January|February|March|April|May|June|July|August|September|October|November|December)\\s+\\d{1,2},\\s+20\\d{2}|20\\d{2}-\\d{2}-\\d{2})";
+  const actionDate = new RegExp(`(?:shut\\s*down|retir(?:ed|ement)|remov(?:ed|al)|sunset|end of (?:life|support))[^.]{0,40}?(?:on\\s+)?${datePattern}`, "i").exec(text)?.[1];
+  if (actionDate) {
+    const actionTime = new Date(`${actionDate} UTC`);
+    if (Number.isFinite(actionTime.getTime())) return actionTime.toISOString();
+  }
+  const iso = text.match(/\b(20\d{2}-\d{2}-\d{2})\b/)?.[1];
+  if (iso) return new Date(`${iso}T00:00:00.000Z`).toISOString();
+  const long = text.match(/\b((?:January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{1,2},\s+20\d{2})\b/i)?.[1];
+  if (!long) return null;
+  const date = new Date(`${long} UTC`);
+  return Number.isFinite(date.getTime()) ? date.toISOString() : null;
+}
+
+function lifecycleHeadline(item: FeedItem, upcoming: boolean) {
+  const title = cleanTitle(item.title);
+  const fastMode = title.match(/fast mode for ([^,]+),\s*with removal/i)?.[1];
+  if (fastMode) return `${fastMode} 的 Fast Mode ${upcoming ? "即将停止" : "已经停止"}`;
+  const retiring = title.match(/(.+?)\s+will be retired on/i)?.[1];
+  if (retiring) return `${cleanTitle(retiring)} ${upcoming ? "即将停止服务" : "已经停止服务"}`;
+  const retired = title.match(/we(?:'|’)ve retired the (.+?) model/i)?.[1];
+  if (retired) return `${cleanTitle(retired)} 已经停止服务`;
+  return displayTitle(title, 74);
+}
+
+function relativeTime(value: string | null, now = Date.now()) {
+  if (!value) return "尚未生成";
+  const mins = Math.max(0, Math.round((now - new Date(value).getTime()) / 60_000));
+  if (mins < 1) return "刚刚";
   if (mins < 60) return `${mins} 分钟前`;
   const hours = Math.round(mins / 60);
   if (hours < 48) return `${hours} 小时前`;
   return `${Math.floor(hours / 24)} 天前`;
 }
 
-function statusText(status: string) {
-  if (status === "ok") return "数据在线";
-  if (status === "stale") return "部分延迟";
-  if (status === "error") return "部分异常";
-  return "准备中";
+function compactMetric(value: number | null | undefined) {
+  if (!value) return "暂无数据";
+  return new Intl.NumberFormat("zh-CN", { notation: "compact", maximumFractionDigits: 1 }).format(value);
+}
+
+function snapshotStatus(status: string, generatedAt: string | null, now: number) {
+  if (!generatedAt) return { label: "等待快照", detail: "等待首次自动采集" };
+  const minutes = Math.max(0, Math.round((now - new Date(generatedAt).getTime()) / 60_000));
+  const age = relativeTime(generatedAt, now);
+
+  if (minutes >= 150) return { label: "更新延迟", detail: `最近快照生成于 ${age}` };
+  if (status === "error") return { label: "采集异常", detail: `部分来源异常，${age}更新` };
+  if (status === "stale") return { label: "部分延迟", detail: `部分来源未响应，${age}更新` };
+  if (minutes >= 75) return { label: "等待更新", detail: `等待下一次采集，${age}更新` };
+  return { label: "每小时", detail: `自动采集正常，${age}更新` };
 }
 
 function isHttpUrl(value: string | null | undefined): value is string {
@@ -225,13 +366,20 @@ function isHttpUrl(value: string | null | undefined): value is string {
 }
 
 function dedupeItems(items: FeedItem[]) {
-  const seen = new Set<string>();
-  return items.filter((item) => {
-    const key = `${item.vendor}|${item.title}`.toLowerCase();
-    if (seen.has(key)) return false;
-    seen.add(key);
-    return true;
-  });
+  const unique = new Map<string, FeedItem>();
+  for (const item of items) {
+    const clean = cleanTitle(item.title).replace(/^model status\s+/i, "");
+    const lifecycleSubject = item.kind === "notice"
+      ? clean.match(/(.+?)\s+will be retired on/i)?.[1]
+        || clean.match(/fast mode for ([^,]+),\s*with removal/i)?.[1]
+        || clean.match(/we(?:'|’)ve retired the (.+?) model/i)?.[1]
+        || clean
+      : clean;
+    const key = `${item.kind}|${item.vendor}|${lifecycleSubject}|${item.effectiveAt?.slice(0, 10) || ""}`.toLowerCase();
+    const previous = unique.get(key);
+    if (!previous || (previous.confidence === "needs_review" && item.confidence === "verified")) unique.set(key, item);
+  }
+  return [...unique.values()];
 }
 
 function sortByTime(items: FeedItem[]) {
@@ -244,26 +392,34 @@ function eventToItem(event: EventRecord): FeedItem | null {
   if (kind === "notice" && !isConcreteNotice(event.title)) return null;
   const vendor = vendorOf(event.item_name, event.provider);
   const product = event.item_name || vendor.label;
+  const confidence: Confidence = event.confidence === "verified" ? "verified" : "needs_review";
+  const effectiveAt = event.effective_at || (kind === "notice" ? dateFromTitle(event.title) : null);
   return {
     id: event.id,
     vendor: vendor.label,
-    title: displayTitle(event.title),
-    note: writeNote(kind, { product, href: event.source_url }),
-    time: event.occurred_at,
+    title: kind === "notice" ? policyDisplayTitle(removeRepeatedProduct(event.title, product)) : displayTitle(removeRepeatedProduct(event.title, product)),
+    note: confidence === "verified"
+      ? writeNote(kind, { product, href: event.source_url })
+      : "页面变化已被捕获，但尚未确认是正式发布；请以官方原文为准。",
+    time: event.published_at || event.occurred_at,
     href: event.source_url,
+    confidence,
+    kind,
+    publishedAt: event.published_at || (kind === "notice" ? null : event.occurred_at),
+    effectiveAt,
   };
 }
 
 function openOfficialLink(url: string) {
   if (!isHttpUrl(url)) return false;
   try {
-    const opened = window.open(url, "_blank", "noopener,noreferrer");
-    if (opened) return true;
+    const opened = window.open(url, "_blank");
+    if (!opened) return false;
+    opened.opener = null;
+    return true;
   } catch {
-    // Fall back to the current tab when a browser blocks a new tab.
+    return false;
   }
-  window.location.assign(url);
-  return true;
 }
 
 function ArrowIcon() {
@@ -395,22 +551,44 @@ export function AgentPulseClient() {
   const [ready, setReady] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [tab, setTab] = useState<TabId>("models");
+  const [confidenceView, setConfidenceView] = useState<ConfidenceView>("verified");
   const [toast, setToast] = useState<string | null>(null);
+  const [clockTick, setClockTick] = useState(() => Date.now());
+  const [snapshotSource, setSnapshotSource] = useState<SnapshotSource>("local");
   const signalSectionRef = useRef<HTMLElement>(null);
+  const generatedAtRef = useRef<string | null>(null);
 
-  const loadData = useCallback(async (manual = false) => {
-    if (manual) setIsRefreshing(true);
+  const loadData = useCallback(async (manual = false, preferRemote = true) => {
+    const startedAt = Date.now();
+    if (manual) {
+      setIsRefreshing(true);
+      setToast("正在同步 GitHub 最新公开快照…");
+    }
     try {
-      const [nextCurrent, nextEvents] = await Promise.all([
-        fetch(dataPath("current.json")).then((response) => (response.ok ? response.json() : Promise.reject(new Error("current data unavailable")))),
-        fetch(dataPath("events.json")).then((response) => (response.ok ? response.json() : [])),
-      ]);
+      const version = Date.now();
+      const { current: nextCurrent, events: nextEvents, source } = await fetchSnapshotBundle(version, preferRemote);
+      if (!Array.isArray(nextEvents)) throw new Error("events data is invalid");
+
+      const previousGeneratedAt = generatedAtRef.current;
+      const nextGeneratedAt = nextCurrent.generated_at || null;
       setCurrent(nextCurrent);
-      setEvents(Array.isArray(nextEvents) ? nextEvents : []);
-      if (manual) setToast("已读取最新本地快照");
+      setEvents(nextEvents);
+      setSnapshotSource(source);
+      generatedAtRef.current = nextGeneratedAt;
+      if (manual) {
+        setToast(source === "github"
+          ? previousGeneratedAt && previousGeneratedAt === nextGeneratedAt
+            ? "已与 GitHub main 最新快照同步"
+            : "已同步 GitHub main 更新后的公开快照"
+          : "GitHub 暂时不可用，已整体回退本地快照");
+      }
     } catch {
-      if (manual) setToast("暂时无法更新，已保留当前信号");
+      if (manual) setToast("无法读取最新快照，已保留当前数据");
     } finally {
+      if (manual) {
+        const remaining = 550 - (Date.now() - startedAt);
+        if (remaining > 0) await new Promise((resolve) => window.setTimeout(resolve, remaining));
+      }
       setReady(true);
       setIsRefreshing(false);
     }
@@ -422,10 +600,34 @@ export function AgentPulseClient() {
   }, [loadData]);
 
   useEffect(() => {
+    const syncTimer = window.setInterval(() => void loadData(false, true), 10 * 60_000);
+    return () => window.clearInterval(syncTimer);
+  }, [loadData]);
+
+  useEffect(() => {
+    const syncWhenActive = () => {
+      if (document.visibilityState === "visible" && navigator.onLine) void loadData(false, true);
+    };
+    window.addEventListener("focus", syncWhenActive);
+    window.addEventListener("online", syncWhenActive);
+    document.addEventListener("visibilitychange", syncWhenActive);
+    return () => {
+      window.removeEventListener("focus", syncWhenActive);
+      window.removeEventListener("online", syncWhenActive);
+      document.removeEventListener("visibilitychange", syncWhenActive);
+    };
+  }, [loadData]);
+
+  useEffect(() => {
     if (!toast) return;
-    const timer = window.setTimeout(() => setToast(null), 2200);
+    const timer = window.setTimeout(() => setToast(null), 3600);
     return () => window.clearTimeout(timer);
   }, [toast]);
+
+  useEffect(() => {
+    const timer = window.setInterval(() => setClockTick(Date.now()), 60_000);
+    return () => window.clearInterval(timer);
+  }, []);
 
   const models = useMemo(() => {
     const fromEvents = events.filter((event) => event.type === "model").map(eventToItem).filter(Boolean) as FeedItem[];
@@ -434,16 +636,23 @@ export function AgentPulseClient() {
       const href = signal?.source_url || model.source_url;
       if (!signal?.title || !isHttpUrl(href)) return [];
       const vendor = vendorOf(model.name, model.provider);
+      const confidence: Confidence = signal.confidence === "verified" ? "verified" : "needs_review";
       return [{
         id: `current-model-${model.id}`,
         vendor: vendor.label,
-        title: displayTitle(signal.title),
-        note: writeNote("model", { product: model.name, href }),
-        time: signal.occurred_at || model.occurred_at,
+        title: displayTitle(removeRepeatedProduct(signal.title, model.name)),
+        note: confidence === "verified"
+          ? writeNote("model", { product: model.name, href })
+          : "页面变化已被捕获，但尚未确认是正式模型发布。",
+        time: signal.published_at || signal.occurred_at || model.occurred_at,
         href,
+        confidence,
+        kind: "model",
+        publishedAt: signal.published_at || signal.occurred_at || model.occurred_at,
+        effectiveAt: signal.effective_at || null,
       } satisfies FeedItem];
     });
-    return sortByTime(dedupeItems([...fromEvents, ...fromCurrent])).slice(0, 16);
+    return sortByTime(dedupeItems([...fromEvents, ...fromCurrent]));
   }, [events, current.models]);
 
   const agents = useMemo(() => {
@@ -455,35 +664,155 @@ export function AgentPulseClient() {
       return [{
         id: `current-tool-${tool.id}`,
         vendor: vendor.label === "其他" ? tool.name : vendor.label,
-        title: `${tool.name} ${version}`,
+        title: releaseTitle(tool.name, version),
         note: writeNote("agent", { product: tool.name, href: tool.latest_release.url, version: tool.latest_release.tag }),
         time: tool.latest_release.published_at,
         href: tool.latest_release.url,
+        confidence: "verified",
+        kind: "agent",
+        publishedAt: tool.latest_release.published_at,
+        effectiveAt: null,
       } satisfies FeedItem];
     });
-    return sortByTime(dedupeItems([...fromEvents, ...fromTools])).slice(0, 16);
+    return sortByTime(dedupeItems([...fromEvents, ...fromTools]));
   }, [events, current.tools]);
 
-  const notices = OFFICIAL_NOTICES;
-  const activeItems = tab === "models" ? models : tab === "agents" ? agents : notices;
-  const totalSignals = models.length + agents.length + notices.length;
-  const providers = new Set([...models, ...agents, ...notices].map((item) => item.vendor)).size;
+  const policies = useMemo(() => {
+    const items = events.filter((event) => event.type === "deprecation").map(eventToItem).filter(Boolean) as FeedItem[];
+    return sortByTime(dedupeItems(items));
+  }, [events]);
+
+  const verifiedModels = models.filter((item) => item.confidence === "verified");
+  const reviewModels = models.filter((item) => item.confidence === "needs_review");
+  const verifiedAgents = agents.filter((item) => item.confidence === "verified");
+  const reviewAgents = agents.filter((item) => item.confidence === "needs_review");
+  const verifiedPolicies = policies.filter((item) => item.confidence === "verified");
+  const reviewPolicies = policies.filter((item) => item.confidence === "needs_review");
+  const activeVerifiedItems = tab === "models" ? verifiedModels : tab === "agents" ? verifiedAgents : verifiedPolicies;
+  const activeReviewItems = tab === "models" ? reviewModels : tab === "agents" ? reviewAgents : reviewPolicies;
+  const activeItems = (confidenceView === "verified" ? activeVerifiedItems : activeReviewItems).slice(0, 16);
+  const totalSignals = verifiedModels.length + verifiedAgents.length + verifiedPolicies.length;
+  const providers = new Set([...models, ...agents, ...policies, ...OFFICIAL_NOTICES].map((item) => item.vendor)).size;
+  const snapshotHighlights = useMemo(() => {
+    const highlights: SnapshotHighlight[] = [];
+    const usedLinks = new Set<string>();
+    const snapshotTime = current.generated_at ? new Date(current.generated_at).getTime() : clockTick;
+    const verifiedNewsItems = [...models, ...agents]
+      .filter((item) => item.confidence === "verified")
+      .filter((item) => item.time && new Date(item.time).getTime() <= snapshotTime);
+    const latestItem = sortByTime(dedupeItems(verifiedNewsItems))[0];
+
+    if (latestItem) {
+      const previewRelease = /(?:alpha|beta|preview|rc)[.-]?\d*/i.test(latestItem.title);
+      highlights.push({
+        label: "刚刚发布",
+        item: latestItem,
+        signal: `${relativeTime(latestItem.time, clockTick)}发布`,
+        reason: previewRelease
+          ? `${latestItem.vendor} 发布了新的测试版本。建议先查看变更日志并完成验证，再决定是否用于正式工作流。`
+          : `${latestItem.vendor} 发布了当前时间最近的正式更新。建议先确认能力变化与现有工作流是否相关。`,
+      });
+      usedLinks.add(latestItem.href);
+    }
+
+    const heatCandidates = [...(current.tools || [])]
+      .filter((tool) => tool.latest_release && isHttpUrl(tool.latest_release.url))
+      .map((tool) => ({
+        tool,
+        stars: Math.max(0, tool.stars_delta_24h || 0),
+        downloads: Math.log10((tool.npm?.weekly_downloads || 0) + 1),
+      }));
+    const maxStars = Math.max(1, ...heatCandidates.map((candidate) => candidate.stars));
+    const maxDownloads = Math.max(1, ...heatCandidates.map((candidate) => candidate.downloads));
+    const hottestTool = heatCandidates
+      .map((candidate) => ({
+        ...candidate.tool,
+        heatScore: (candidate.stars / maxStars) * 0.65 + (candidate.downloads / maxDownloads) * 0.35,
+      }))
+      .sort((a, b) => b.heatScore - a.heatScore)[0];
+    const hottestItem = hottestTool
+      ? agents.find((item) => item.href === hottestTool.latest_release?.url)
+      : undefined;
+
+    if (hottestTool && hottestItem && !usedLinks.has(hottestItem.href)) {
+      const starDelta = hottestTool.stars_delta_24h || 0;
+      highlights.push({
+        label: "正在升温",
+        item: hottestItem,
+        signal: starDelta > 0 ? `+${starDelta} Star / 24h` : `${compactMetric(hottestTool.npm?.weekly_downloads)} 周下载`,
+        reason: `${hottestTool.name} 近 24 小时新增 ${starDelta} Star，npm 周下载约 ${compactMetric(hottestTool.npm?.weekly_downloads)}，综合热度在当前监测工具中最高。`,
+      });
+      usedLinks.add(hottestItem.href);
+    }
+
+    const day = 24 * 60 * 60 * 1000;
+    const lifecycleItems = policies
+      .filter((item) => item.confidence === "verified" && item.effectiveAt && !usedLinks.has(item.href))
+      .map((item) => ({ item, effectiveTime: new Date(item.effectiveAt as string).getTime() }));
+    const upcomingRisk = lifecycleItems
+      .filter(({ effectiveTime }) => effectiveTime > clockTick && effectiveTime - clockTick <= 90 * day)
+      .sort((a, b) => a.effectiveTime - b.effectiveTime)[0];
+    const recentRisk = lifecycleItems
+      .filter(({ effectiveTime }) => effectiveTime <= clockTick && clockTick - effectiveTime <= 30 * day)
+      .sort((a, b) => b.effectiveTime - a.effectiveTime)[0];
+    const selectedRisk = upcomingRisk || recentRisk;
+
+    if (selectedRisk) {
+      const upcoming = selectedRisk.effectiveTime > clockTick;
+      const riskItem = {
+        ...selectedRisk.item,
+        title: lifecycleHeadline(selectedRisk.item, upcoming),
+      };
+      highlights.push({
+        label: upcoming ? "需要行动" : "已经生效",
+        item: riskItem,
+        signal: `${formatCalendarDate(riskItem.effectiveAt)}`,
+        reason: upcoming
+          ? `${riskItem.vendor} 已确认该变化即将生效。仍在使用相关能力的项目应尽快核对替代方案并安排迁移测试。`
+          : `${riskItem.vendor} 的停止日期已经过去。仍在使用相关模型或接口的项目应立即确认替代方案。`,
+      });
+      usedLinks.add(riskItem.href);
+    }
+
+    if (highlights.length < 3) {
+      const fallback = sortByTime(verifiedNewsItems).find((item) => !usedLinks.has(item.href));
+      if (fallback) {
+        highlights.push({
+          label: "重要更新",
+          item: fallback,
+          signal: `${relativeTime(fallback.time, clockTick)}发布`,
+          reason: `${fallback.vendor} 的这项更新已经过来源核验，适合结合当前项目需求判断是否需要进一步测试。`,
+        });
+      }
+    }
+
+    return highlights.slice(0, 3);
+  }, [agents, clockTick, current.generated_at, current.tools, models, policies]);
   const activeMeta = tab === "models"
     ? { title: "模型发布", label: "模型更新", copy: "汇总厂商官网与发布说明中的新模型和能力变化，每条均可回到官方原文核验。", icon: <ImageIcon />, tags: ["最新发布", "官方来源", "模型更新"] }
     : tab === "agents"
       ? { title: "Agent 工具", label: "工具更新", copy: "跟踪 Agent 工具的正式版本与开源发布，快速确认工作流中值得升级的变化。", icon: <MovieIcon />, tags: ["版本发布", "GitHub", "工具链"] }
       : { title: "弃用与迁移", label: "风险提醒", copy: "集中查看模型停用、接口弃用与迁移说明，为替换和调整提前留出时间。", icon: <LightIcon />, tags: ["弃用迁移", "官方文档", "政策提醒"] };
+  const snapshotMeta = snapshotStatus(current.status, current.generated_at, clockTick);
+  const activeTotal = confidenceView === "verified" ? activeVerifiedItems.length : activeReviewItems.length;
+  const activeCountLabel = `${activeItems.length < activeTotal ? `最近 ${activeItems.length} 条 · 共 ` : ""}${activeTotal} 条${confidenceView === "verified" ? "已核验更新" : "待核验线索"}`;
+  const activeIntro = confidenceView === "verified"
+    ? activeMeta.copy
+    : "这些内容来自官方页面变化，但还没有足够证据确认是正式发布。它们不会进入首页摘要，请结合原文人工判断。";
 
   const handleOpen = (item: FeedItem) => {
     if (!isHttpUrl(item.href)) {
       setToast("这条没有可用链接");
       return;
     }
-    openOfficialLink(item.href);
+    if (!openOfficialLink(item.href)) {
+      setToast("浏览器阻止了新标签页，请允许弹窗后重试");
+    }
   };
 
   const selectFeed = (nextTab: TabId, shouldScroll = false) => {
     setTab(nextTab);
+    setConfidenceView("verified");
     if (shouldScroll) signalSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
@@ -492,9 +821,9 @@ export function AgentPulseClient() {
   if (!ready) return <div className="loading">正在连接信号源…</div>;
 
   const feedCards: Array<{ id: TabId; title: string; count: number; icon: React.ReactNode; tags: string[]; copy: string }> = [
-    { id: "models", title: "模型发布", count: models.length, icon: <ImageIcon />, tags: ["新模型", "能力更新", "官方原文"], copy: "汇总 GPT、Claude、Gemini 等官方发布，帮你快速判断哪些模型变化值得关注。" },
-    { id: "agents", title: "Agent 工具", count: agents.length, icon: <MovieIcon />, tags: ["正式发版", "GitHub", "npm"], copy: "跟踪 Codex、Claude Code 等工具的版本演进，不错过影响实际工作流的升级。" },
-    { id: "notices", title: "弃用与迁移", count: notices.length, icon: <LightIcon />, tags: ["模型停用", "接口弃用", "迁移说明"], copy: "提前发现停用时间和替换建议，避免关键变化临近时才被动处理。" },
+    { id: "models", title: "模型发布", count: verifiedModels.length, icon: <ImageIcon />, tags: [`已核验 ${verifiedModels.length}`, `待核验 ${reviewModels.length}`, "官方原文"], copy: "默认只展示已确认的模型与能力变化，待核验页面线索独立查看。" },
+    { id: "agents", title: "Agent 工具", count: verifiedAgents.length, icon: <MovieIcon />, tags: [`已核验 ${verifiedAgents.length}`, "GitHub", "npm"], copy: "跟踪 Codex、Claude Code 等工具的正式版本与热度变化。" },
+    { id: "notices", title: "弃用与迁移", count: verifiedPolicies.length, icon: <LightIcon />, tags: [`已核验 ${verifiedPolicies.length}`, `待核验 ${reviewPolicies.length}`, `官方入口 ${OFFICIAL_NOTICES.length}`], copy: "区分真实停用事件和固定监测入口，优先呈现需要行动的变化。" },
   ];
 
   return (
@@ -508,8 +837,8 @@ export function AgentPulseClient() {
             <button type="button" onClick={() => selectFeed("models", true)}>模型发布</button>
             <button type="button" onClick={() => selectFeed("agents", true)}>Agent 工具</button>
             <button type="button" onClick={() => selectFeed("notices", true)}>弃用提醒</button>
-            <button type="button" className="nav-refresh" onClick={() => void loadData(true)} disabled={isRefreshing}>
-              {isRefreshing ? "更新中" : "刷新数据"}<ArrowIcon />
+            <button type="button" className="nav-refresh" onClick={() => void loadData(true)} disabled={isRefreshing} title="直接同步 GitHub main 上最新的公开数据快照">
+              {isRefreshing ? "同步中" : "同步快照"}<ArrowIcon />
             </button>
           </nav>
           <div className="nav-spacer" aria-hidden="true" />
@@ -517,24 +846,24 @@ export function AgentPulseClient() {
 
         <div className="hero-content">
           <div className="live-badge liquid-glass reveal reveal-one">
-            <span>LIVE</span>
-            <p>{statusText(current.status)} · {relativeTime(current.generated_at)}</p>
+            <span>{snapshotMeta.label}</span>
+            <p>{snapshotMeta.detail} · {snapshotSource === "github" ? "GitHub main" : "本地回退"}</p>
           </div>
           <h1 className="hero-title reveal reveal-two">见微知著</h1>
           <p className="hero-copy reveal reveal-three">把散落在官网、GitHub 与 npm 的模型发布、Agent 工具更新和弃用提醒，整理成可核验、可直达原文的更新清单。</p>
           <div className="hero-actions reveal reveal-four">
-            <button type="button" className="liquid-glass-strong primary-action" onClick={() => void loadData(true)} disabled={isRefreshing}>
-              {isRefreshing ? "正在更新" : "读取最新快照"}<ArrowIcon />
+            <button type="button" className="liquid-glass-strong primary-action" onClick={() => void loadData(true)} disabled={isRefreshing} title="直接同步 GitHub main 上最新的公开数据快照">
+              {isRefreshing ? "正在同步" : "同步最新快照"}<ArrowIcon />
             </button>
             <button type="button" className="quiet-action" onClick={scrollToSignals}>查看更新清单<PlayIcon /></button>
           </div>
           <div className="hero-stats reveal reveal-five" aria-label="实时概览">
-            <div className="stat-card liquid-glass">
+            <div className="stat-card liquid-glass frosted-panel">
               <ClockIcon />
               <strong>{totalSignals}</strong>
-              <span>已收录可验证更新</span>
+              <span>已收录已核验更新</span>
             </div>
-            <div className="stat-card liquid-glass">
+            <div className="stat-card liquid-glass frosted-panel">
               <GlobeIcon />
               <strong>{providers}</strong>
               <span>持续检查的官方来源</span>
@@ -556,12 +885,41 @@ export function AgentPulseClient() {
             <h2>重要更新，<br />集中抵达。</h2>
           </div>
 
+          <section className="snapshot-summary liquid-glass frosted-panel" aria-labelledby="snapshot-summary-title">
+            <div className="summary-intro">
+              <p className="summary-kicker">最新与热点 · 仅展示已核验信号</p>
+              <h3 id="snapshot-summary-title">现在值得关注</h3>
+              <p className="summary-copy">
+                不再按分类各取一条，而是结合发布时间、24 小时热度和迁移影响筛选。当前快照于 {relativeTime(current.generated_at, clockTick)}同步。
+              </p>
+            </div>
+            <div className="summary-stack">
+              {snapshotHighlights.map(({ label, item, reason, signal }, index) => (
+                <button
+                  key={`${label}-${item.id}`}
+                  type="button"
+                  className={`summary-row ${index === 0 ? "is-featured" : ""}`}
+                  onClick={() => handleOpen(item)}
+                  title={item.href}
+                >
+                  <span className="summary-index">{String(index + 1).padStart(2, "0")}</span>
+                  <div className="summary-body">
+                    <p><span>{label}</span><b>{item.vendor}</b><em>{signal}</em></p>
+                    <h4>{item.title}</h4>
+                    <p className="summary-note">{reason}</p>
+                  </div>
+                  <span className="summary-open">原文<ArrowIcon /></span>
+                </button>
+              ))}
+            </div>
+          </section>
+
           <div className="feed-card-grid">
             {feedCards.map((card) => (
               <button
                 key={card.id}
                 type="button"
-                className={`feed-card liquid-glass ${tab === card.id ? "is-active" : ""}`}
+                className={`feed-card liquid-glass frosted-panel ${tab === card.id ? "is-active" : ""}`}
                 onClick={() => selectFeed(card.id)}
                 aria-pressed={tab === card.id}
               >
@@ -578,20 +936,37 @@ export function AgentPulseClient() {
             ))}
           </div>
 
-          <section className="signal-list liquid-glass" aria-live="polite">
+          <section className="signal-list liquid-glass frosted-panel" aria-live="polite">
             <div className="signal-list-head">
               <div>
                 <p>{"// "}{activeMeta.label}</p>
                 <h3>{activeMeta.title}</h3>
               </div>
-              <span>{activeItems.length} 条可核验更新</span>
+              <div className="signal-list-controls">
+                <span>{activeCountLabel}</span>
+                <div className="confidence-switch" aria-label="可信状态筛选">
+                  <button type="button" className={confidenceView === "verified" ? "is-active" : ""} onClick={() => setConfidenceView("verified")} aria-pressed={confidenceView === "verified"}>
+                    已核验 {activeVerifiedItems.length}
+                  </button>
+                  {activeReviewItems.length ? (
+                    <button type="button" className={confidenceView === "needs_review" ? "is-active is-review" : ""} onClick={() => setConfidenceView("needs_review")} aria-pressed={confidenceView === "needs_review"}>
+                      待核验 {activeReviewItems.length}
+                    </button>
+                  ) : null}
+                </div>
+              </div>
             </div>
-            <p className="signal-list-intro">{activeMeta.copy}</p>
+            <p className="signal-list-intro">{activeIntro}</p>
             <div className="signal-rows">
               {activeItems.length ? activeItems.map((item) => (
                 <button key={item.id} type="button" className="signal-row" onClick={() => handleOpen(item)} title={item.href}>
                   <div>
-                    <p className="row-meta"><b>{item.vendor}</b>{item.topic ? <span>{item.topic}</span> : null}<time>{item.isPortal ? "官方入口" : formatDate(item.time)}</time></p>
+                    <p className="row-meta">
+                      <b>{item.vendor}</b>
+                      <em className={`confidence-badge ${item.confidence === "verified" ? "is-verified" : "is-review"}`}>{item.confidence === "verified" ? "已核验" : "待核验"}</em>
+                      {item.topic ? <span>{item.topic}</span> : null}
+                      <time>{item.effectiveAt ? `生效 ${formatCalendarDate(item.effectiveAt)}` : formatDate(item.time)}</time>
+                    </p>
                     <h4>{item.title}</h4>
                     <p className="row-note">{item.note}</p>
                   </div>
@@ -599,6 +974,23 @@ export function AgentPulseClient() {
                 </button>
               )) : <div className="empty">暂时还没有信号。</div>}
             </div>
+            {tab === "notices" ? (
+              <div className="portal-section">
+                <div className="portal-section-head">
+                  <div><p>{"// Official watchlist"}</p><h4>官方监测入口</h4></div>
+                  <span>{OFFICIAL_NOTICES.length} 个固定入口，不计入更新数量</span>
+                </div>
+                <div className="portal-grid">
+                  {OFFICIAL_NOTICES.map((item) => (
+                    <button key={item.id} type="button" className="portal-link" onClick={() => handleOpen(item)} title={item.href}>
+                      <span>{item.vendor}</span>
+                      <b>{item.title}</b>
+                      <ArrowIcon />
+                    </button>
+                  ))}
+                </div>
+              </div>
+            ) : null}
           </section>
         </div>
       </section>

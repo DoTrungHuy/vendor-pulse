@@ -7,7 +7,8 @@ on:
       - "data/sources.json"
       - "scripts/collect.mjs"
   schedule:
-    - cron: "0 * * * *"
+    # Avoid the top-of-hour congestion window for scheduled Actions.
+    - cron: "17 * * * *"
   workflow_dispatch:
 
 permissions:

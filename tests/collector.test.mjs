@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import {
   calculateDelta,
+  canonicalEventKey,
   classifyEventType,
   getFiveHourSlot,
   isConcreteDeprecation,
@@ -23,12 +24,58 @@ test("five-hour slots remain contiguous across a UTC date boundary", () => {
 });
 
 test("event merging is idempotent and newest-first", () => {
+  const base = {
+    item_id: "gpt",
+    item_name: "GPT",
+    type: "model",
+    source_url: "https://example.com/news",
+    provider: "OpenAI",
+    feed_id: "news",
+    confidence: "verified",
+  };
   const result = mergeEvents(
-    [{ id: "one", occurred_at: "2026-07-01T00:00:00Z" }],
-    [{ id: "one", occurred_at: "2026-07-02T00:00:00Z" }, { id: "two", occurred_at: "2026-07-03T00:00:00Z" }],
+    [{ ...base, id: "legacy-one", title: "GPT-5.6 released", occurred_at: "2026-07-01T00:00:00Z" }],
+    [
+      { ...base, id: "new-one", title: "GPT-5.6 released", occurred_at: "2026-07-01T00:00:00Z" },
+      { ...base, id: "two", title: "GPT-5.7 released", occurred_at: "2026-07-03T00:00:00Z" },
+    ],
   );
   assert.equal(result.length, 2);
-  assert.deepEqual(result.map((event) => event.id), ["two", "one"]);
+  assert.match(result[0].title, /5\.7/);
+  assert.ok(result.every((event) => event.id === event.canonical_key));
+});
+
+test("pending page fragments keep one stable identity across repeated scans", () => {
+  const fragment = {
+    item_id: "claude",
+    item_name: "Claude",
+    type: "deprecation",
+    title: "Claude Sonnet preview may be retired; migration details need review",
+    source_url: "https://example.com/deprecations",
+    provider: "Anthropic",
+    feed_id: "deprecations",
+    confidence: "needs_review",
+  };
+  const first = { ...fragment, id: "old", occurred_at: "2026-07-01T00:00:00Z" };
+  const later = { ...fragment, id: "new", occurred_at: "2026-07-03T00:00:00Z" };
+  const result = mergeEvents([first], [later]);
+  assert.equal(result.length, 1);
+  assert.equal(result[0].occurred_at, "2026-07-01T00:00:00Z");
+  assert.equal(result[0].last_seen_at, "2026-07-03T00:00:00Z");
+  assert.equal(canonicalEventKey(first), canonicalEventKey(later));
+});
+
+test("lifecycle variants share one canonical identity", () => {
+  const base = {
+    item_id: "claude",
+    type: "deprecation",
+    feed_id: "deprecations",
+    confidence: "verified",
+    effective_at: "2026-06-30T00:00:00.000Z",
+  };
+  const concise = { ...base, title: "Claude: Claude Mythos Preview will be retired on June 30, 2026." };
+  const tableVariant = { ...base, title: "Claude: Model status Claude Mythos Preview will be retired on June 30, 2026. Migration guide" };
+  assert.equal(canonicalEventKey(concise), canonicalEventKey(tableVariant));
 });
 
 test("snapshot retention keeps high-resolution history for ninety days and daily rollups before it", () => {
@@ -101,10 +148,13 @@ test("deprecations page parser extracts concrete model shutdown language", () =>
   assert.ok(events.length >= 1);
   assert.equal(events[0].type, "deprecation");
   assert.match(events[0].title, /shut down|gpt-5/i);
+  assert.equal(events[0].effective_at, "2026-12-11T00:00:00.000Z");
+  assert.equal(events[0].published_at, null);
 });
 
 test("deprecations page parser ignores glossary and page chrome", () => {
   assert.equal(isConcreteDeprecation("See which Claude models are active, deprecated, or retired, and find retirement dates"), false);
+  assert.equal(isConcreteDeprecation("Current and recently retired models are listed in the following table with their status: API model name Current state Deprecated"), false);
   assert.equal(isConcreteDeprecation("Active: The model is fully supported and recommended for use. Legacy: The model will"), false);
   assert.equal(isConcreteDeprecation("On December 11, 2026 gpt-5-2025-08-07 will be shut down"), true);
 });

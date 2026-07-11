@@ -19,6 +19,8 @@ export type ToolRecord = {
 export type SignalRecord = {
   title: string;
   occurred_at: string;
+  published_at?: string | null;
+  effective_at?: string | null;
   source_url: string;
   feed_id: string | null;
   confidence?: "verified" | "needs_review";
@@ -49,11 +51,16 @@ export type ModelRecord = {
 
 export type EventRecord = {
   id: string;
+  canonical_key?: string;
   item_id: string;
   item_name: string;
   type: "release" | "model" | "deprecation" | "source_changed";
   title: string;
   occurred_at: string;
+  published_at?: string | null;
+  effective_at?: string | null;
+  first_seen_at?: string | null;
+  last_seen_at?: string | null;
   source_url: string;
   provider?: string | null;
   feed_id?: string | null;

@@ -71,5 +71,9 @@ test("events may include model policy and review metadata", async () => {
   events.slice(0, 50).forEach((event) => {
     assert.ok(allowed.has(event.type), `unexpected event type ${event.type}`);
     assert.match(event.source_url, /^https:\/\//);
+    assert.ok(["verified", "needs_review"].includes(event.confidence));
+    assert.equal(event.id, event.canonical_key);
   });
+  assert.ok(events.some((event) => event.published_at), "expected summary-ready publish dates");
+  assert.ok(events.some((event) => event.effective_at), "expected lifecycle effective dates");
 });
