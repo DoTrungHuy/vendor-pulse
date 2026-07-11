@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-11T17:44:06.059Z",
+  "generated_at": "2026-07-11T17:45:45.377Z",
   "timezone": "Asia/Shanghai",
   "status": "stale",
   "tools": [
@@ -142,7 +142,7 @@
           "kind": "model",
           "url": "https://openai.com/news/rss.xml",
           "status": "ok",
-          "checked_at": "2026-07-11T17:44:13.384Z",
+          "checked_at": "2026-07-11T17:45:48.014Z",
           "error": null
         },
         {
@@ -151,7 +151,7 @@
           "kind": "model",
           "url": "https://help.openai.com/en/articles/9624314-model-release-notes",
           "status": "error",
-          "checked_at": "2026-07-11T17:44:17.893Z",
+          "checked_at": "2026-07-11T17:45:49.901Z",
           "error": "403 Forbidden"
         },
         {
@@ -159,18 +159,18 @@
           "label": "API Deprecations",
           "kind": "deprecation",
           "url": "https://developers.openai.com/api/docs/deprecations",
-          "status": "error",
-          "checked_at": "2026-07-11T17:44:21.093Z",
-          "error": "403 Forbidden"
+          "status": "ok",
+          "checked_at": "2026-07-11T17:45:50.234Z",
+          "error": null
         },
         {
           "id": "api-changelog",
           "label": "API Changelog",
           "kind": "model",
           "url": "https://developers.openai.com/api/docs/changelog",
-          "status": "error",
-          "checked_at": "2026-07-11T17:44:25.064Z",
-          "error": "403 Forbidden"
+          "status": "ok",
+          "checked_at": "2026-07-11T17:45:50.336Z",
+          "error": null
         }
       ]
     },
@@ -180,20 +180,20 @@
       "provider": "Anthropic",
       "source_url": "https://www.anthropic.com/news",
       "title": "Introducing Claude Sonnet 5",
-      "occurred_at": "2026-07-11T17:44:15.577Z",
+      "occurred_at": "2026-07-11T17:45:50.744Z",
       "status": "ok",
       "latest_model": {
         "title": "Introducing Claude Sonnet 5",
-        "occurred_at": "2026-07-11T17:44:15.577Z",
-        "published_at": "2026-07-11T17:44:15.577Z",
+        "occurred_at": "2026-07-11T17:45:50.744Z",
+        "published_at": "2026-07-11T17:45:50.744Z",
         "effective_at": null,
         "source_url": "https://www.anthropic.com/news",
         "feed_id": "news",
         "confidence": "needs_review"
       },
       "latest_policy": {
-        "title": "To help measure the performance of replacement models on your tasks, consider thorough testing of your applications with the new models well before the retirement date. For specific instructions on migrating to the lates",
-        "occurred_at": "2026-07-11T17:44:20.578Z",
+        "title": "As safer and more capable models launch, Anthropic regularly retires older ones. Applications relying on Anthropic models may need occasional updates to keep working. Impacted customers will always be notified by email a",
+        "occurred_at": "2026-07-11T17:45:51.527Z",
         "published_at": null,
         "effective_at": null,
         "source_url": "https://platform.claude.com/docs/en/about-claude/model-deprecations",
@@ -207,7 +207,7 @@
           "kind": "model",
           "url": "https://www.anthropic.com/news",
           "status": "ok",
-          "checked_at": "2026-07-11T17:44:15.575Z",
+          "checked_at": "2026-07-11T17:45:50.742Z",
           "error": null
         },
         {
@@ -216,7 +216,7 @@
           "kind": "model",
           "url": "https://platform.claude.com/docs/en/release-notes/overview",
           "status": "ok",
-          "checked_at": "2026-07-11T17:44:18.676Z",
+          "checked_at": "2026-07-11T17:45:51.173Z",
           "error": null
         },
         {
@@ -225,7 +225,7 @@
           "kind": "deprecation",
           "url": "https://platform.claude.com/docs/en/about-claude/model-deprecations",
           "status": "ok",
-          "checked_at": "2026-07-11T17:44:20.574Z",
+          "checked_at": "2026-07-11T17:45:51.522Z",
           "error": null
         }
       ]
@@ -263,7 +263,7 @@
           "kind": "model",
           "url": "https://ai.google.dev/gemini-api/docs/changelog",
           "status": "ok",
-          "checked_at": "2026-07-11T17:44:12.456Z",
+          "checked_at": "2026-07-11T17:45:47.959Z",
           "error": null
         },
         {
@@ -272,7 +272,7 @@
           "kind": "deprecation",
           "url": "https://ai.google.dev/gemini-api/docs/models",
           "status": "ok",
-          "checked_at": "2026-07-11T17:44:13.251Z",
+          "checked_at": "2026-07-11T17:45:48.172Z",
           "error": null
         }
       ]
