@@ -99,7 +99,7 @@
     "published_at": null,
     "effective_at": null,
     "first_seen_at": "2026-07-10T08:32:32.432Z",
-    "last_seen_at": "2026-07-11T19:32:53.812Z"
+    "last_seen_at": "2026-07-11T21:08:27.013Z"
   },
   {
     "id": "event:deprecation:claude:deprecations:b2e95fd4ce",
@@ -116,7 +116,7 @@
     "published_at": null,
     "effective_at": null,
     "first_seen_at": "2026-07-10T08:32:32.432Z",
-    "last_seen_at": "2026-07-11T19:32:53.812Z"
+    "last_seen_at": "2026-07-11T21:08:27.013Z"
   },
   {
     "id": "event:deprecation:claude:deprecations:b1c7c0ee04",
@@ -133,7 +133,7 @@
     "published_at": null,
     "effective_at": null,
     "first_seen_at": "2026-07-10T08:32:32.431Z",
-    "last_seen_at": "2026-07-11T19:32:53.811Z"
+    "last_seen_at": "2026-07-11T21:08:27.012Z"
   },
   {
     "id": "event:model:claude:news:9817cc08a3",
@@ -150,7 +150,7 @@
     "published_at": null,
     "effective_at": null,
     "first_seen_at": "2026-07-10T08:32:31.676Z",
-    "last_seen_at": "2026-07-11T19:32:52.859Z"
+    "last_seen_at": "2026-07-11T21:08:26.078Z"
   },
   {
     "id": "event:deprecation:gemini:models-page:2590d4ce84",
@@ -167,7 +167,7 @@
     "published_at": null,
     "effective_at": null,
     "first_seen_at": "2026-07-10T08:32:31.411Z",
-    "last_seen_at": "2026-07-11T19:32:51.974Z"
+    "last_seen_at": "2026-07-11T21:08:24.605Z"
   },
   {
     "id": "event:deprecation:gemini:models-page:1f46ddb53b",
@@ -184,7 +184,7 @@
     "published_at": null,
     "effective_at": null,
     "first_seen_at": "2026-07-10T08:32:31.410Z",
-    "last_seen_at": "2026-07-11T19:32:51.973Z"
+    "last_seen_at": "2026-07-11T21:08:24.605Z"
   },
   {
     "id": "event:deprecation:gemini:models-page:76140e01b7",
@@ -201,7 +201,7 @@
     "published_at": null,
     "effective_at": null,
     "first_seen_at": "2026-07-10T08:32:31.410Z",
-    "last_seen_at": "2026-07-11T19:32:51.974Z"
+    "last_seen_at": "2026-07-11T21:08:24.605Z"
   },
   {
     "id": "event:deprecation:gemini:models-page:a651b18a32",
@@ -218,7 +218,7 @@
     "published_at": null,
     "effective_at": null,
     "first_seen_at": "2026-07-10T08:32:31.410Z",
-    "last_seen_at": "2026-07-11T19:32:51.974Z"
+    "last_seen_at": "2026-07-11T21:08:24.605Z"
   },
   {
     "id": "event:deprecation:gemini:models-page:b91e330192",
@@ -235,7 +235,7 @@
     "published_at": null,
     "effective_at": null,
     "first_seen_at": "2026-07-10T08:32:31.409Z",
-    "last_seen_at": "2026-07-11T19:32:51.972Z"
+    "last_seen_at": "2026-07-11T21:08:24.603Z"
   },
   {
     "id": "event:deprecation:gemini:models-page:cac246339b",
@@ -252,7 +252,7 @@
     "published_at": null,
     "effective_at": null,
     "first_seen_at": "2026-07-10T08:32:31.409Z",
-    "last_seen_at": "2026-07-11T19:32:51.972Z"
+    "last_seen_at": "2026-07-11T21:08:24.603Z"
   },
   {
     "id": "event:source_changed:gpt:primary:a32a7bb442",
