@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-11T00:05:43.658Z",
+  "generated_at": "2026-07-11T04:09:57.772Z",
   "timezone": "Asia/Shanghai",
   "status": "stale",
   "tools": [
@@ -10,14 +10,14 @@
       "repo_url": "https://github.com/openai/codex",
       "official_url": "https://developers.openai.com/codex",
       "x_url": "https://x.com/OpenAI",
-      "stars": 97000,
-      "stars_delta_24h": null,
+      "stars": 97046,
+      "stars_delta_24h": 286,
       "stars_delta_7d": null,
       "latest_release": {
-        "tag": "rust-v0.145.0-alpha.3",
-        "title": "0.145.0-alpha.3",
-        "published_at": "2026-07-10T23:11:40Z",
-        "url": "https://github.com/openai/codex/releases/tag/rust-v0.145.0-alpha.3"
+        "tag": "rust-v0.145.0-alpha.4",
+        "title": "0.145.0-alpha.4",
+        "published_at": "2026-07-11T00:10:19Z",
+        "url": "https://github.com/openai/codex/releases/tag/rust-v0.145.0-alpha.4"
       },
       "release_cadence_30d": {
         "count": 20,
@@ -37,22 +37,22 @@
       "repo_url": "https://github.com/anthropics/claude-code",
       "official_url": "https://code.claude.com/docs",
       "x_url": "https://x.com/AnthropicAI",
-      "stars": 137308,
-      "stars_delta_24h": null,
+      "stars": 137335,
+      "stars_delta_24h": 225,
       "stars_delta_7d": null,
       "latest_release": {
-        "tag": "v2.1.206",
-        "title": "v2.1.206",
-        "published_at": "2026-07-10T01:45:26Z",
-        "url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.206"
+        "tag": "v2.1.207",
+        "title": "v2.1.207",
+        "published_at": "2026-07-11T00:52:10Z",
+        "url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.207"
       },
       "release_cadence_30d": {
         "count": 20,
-        "median_days": 0.9914930555555556
+        "median_days": 0.9887152777777778
       },
       "npm": {
         "package": "@anthropic-ai/claude-code",
-        "version": "2.1.206",
+        "version": "2.1.207",
         "weekly_downloads": 11482894
       },
       "status": "ok"
@@ -64,8 +64,8 @@
       "repo_url": "https://github.com/google-antigravity/antigravity-cli",
       "official_url": "https://www.antigravity.google/docs/cli-using",
       "x_url": "https://x.com/GoogleAI",
-      "stars": 1552,
-      "stars_delta_24h": null,
+      "stars": 1555,
+      "stars_delta_24h": 15,
       "stars_delta_7d": null,
       "latest_release": {
         "tag": "1.1.1",
@@ -87,8 +87,8 @@
       "repo_url": "https://github.com/openclaw/openclaw",
       "official_url": "https://openclaw.ai",
       "x_url": "https://x.com/openclaw",
-      "stars": 382509,
-      "stars_delta_24h": null,
+      "stars": 382524,
+      "stars_delta_24h": 136,
       "stars_delta_7d": null,
       "latest_release": {
         "tag": "v2026.7.1-beta.2",
@@ -138,7 +138,7 @@
           "kind": "model",
           "url": "https://openai.com/news/rss.xml",
           "status": "ok",
-          "checked_at": "2026-07-11T00:05:46.852Z",
+          "checked_at": "2026-07-11T04:10:00.474Z",
           "error": null
         },
         {
@@ -147,7 +147,7 @@
           "kind": "model",
           "url": "https://help.openai.com/en/articles/9624314-model-release-notes",
           "status": "error",
-          "checked_at": "2026-07-11T00:05:48.837Z",
+          "checked_at": "2026-07-11T04:10:02.366Z",
           "error": "403 Forbidden"
         },
         {
@@ -156,7 +156,7 @@
           "kind": "deprecation",
           "url": "https://developers.openai.com/api/docs/deprecations",
           "status": "ok",
-          "checked_at": "2026-07-11T00:05:48.949Z",
+          "checked_at": "2026-07-11T04:10:02.451Z",
           "error": null
         },
         {
@@ -165,7 +165,7 @@
           "kind": "model",
           "url": "https://developers.openai.com/api/docs/changelog",
           "status": "ok",
-          "checked_at": "2026-07-11T00:05:49.066Z",
+          "checked_at": "2026-07-11T04:10:02.473Z",
           "error": null
         }
       ]
@@ -176,11 +176,11 @@
       "provider": "Anthropic",
       "source_url": "https://www.anthropic.com/news",
       "title": "Introducing Claude Sonnet 5",
-      "occurred_at": "2026-07-11T00:05:46.870Z",
+      "occurred_at": "2026-07-11T04:10:04.078Z",
       "status": "ok",
       "latest_model": {
         "title": "Introducing Claude Sonnet 5",
-        "occurred_at": "2026-07-11T00:05:46.870Z",
+        "occurred_at": "2026-07-11T04:10:04.078Z",
         "source_url": "https://www.anthropic.com/news",
         "feed_id": "news",
         "confidence": "needs_review"
@@ -199,7 +199,7 @@
           "kind": "model",
           "url": "https://www.anthropic.com/news",
           "status": "ok",
-          "checked_at": "2026-07-11T00:05:46.868Z",
+          "checked_at": "2026-07-11T04:10:04.076Z",
           "error": null
         },
         {
@@ -208,7 +208,7 @@
           "kind": "model",
           "url": "https://platform.claude.com/docs/en/release-notes/overview",
           "status": "ok",
-          "checked_at": "2026-07-11T00:05:47.284Z",
+          "checked_at": "2026-07-11T04:10:04.520Z",
           "error": null
         },
         {
@@ -217,7 +217,7 @@
           "kind": "deprecation",
           "url": "https://platform.claude.com/docs/en/about-claude/model-deprecations",
           "status": "ok",
-          "checked_at": "2026-07-11T00:05:47.629Z",
+          "checked_at": "2026-07-11T04:10:04.895Z",
           "error": null
         }
       ]
@@ -251,7 +251,7 @@
           "kind": "model",
           "url": "https://ai.google.dev/gemini-api/docs/changelog",
           "status": "ok",
-          "checked_at": "2026-07-11T00:05:47.009Z",
+          "checked_at": "2026-07-11T04:10:00.451Z",
           "error": null
         },
         {
@@ -260,7 +260,7 @@
           "kind": "deprecation",
           "url": "https://ai.google.dev/gemini-api/docs/models",
           "status": "ok",
-          "checked_at": "2026-07-11T00:05:47.206Z",
+          "checked_at": "2026-07-11T04:10:00.607Z",
           "error": null
         }
       ]
