@@ -18,6 +18,8 @@ test("collector workflow validates before committing and reports health", () => 
   assert.match(workflow, /npm run report:health/);
   assert.match(workflow, /issues: write/);
   assert.match(workflow, /critical_failure/);
+  assert.match(workflow, /actions\/checkout@v7/);
+  assert.match(workflow, /actions\/setup-node@v6/);
 });
 
 test("collector workflow rebases and never force pushes", () => {

@@ -657,12 +657,14 @@ async function collectModel(source, oldModel, sourceStatuses) {
 
   const signals = feedResults.flatMap((result) => result.signals);
   const reviewEvents = feedResults.map((result) => result.reviewEvent).filter(Boolean);
-  const latestModelSignal = pickSignal(signals, "model") || (oldModel?.latest_model
+  const verifiedSignals = signals.filter((signal) => signal.confidence !== "needs_review");
+  const reviewSignals = signals.filter((signal) => signal.confidence === "needs_review");
+  const latestModelSignal = pickSignal(verifiedSignals, "model") || (oldModel?.latest_model
     ? { ...oldModel.latest_model, type: "model", priority: 9 }
-    : null);
-  const latestPolicySignal = pickSignal(signals, "deprecation") || (oldModel?.latest_policy
+    : pickSignal(reviewSignals, "model"));
+  const latestPolicySignal = pickSignal(verifiedSignals, "deprecation") || (oldModel?.latest_policy
     ? { ...oldModel.latest_policy, type: "deprecation", priority: 9 }
-    : null);
+    : pickSignal(reviewSignals, "deprecation"));
 
   const feedStatuses = feedResults.map((result) => ({
     id: result.feed.id,
@@ -807,6 +809,13 @@ export function summarizeHealth(sourceStatuses) {
 }
 
 function contentFingerprint(tools, models, events) {
+  const stableSignal = (signal) => signal ? {
+    title: signal.title,
+    source_url: signal.source_url,
+    feed_id: signal.feed_id || null,
+    effective_at: signal.effective_at || null,
+    confidence: signal.confidence || "verified",
+  } : null;
   return {
     tools: tools.map((tool) => ({
       id: tool.id,
@@ -815,8 +824,8 @@ function contentFingerprint(tools, models, events) {
     })),
     models: models.map((model) => ({
       id: model.id,
-      latest_model: model.latest_model || null,
-      latest_policy: model.latest_policy || null,
+      latest_model: stableSignal(model.latest_model),
+      latest_policy: stableSignal(model.latest_policy),
     })),
     events: events.map((event) => ({
       id: event.id,
