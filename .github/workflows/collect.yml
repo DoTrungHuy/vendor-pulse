@@ -7,12 +7,14 @@ on:
       - "data/sources.json"
       - "scripts/collect.mjs"
   schedule:
-    # Avoid the top-of-hour congestion window for scheduled Actions.
+    # Two staggered chances reduce the impact of delayed or dropped schedules.
     - cron: "17 * * * *"
+    - cron: "47 * * * *"
   workflow_dispatch:
 
 permissions:
   contents: write
+  issues: write
 
 concurrency:
   group: agent-pulse-collector
@@ -28,9 +30,18 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      - run: npm run collect
+      - name: Collect official updates
+        run: npm run collect
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          COLLECTOR_COOLDOWN_MINUTES: ${{ github.event_name == 'schedule' && '45' || '0' }}
+      - name: Validate the complete data bundle
+        run: |
+          npm run validate:data
+          node --test tests/*.test.mjs
+      - name: Report source health
+        id: health
+        run: npm run report:health
       - name: Commit verified data only when it changed
         run: |
           git config user.name "github-actions[bot]"
@@ -40,4 +51,41 @@ jobs:
             exit 0
           fi
           git commit -m "data: refresh agent pulse"
-          git push
+          for attempt in 1 2 3; do
+            if git pull --rebase origin main && git push origin HEAD:main; then
+              exit 0
+            fi
+            git rebase --abort || true
+            sleep $((attempt * 2))
+          done
+          exit 1
+      - name: Create or update the persistent health issue
+        if: steps.health.outputs.alert_required == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ALERT_SOURCES: ${{ steps.health.outputs.alert_sources }}
+        run: |
+          title="[health] Agent Pulse data source alert"
+          body="Required sources have failed at least three consecutive checks: ${ALERT_SOURCES}. See the latest collector run and public/data/status.json for details."
+          issue_number="$(gh issue list --repo "$GITHUB_REPOSITORY" --state all --search "in:title \"$title\"" --json number --jq '.[0].number // empty')"
+          if [ -n "$issue_number" ]; then
+            gh issue reopen "$issue_number" --repo "$GITHUB_REPOSITORY" || true
+            gh issue edit "$issue_number" --repo "$GITHUB_REPOSITORY" --body "$body"
+          else
+            gh issue create --repo "$GITHUB_REPOSITORY" --title "$title" --body "$body"
+          fi
+      - name: Close the health issue after recovery
+        if: steps.health.outputs.alert_required != 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          title="[health] Agent Pulse data source alert"
+          issue_number="$(gh issue list --repo "$GITHUB_REPOSITORY" --state open --search "in:title \"$title\"" --json number --jq '.[0].number // empty')"
+          if [ -n "$issue_number" ]; then
+            gh issue close "$issue_number" --repo "$GITHUB_REPOSITORY" --comment "All required sources have recovered."
+          fi
+      - name: Fail visibly when a required source is unavailable
+        if: steps.health.outputs.critical_failure == 'true'
+        run: |
+          echo "One or more required sources are unavailable."
+          exit 1

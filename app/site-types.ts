@@ -1,4 +1,13 @@
-export type SourceHealth = "ok" | "stale" | "error" | "bootstrapping";
+export type SourceHealth = "ok" | "degraded" | "stale" | "error" | "bootstrapping";
+
+export type SourceCounts = {
+  total: number;
+  healthy: number;
+  failed: number;
+  required: number;
+  required_healthy: number;
+  required_failed: number;
+};
 
 export type ToolRecord = {
   id: string;
@@ -34,6 +43,7 @@ export type ModelFeedStatus = {
   status: SourceHealth | "ok" | "error" | "stale";
   checked_at: string | null;
   error: string | null;
+  required?: boolean;
 };
 
 export type ModelRecord = {
@@ -68,11 +78,36 @@ export type EventRecord = {
 };
 
 export type CurrentData = {
+  schema_version?: number;
+  snapshot_id?: string | null;
   generated_at: string | null;
+  checked_at?: string | null;
+  content_updated_at?: string | null;
+  last_full_success_at?: string | null;
   timezone: string;
   tools: ToolRecord[];
   models: ModelRecord[];
   status: SourceHealth;
+  source_counts?: SourceCounts;
+};
+
+export type SnapshotHealth = {
+  schema_version: number;
+  snapshot_id: string;
+  checked_at: string;
+  content_updated_at: string;
+  last_full_success_at: string | null;
+  overall: SourceHealth;
+  source_counts: SourceCounts;
+};
+
+export type SnapshotBundle = {
+  schema_version: number;
+  snapshot_id: string;
+  checked_at: string;
+  current: CurrentData;
+  events: EventRecord[];
+  health: SnapshotHealth;
 };
 
 export type SnapshotSeries = { tool_id: string; points: Array<{ captured_at: string; stars: number }> };

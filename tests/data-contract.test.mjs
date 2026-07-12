@@ -10,10 +10,16 @@ async function json(base, name) {
 }
 
 test("published data interfaces remain available and parseable", async () => {
-  const [current, events, snapshots, capabilities, status] = await Promise.all(
-    ["current.json", "events.json", "snapshots.json", "capabilities.json", "status.json"].map((name) => json(dataRoot, name)),
+  const [bundle, current, events, snapshots, capabilities, status] = await Promise.all(
+    ["bundle.json", "current.json", "events.json", "snapshots.json", "capabilities.json", "status.json"].map((name) => json(dataRoot, name)),
   );
+  assert.equal(bundle.snapshot_id, current.snapshot_id);
+  assert.equal(bundle.snapshot_id, status.snapshot_id);
+  assert.deepEqual(bundle.current, current);
+  assert.deepEqual(bundle.events, events);
   assert.equal(current.timezone, "Asia/Shanghai");
+  assert.ok(["ok", "degraded", "error"].includes(current.status));
+  assert.equal(typeof current.source_counts.total, "number");
   assert.ok(Array.isArray(current.tools));
   assert.ok(Array.isArray(current.models));
   assert.ok(Array.isArray(events));
@@ -45,6 +51,7 @@ test("model sources define multiple free official feeds per vendor", async () =>
       assert.match(feed.url, /^https:\/\//);
       assert.ok(["model", "deprecation", "policy"].includes(feed.kind));
       assert.ok(feed.parser);
+      assert.equal(typeof feed.required, "boolean");
     });
   });
 });

@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import type { CurrentData, EventRecord } from "./site-types";
+import type { CurrentData, EventRecord, SnapshotBundle } from "./site-types";
 
 const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
 const dataPath = (name: string) => `${basePath}/data/${name}`;
@@ -10,23 +10,42 @@ const remoteDataPath = (name: string) => `https://raw.githubusercontent.com/DoTr
 
 type SnapshotSource = "github" | "local";
 
-async function fetchSnapshot<T>(url: string, name: string, version: number): Promise<T> {
-  const response = await fetch(`${url}?v=${version}`, { cache: "no-store" });
+async function fetchSnapshot<T>(url: string, name: string, version: number, signal: AbortSignal): Promise<T> {
+  const response = await fetch(`${url}?v=${version}`, { cache: "no-store", signal });
   if (!response.ok) throw new Error(`${name} unavailable (${response.status})`);
   return response.json() as Promise<T>;
 }
 
-async function fetchSnapshotBundle(version: number, preferRemote = true) {
+function validateBundle(bundle: SnapshotBundle) {
+  if (!bundle || bundle.schema_version !== 1 || !bundle.snapshot_id) throw new Error("snapshot bundle is invalid");
+  if (!bundle.current || !Array.isArray(bundle.events)) throw new Error("snapshot bundle is incomplete");
+  if (bundle.current.snapshot_id !== bundle.snapshot_id || bundle.health?.snapshot_id !== bundle.snapshot_id) {
+    throw new Error("snapshot bundle versions do not match");
+  }
+  return bundle;
+}
+
+async function fetchSnapshotBundle(version: number, preferRemote = true, signal: AbortSignal) {
   const candidates: Array<{ source: SnapshotSource; path: (name: string) => string }> = preferRemote
     ? [{ source: "github", path: remoteDataPath }, { source: "local", path: dataPath }]
     : [{ source: "local", path: dataPath }];
   let lastError: Error | null = null;
 
   for (const candidate of candidates) {
+    const candidateSignal = AbortSignal.any([
+      signal,
+      AbortSignal.timeout(candidate.source === "github" ? 6_000 : 2_000),
+    ]);
+    try {
+      const bundle = validateBundle(await fetchSnapshot<SnapshotBundle>(candidate.path("bundle.json"), "bundle.json", version, candidateSignal));
+      return { current: bundle.current, events: bundle.events, source: candidate.source };
+    } catch (bundleError) {
+      if (signal.aborted) throw bundleError;
+    }
     try {
       const [current, events] = await Promise.all([
-        fetchSnapshot<CurrentData>(candidate.path("current.json"), "current.json", version),
-        fetchSnapshot<EventRecord[]>(candidate.path("events.json"), "events.json", version),
+        fetchSnapshot<CurrentData>(candidate.path("current.json"), "current.json", version, candidateSignal),
+        fetchSnapshot<EventRecord[]>(candidate.path("events.json"), "events.json", version, candidateSignal),
       ]);
       return { current, events, source: candidate.source };
     } catch (error) {
@@ -200,6 +219,9 @@ const OFFICIAL_NOTICES: FeedItem[] = [
 
 const emptyCurrent: CurrentData = {
   generated_at: null,
+  checked_at: null,
+  content_updated_at: null,
+  last_full_success_at: null,
   timezone: "Asia/Shanghai",
   status: "bootstrapping",
   tools: [],
@@ -372,18 +394,23 @@ function compactMetric(value: number | null | undefined) {
   return new Intl.NumberFormat("zh-CN", { notation: "compact", maximumFractionDigits: 1 }).format(value);
 }
 
-function snapshotStatus(status: string, generatedAt: string | null, now: number) {
-  if (!generatedAt) return { label: "等待快照", detail: "等待首次自动采集" };
-  const generatedTimestamp = new Date(generatedAt).getTime();
+function snapshotStatus(current: CurrentData, now: number) {
+  const checkedAt = current.checked_at || current.generated_at;
+  if (!checkedAt) return { label: "等待快照", detail: "等待首次自动采集" };
+  const generatedTimestamp = new Date(checkedAt).getTime();
   if (!Number.isFinite(generatedTimestamp)) return { label: "时间异常", detail: "快照时间无法识别，请重新同步" };
   const minutes = Math.max(0, Math.floor((now - generatedTimestamp) / 60_000));
-  const age = relativeTime(generatedAt, now);
+  const checkedAge = relativeTime(checkedAt, now);
+  const contentAge = relativeTime(current.content_updated_at || current.generated_at, now);
+  const successAge = relativeTime(current.last_full_success_at || null, now);
+  const counts = current.source_counts;
+  const sourceDetail = counts ? `${counts.healthy}/${counts.total} 个来源正常` : "来源状态待确认";
+  const detail = `${sourceDetail} · ${checkedAge}检查 · 内容${contentAge}更新 · 完整成功${successAge}`;
 
-  if (minutes >= 150) return { label: "更新延迟", detail: `最近快照生成于 ${age}` };
-  if (status === "error") return { label: "采集异常", detail: `部分来源异常，${age}更新` };
-  if (status === "stale") return { label: "部分延迟", detail: `部分来源未响应，${age}更新` };
-  if (minutes >= 75) return { label: "等待更新", detail: `等待下一次采集，${age}更新` };
-  return { label: "每小时", detail: `自动采集正常，${age}更新` };
+  if (minutes >= 90) return { label: "更新延迟", detail };
+  if (current.status === "error") return { label: "采集异常", detail };
+  if (current.status === "degraded" || current.status === "stale") return { label: "部分来源异常", detail };
+  return { label: "自动检查正常", detail };
 }
 
 function isHttpUrl(value: string | null | undefined): value is string {
@@ -682,7 +709,9 @@ export function AgentPulseClient() {
   const [isMobileLayout, setIsMobileLayout] = useState(() => typeof window !== "undefined" && window.matchMedia(MOBILE_BREAKPOINT).matches);
   const [mobileView, setMobileView] = useState<MobileView>(() => mobileViewFromHash());
   const signalSectionRef = useRef<HTMLElement>(null);
-  const generatedAtRef = useRef<string | null>(null);
+  const snapshotIdRef = useRef<string | null>(null);
+  const requestControllerRef = useRef<AbortController | null>(null);
+  const requestSequenceRef = useRef(0);
   const mobileFlowRef = useRef<HTMLDivElement>(null);
   const mobileHomeRef = useRef<HTMLElement>(null);
   const mobileTodayRef = useRef<HTMLElement>(null);
@@ -711,39 +740,56 @@ export function AgentPulseClient() {
 
   const loadData = useCallback(async (manual = false, preferRemote = true) => {
     const startedAt = Date.now();
+    requestControllerRef.current?.abort();
+    const controller = new AbortController();
+    requestControllerRef.current = controller;
+    const sequence = requestSequenceRef.current + 1;
+    requestSequenceRef.current = sequence;
+    const timeout = window.setTimeout(() => controller.abort(), 8_000);
     if (manual) {
       setIsRefreshing(true);
-      setToast("正在同步 GitHub 最新公开快照…");
+      setToast("正在读取 GitHub 最新公开快照…");
     }
     try {
       const version = Date.now();
-      const { current: nextCurrent, events: nextEvents, source } = await fetchSnapshotBundle(version, preferRemote);
+      const { current: nextCurrent, events: nextEvents, source } = await fetchSnapshotBundle(version, preferRemote, controller.signal);
+      if (sequence !== requestSequenceRef.current) return;
+      if (!nextCurrent || !Array.isArray(nextCurrent.tools) || !Array.isArray(nextCurrent.models)) throw new Error("current data is invalid");
       if (!Array.isArray(nextEvents)) throw new Error("events data is invalid");
 
-      const previousGeneratedAt = generatedAtRef.current;
-      const nextGeneratedAt = nextCurrent.generated_at || null;
+      const previousSnapshotId = snapshotIdRef.current;
       setCurrent(nextCurrent);
       setEvents(nextEvents);
       setSnapshotSource(source);
-      generatedAtRef.current = nextGeneratedAt;
+      snapshotIdRef.current = nextCurrent.snapshot_id || nextCurrent.generated_at;
       if (manual) {
         setToast(source === "github"
-          ? previousGeneratedAt && previousGeneratedAt === nextGeneratedAt
-            ? "已与 GitHub main 最新快照同步"
-            : "已同步 GitHub main 更新后的公开快照"
+          ? previousSnapshotId && previousSnapshotId === snapshotIdRef.current
+            ? "当前已是 GitHub main 最新公开快照"
+            : "已读取 GitHub main 更新后的公开快照"
           : "GitHub 暂时不可用，已整体回退本地快照");
       }
-    } catch {
-      if (manual) setToast("无法读取最新快照，已保留当前数据");
+    } catch (error) {
+      if (manual && sequence === requestSequenceRef.current) {
+        setToast(error instanceof DOMException && error.name === "AbortError"
+          ? "读取快照超时，已保留当前数据"
+          : "无法读取最新快照，已保留当前数据");
+      }
     } finally {
-      if (manual) {
+      window.clearTimeout(timeout);
+      if (manual && sequence === requestSequenceRef.current) {
         const remaining = 550 - (Date.now() - startedAt);
         if (remaining > 0) await new Promise((resolve) => window.setTimeout(resolve, remaining));
       }
-      setReady(true);
-      setIsRefreshing(false);
+      if (sequence === requestSequenceRef.current) {
+        setReady(true);
+        setIsRefreshing(false);
+        requestControllerRef.current = null;
+      }
     }
   }, []);
+
+  useEffect(() => () => requestControllerRef.current?.abort(), []);
 
   useEffect(() => {
     const initialLoad = window.setTimeout(() => void loadData(), 0);
@@ -906,7 +952,8 @@ export function AgentPulseClient() {
   const snapshotHighlights = useMemo(() => {
     const highlights: SnapshotHighlight[] = [];
     const usedLinks = new Set<string>();
-    const snapshotTime = current.generated_at ? new Date(current.generated_at).getTime() : clockTick;
+    const snapshotTimeValue = current.checked_at || current.generated_at;
+    const snapshotTime = snapshotTimeValue ? new Date(snapshotTimeValue).getTime() : clockTick;
     const verifiedNewsItems = [...models, ...agents]
       .filter((item) => item.confidence === "verified")
       .filter((item) => item.time && new Date(item.time).getTime() <= snapshotTime);
@@ -997,13 +1044,13 @@ export function AgentPulseClient() {
     }
 
     return highlights.slice(0, 3);
-  }, [agents, clockTick, current.generated_at, current.tools, models, policies]);
+  }, [agents, clockTick, current.checked_at, current.generated_at, current.tools, models, policies]);
   const activeMeta = tab === "models"
     ? { title: "模型发布", label: "模型更新", copy: "汇总厂商官网与发布说明中的新模型和能力变化，每条均可回到官方原文核验。", icon: <ImageIcon />, tags: ["最新发布", "官方来源", "模型更新"] }
     : tab === "agents"
       ? { title: "Agent 工具", label: "工具更新", copy: "跟踪 Agent 工具的正式版本与开源发布，快速确认工作流中值得升级的变化。", icon: <MovieIcon />, tags: ["版本发布", "GitHub", "工具链"] }
       : { title: "弃用与迁移", label: "风险提醒", copy: "集中查看模型停用、接口弃用与迁移说明，为替换和调整提前留出时间。", icon: <LightIcon />, tags: ["弃用迁移", "官方文档", "政策提醒"] };
-  const snapshotMeta = snapshotStatus(current.status, current.generated_at, clockTick);
+  const snapshotMeta = snapshotStatus(current, clockTick);
   const activeTotal = confidenceView === "verified" ? activeVerifiedItems.length : activeReviewItems.length;
   const activeCountLabel = `${activeItems.length < activeTotal ? `最近 ${activeItems.length} 条 · 共 ` : ""}${activeTotal} 条${confidenceView === "verified" ? "已核验更新" : "待核验线索"}`;
   const activeIntro = confidenceView === "verified"
@@ -1044,7 +1091,7 @@ export function AgentPulseClient() {
             <header className="mobile-landing-nav">
               <CornerLinks />
               <button type="button" className="mobile-sync-button liquid-glass-strong" onClick={() => void loadData(true)} disabled={isRefreshing}>
-                {isRefreshing ? "同步中" : "同步快照"}<ArrowIcon />
+                {isRefreshing ? "读取中" : "读取快照"}<ArrowIcon />
               </button>
             </header>
 
@@ -1071,7 +1118,7 @@ export function AgentPulseClient() {
                 <h2 id="mobile-today-title">今日重点</h2>
               </div>
               <button type="button" className="mobile-sync-button liquid-glass-strong" onClick={() => void loadData(true)} disabled={isRefreshing}>
-                {isRefreshing ? "同步中" : "同步"}<ArrowIcon />
+                {isRefreshing ? "读取中" : "读取"}<ArrowIcon />
               </button>
             </header>
             <p className="mobile-today-status">{snapshotMeta.detail} · {snapshotSource === "github" ? "GitHub main" : "本地回退"}</p>
@@ -1121,7 +1168,7 @@ export function AgentPulseClient() {
           <div className="mobile-category-toolbar">
             <button type="button" className="mobile-back-button" onClick={returnToMobileToday} aria-label="返回今日重点"><span aria-hidden="true">←</span></button>
             <div><p>{activeMeta.label}</p><strong>{activeMeta.title}</strong></div>
-            <button type="button" className="mobile-header-sync" onClick={() => void loadData(true)} disabled={isRefreshing}>{isRefreshing ? "同步中" : "同步"}</button>
+            <button type="button" className="mobile-header-sync" onClick={() => void loadData(true)} disabled={isRefreshing}>{isRefreshing ? "读取中" : "读取"}</button>
           </div>
           <nav className="mobile-category-tabs" aria-label="切换情报分类">
             {feedCards.map((card) => (
@@ -1194,8 +1241,8 @@ export function AgentPulseClient() {
             <button type="button" onClick={() => selectFeed("models", true)}>模型发布</button>
             <button type="button" onClick={() => selectFeed("agents", true)}>Agent 工具</button>
             <button type="button" onClick={() => selectFeed("notices", true)}>弃用提醒</button>
-            <button type="button" className="nav-refresh" onClick={() => void loadData(true)} disabled={isRefreshing} title="直接同步 GitHub main 上最新的公开数据快照">
-              {isRefreshing ? "同步中" : "同步快照"}<ArrowIcon />
+            <button type="button" className="nav-refresh" onClick={() => void loadData(true)} disabled={isRefreshing} title="读取 GitHub main 已完成采集的最新公开快照">
+              {isRefreshing ? "读取中" : "读取快照"}<ArrowIcon />
             </button>
           </nav>
           <div className="nav-spacer" aria-hidden="true" />
@@ -1209,8 +1256,8 @@ export function AgentPulseClient() {
           <h1 className="hero-title reveal reveal-two">见微知著</h1>
           <p className="hero-copy reveal reveal-three">把散落在官网、GitHub 与 npm 的模型发布、Agent 工具更新和弃用提醒，整理成可核验、可直达原文的更新清单。</p>
           <div className="hero-actions reveal reveal-four">
-            <button type="button" className="liquid-glass-strong primary-action" onClick={() => void loadData(true)} disabled={isRefreshing} title="直接同步 GitHub main 上最新的公开数据快照">
-              {isRefreshing ? "正在同步" : "同步最新快照"}<ArrowIcon />
+            <button type="button" className="liquid-glass-strong primary-action" onClick={() => void loadData(true)} disabled={isRefreshing} title="读取 GitHub main 已完成采集的最新公开快照">
+              {isRefreshing ? "正在读取" : "读取最新快照"}<ArrowIcon />
             </button>
             <button type="button" className="quiet-action" onClick={scrollToSignals}>查看更新清单<PlayIcon /></button>
           </div>
@@ -1247,7 +1294,7 @@ export function AgentPulseClient() {
               <p className="summary-kicker">最新与热点 · 仅展示已核验信号</p>
               <h3 id="snapshot-summary-title">现在值得关注</h3>
               <p className="summary-copy">
-                不再按分类各取一条，而是结合发布时间、24 小时热度和迁移影响筛选。当前快照于 {relativeTime(current.generated_at, clockTick)}同步。
+                不再按分类各取一条，而是结合发布时间、24 小时热度和迁移影响筛选。最近于 {relativeTime(current.checked_at || current.generated_at, clockTick)}完成检查，内容于 {relativeTime(current.content_updated_at || current.generated_at, clockTick)}更新。
               </p>
             </div>
             <div className="summary-stack">

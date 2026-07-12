@@ -117,6 +117,7 @@ export function normalizeFeeds(source) {
       kind: feed.kind === "deprecation" || feed.kind === "policy" ? "deprecation" : "model",
       parser: feed.parser || "dated-sections",
       priority: Number.isFinite(feed.priority) ? feed.priority : 2,
+      required: feed.required !== false,
     }));
   }
   return [{
@@ -126,6 +127,7 @@ export function normalizeFeeds(source) {
     kind: "model",
     parser: source.parser || "dated-sections",
     priority: 1,
+    required: true,
   }];
 }
 
@@ -426,7 +428,12 @@ function eventId(parts) {
 }
 
 async function readJson(file, fallback) {
-  try { return JSON.parse(await readFile(file, "utf8")); } catch { return fallback; }
+  try {
+    return JSON.parse(await readFile(file, "utf8"));
+  } catch (error) {
+    if (error?.code === "ENOENT") return fallback;
+    throw new Error(`Invalid JSON in ${path.relative(root, file)}: ${error.message}`);
+  }
 }
 
 async function writeJson(file, value) {
@@ -437,7 +444,8 @@ async function writeJson(file, value) {
 }
 
 async function request(url, previous = {}) {
-  const isGitHub = url.includes("api.github.com");
+  const parsedUrl = new URL(url);
+  const isGitHub = parsedUrl.protocol === "https:" && parsedUrl.hostname === "api.github.com";
   const headers = {
     "user-agent": userAgent,
     accept: isGitHub ? "application/vnd.github+json" : "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
@@ -461,10 +469,14 @@ async function request(url, previous = {}) {
   throw lastError;
 }
 
-function sourceState(previous, response, error) {
+function sourceState(previous, response, error, required = true) {
+  const checkedAt = new Date().toISOString();
   return {
     status: error ? "error" : "ok",
-    checked_at: new Date().toISOString(),
+    required,
+    checked_at: checkedAt,
+    last_success_at: error ? previous?.last_success_at || null : checkedAt,
+    consecutive_failures: error ? (previous?.consecutive_failures || 0) + 1 : 0,
     etag: response?.headers?.get?.("etag") || previous?.etag || null,
     last_modified: response?.headers?.get?.("last-modified") || previous?.last_modified || null,
     content_hash: response?.body ? createHash("sha256").update(response.body).digest("hex") : previous?.content_hash || null,
@@ -507,18 +519,18 @@ async function collectTool(source, oldTool, sourceStatuses, now) {
   const errors = [];
   try {
     const result = await request(`https://api.github.com/repos/${source.repo}`, sourceStatuses[repoKey]);
-    sourceStatuses[repoKey] = sourceState(sourceStatuses[repoKey], result);
+    sourceStatuses[repoKey] = sourceState(sourceStatuses[repoKey], result, null, true);
     repo = result.unchanged ? oldTool : JSON.parse(result.body);
   } catch (error) {
-    sourceStatuses[repoKey] = sourceState(sourceStatuses[repoKey], null, error);
+    sourceStatuses[repoKey] = sourceState(sourceStatuses[repoKey], null, error, true);
     errors.push(error);
   }
   try {
     const result = await request(`https://api.github.com/repos/${source.repo}/releases?per_page=20`, sourceStatuses[releaseKey]);
-    sourceStatuses[releaseKey] = sourceState(sourceStatuses[releaseKey], result);
+    sourceStatuses[releaseKey] = sourceState(sourceStatuses[releaseKey], result, null, true);
     releases = result.unchanged ? [] : JSON.parse(result.body);
   } catch (error) {
-    sourceStatuses[releaseKey] = sourceState(sourceStatuses[releaseKey], null, error);
+    sourceStatuses[releaseKey] = sourceState(sourceStatuses[releaseKey], null, error, true);
     errors.push(error);
   }
   if (source.npm) {
@@ -527,7 +539,7 @@ async function collectTool(source, oldTool, sourceStatuses, now) {
         request(`https://registry.npmjs.org/${encodeURIComponent(source.npm)}/latest`, sourceStatuses[npmKey]),
         request(`https://api.npmjs.org/downloads/point/last-week/${encodeURIComponent(source.npm)}`),
       ]);
-      sourceStatuses[npmKey] = sourceState(sourceStatuses[npmKey], packageResult);
+      sourceStatuses[npmKey] = sourceState(sourceStatuses[npmKey], packageResult, null, false);
       npm = packageResult.unchanged
         ? oldTool?.npm
         : {
@@ -536,7 +548,7 @@ async function collectTool(source, oldTool, sourceStatuses, now) {
             weekly_downloads: JSON.parse(downloadsResult.body).downloads ?? null,
           };
     } catch (error) {
-      sourceStatuses[npmKey] = sourceState(sourceStatuses[npmKey], null, error);
+      sourceStatuses[npmKey] = sourceState(sourceStatuses[npmKey], null, error, false);
       errors.push(error);
     }
   }
@@ -558,7 +570,7 @@ async function collectTool(source, oldTool, sourceStatuses, now) {
         : oldTool?.latest_release || null,
       release_cadence_30d: releases.length ? cadence(releases, now) : oldTool?.release_cadence_30d || { count: 0, median_days: null },
       npm,
-      status: errors.length >= 2 ? "error" : errors.length ? "stale" : "ok",
+      status: errors.length >= 2 ? "error" : errors.length ? "degraded" : "ok",
     },
     events: releases.map((release) => ({
       id: `release:${source.id}:${release.id}`,
@@ -583,7 +595,7 @@ async function collectFeed(source, feed, sourceStatuses) {
   const previous = sourceStatuses[key] || (feed.id === "primary" || feed.id === "news-rss" || feed.id === "api-changelog" ? sourceStatuses[legacyKey] : null) || {};
   try {
     const result = await request(feed.url, previous);
-    const state = sourceState(previous, result);
+    const state = sourceState(previous, result, null, feed.required);
     const normalizedHash = result.body
       ? createHash("sha256").update(stripMarkup(result.body)).digest("hex")
       : previous.content_hash || null;
@@ -626,7 +638,7 @@ async function collectFeed(source, feed, sourceStatuses) {
     return { feed, status: "ok", signals: parsed, reviewEvent, state };
   } catch (error) {
     sourceStatuses[key] = {
-      ...sourceState(previous, null, error),
+      ...sourceState(previous, null, error, feed.required),
       feed_id: feed.id,
       feed_label: feed.label,
       kind: feed.kind,
@@ -656,6 +668,7 @@ async function collectModel(source, oldModel, sourceStatuses) {
     id: result.feed.id,
     label: result.feed.label,
     kind: result.feed.kind,
+    required: result.feed.required,
     url: result.feed.url,
     status: result.status,
     checked_at: result.state?.checked_at || null,
@@ -663,7 +676,7 @@ async function collectModel(source, oldModel, sourceStatuses) {
   }));
 
   const healthy = feedStatuses.filter((feed) => feed.status === "ok").length;
-  const status = healthy === 0 ? "error" : healthy < feedStatuses.length ? "stale" : "ok";
+  const status = healthy === 0 ? "error" : healthy < feedStatuses.length ? "degraded" : "ok";
 
   const title = latestModelSignal?.title || oldModel?.title || "官方发布说明页已建立基线";
   const occurred_at = latestModelSignal?.occurred_at || oldModel?.occurred_at || null;
@@ -741,6 +754,82 @@ async function collectModel(source, oldModel, sourceStatuses) {
   return { model, events };
 }
 
+function configuredSourceKeys(sources) {
+  const keys = new Set();
+  for (const source of sources.tools || []) {
+    keys.add(`github:${source.id}:repo`);
+    keys.add(`github:${source.id}:releases`);
+    if (source.npm) keys.add(`npm:${source.id}`);
+  }
+  for (const source of sources.models || []) {
+    for (const feed of normalizeFeeds(source)) keys.add(`model:${source.id}:${feed.id}`);
+  }
+  return keys;
+}
+
+export function shouldSkipCollection(previousStatus, now = new Date(), cooldownMinutes = 0) {
+  if (!Number.isFinite(cooldownMinutes) || cooldownMinutes <= 0) return false;
+  const previous = new Date(previousStatus?.checked_at || previousStatus?.generated_at || 0).getTime();
+  return Number.isFinite(previous) && previous > 0 && now.getTime() - previous < cooldownMinutes * 60_000;
+}
+
+export function summarizeHealth(sourceStatuses) {
+  const entries = Object.entries(sourceStatuses);
+  const required = entries.filter(([, source]) => source.required !== false);
+  const failed = entries.filter(([, source]) => source.status === "error");
+  const requiredFailed = required.filter(([, source]) => source.status === "error");
+  const requiredHealthy = required.filter(([, source]) => source.status === "ok");
+  const overall = required.length > 0 && requiredHealthy.length === 0
+    ? "error"
+    : failed.length > 0
+      ? "degraded"
+      : "ok";
+  return {
+    overall,
+    counts: {
+      total: entries.length,
+      healthy: entries.length - failed.length,
+      failed: failed.length,
+      required: required.length,
+      required_healthy: requiredHealthy.length,
+      required_failed: requiredFailed.length,
+    },
+    failed_sources: failed.map(([key, source]) => ({
+      key,
+      required: source.required !== false,
+      error: source.error || "unknown error",
+      consecutive_failures: source.consecutive_failures || 0,
+    })),
+    alert_sources: requiredFailed
+      .filter(([, source]) => (source.consecutive_failures || 0) >= 3)
+      .map(([key]) => key),
+  };
+}
+
+function contentFingerprint(tools, models, events) {
+  return {
+    tools: tools.map((tool) => ({
+      id: tool.id,
+      latest_release: tool.latest_release,
+      npm_version: tool.npm?.version || null,
+    })),
+    models: models.map((model) => ({
+      id: model.id,
+      latest_model: model.latest_model || null,
+      latest_policy: model.latest_policy || null,
+    })),
+    events: events.map((event) => ({
+      id: event.id,
+      title: event.title,
+      occurred_at: event.occurred_at,
+      published_at: event.published_at || null,
+      effective_at: event.effective_at || null,
+      source_url: event.source_url,
+      confidence: event.confidence,
+    })),
+  };
+}
+
 export async function main(now = new Date()) {
   const [sources, oldCurrent, oldEvents, oldSnapshots, oldStatus] = await Promise.all([
     readJson(sourceFile, { tools: [], models: [] }),
@@ -749,7 +838,16 @@ export async function main(now = new Date()) {
     readJson(path.join(publicData, "snapshots.json"), []),
     readJson(path.join(publicData, "status.json"), { sources: {} }),
   ]);
-  const sourceStatuses = oldStatus.sources || {};
+  const cooldownMinutes = Number(process.env.COLLECTOR_COOLDOWN_MINUTES || 0);
+  if (shouldSkipCollection(oldStatus, now, cooldownMinutes)) {
+    console.log(`Skipped collection because the previous check is inside the ${cooldownMinutes}-minute cooldown.`);
+    return { skipped: true, reason: "cooldown" };
+  }
+
+  const allowedKeys = configuredSourceKeys(sources);
+  const sourceStatuses = Object.fromEntries(
+    [...allowedKeys].map((key) => [key, oldStatus.sources?.[key] || {}]),
+  );
   const oldTools = new Map((oldCurrent.tools || []).map((tool) => [tool.id, tool]));
   const oldModels = new Map((oldCurrent.models || []).map((model) => [model.id, model]));
 
@@ -776,25 +874,65 @@ export async function main(now = new Date()) {
   ]).filter((event) => event.type !== "deprecation" || isConcreteDeprecation(event.title));
 
   const models = modelResults.map((result) => result.model);
-  const allSourcesHealthy = tools.every((tool) => tool.status === "ok") && models.every((model) => model.status === "ok");
+  const health = summarizeHealth(sourceStatuses);
+  const checkedAt = now.toISOString();
+  const contentHash = createHash("sha256")
+    .update(JSON.stringify(contentFingerprint(tools, models, events)))
+    .digest("hex");
+  const contentUpdatedAt = oldStatus.content_hash === contentHash
+    ? oldStatus.content_updated_at || oldCurrent.content_updated_at || oldCurrent.generated_at || checkedAt
+    : checkedAt;
+  const lastFullSuccessAt = health.counts.required_failed === 0
+    ? checkedAt
+    : oldStatus.last_full_success_at || oldStatus.latest_success_at || null;
+  const snapshotId = `snapshot-${shortHash(`${checkedAt}:${contentHash}`)}`;
   const current = {
-    generated_at: now.toISOString(),
+    schema_version: 1,
+    snapshot_id: snapshotId,
+    generated_at: checkedAt,
+    checked_at: checkedAt,
+    content_updated_at: contentUpdatedAt,
+    last_full_success_at: lastFullSuccessAt,
     timezone: "Asia/Shanghai",
-    status: allSourcesHealthy ? "ok" : "stale",
+    status: health.overall,
+    source_counts: health.counts,
     tools,
     models,
   };
-  const status = { latest_success_at: now.toISOString(), sources: sourceStatuses };
+  const status = {
+    schema_version: 1,
+    snapshot_id: snapshotId,
+    checked_at: checkedAt,
+    content_updated_at: contentUpdatedAt,
+    last_full_success_at: lastFullSuccessAt,
+    latest_success_at: lastFullSuccessAt,
+    overall: health.overall,
+    source_counts: health.counts,
+    failed_sources: health.failed_sources,
+    alert_sources: health.alert_sources,
+    content_hash: contentHash,
+    sources: sourceStatuses,
+  };
+  const bundle = {
+    schema_version: 1,
+    snapshot_id: snapshotId,
+    checked_at: checkedAt,
+    current,
+    events,
+    health: status,
+  };
 
   await Promise.all([
     writeJson(path.join(publicData, "current.json"), current),
     writeJson(path.join(publicData, "events.json"), events),
     writeJson(path.join(publicData, "snapshots.json"), [...snapshotsByTool.entries()].map(([tool_id, points]) => ({ tool_id, points }))),
     writeJson(path.join(publicData, "status.json"), status),
+    writeJson(path.join(publicData, "bundle.json"), bundle),
   ]);
 
   const feedCount = models.reduce((sum, model) => sum + (model.feeds?.length || 0), 0);
-  console.log(`Collected ${tools.length} tools, ${models.length} models (${feedCount} feeds), ${events.length} events.`);
+  console.log(`Collected ${tools.length} tools, ${models.length} models (${feedCount} feeds), ${events.length} events. Health: ${health.overall}. Snapshot: ${snapshotId}.`);
+  return { skipped: false, current, events, status, bundle };
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(path.resolve(process.argv[1])).href) {

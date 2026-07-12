@@ -10,6 +10,8 @@
     "build": "vinext build",
     "start": "vinext start",
     "collect": "node scripts/collect.mjs",
+    "validate:data": "node scripts/validate-data.mjs",
+    "report:health": "node scripts/report-health.mjs",
     "test": "npm run build && node --test tests/*.test.mjs",
     "typecheck": "tsc --noEmit",
     "lint": "eslint . --ignore-pattern dist --ignore-pattern .next",

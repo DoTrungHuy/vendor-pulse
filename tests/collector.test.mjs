@@ -15,6 +15,8 @@ import {
   parseRssModelEvent,
   parseRssModelEvents,
   pruneSnapshots,
+  shouldSkipCollection,
+  summarizeHealth,
 } from "../scripts/collect.mjs";
 
 test("five-hour slots remain contiguous across a UTC date boundary", () => {
@@ -184,4 +186,39 @@ test("classifyEventType prefers policy keywords", () => {
   assert.equal(classifyEventType("GPT-5.6 is now available"), "model");
   assert.equal(classifyEventType("Retiring GPT-4.5", "model"), "deprecation");
   assert.equal(classifyEventType("Routine note", "deprecation"), "deprecation");
+});
+
+test("collection cooldown supplies a staggered schedule without duplicate writes", () => {
+  const now = new Date("2026-07-12T12:00:00Z");
+  assert.equal(shouldSkipCollection({ checked_at: "2026-07-12T11:30:00Z" }, now, 45), true);
+  assert.equal(shouldSkipCollection({ checked_at: "2026-07-12T11:00:00Z" }, now, 45), false);
+  assert.equal(shouldSkipCollection({ checked_at: "2026-07-12T11:30:00Z" }, now, 0), false);
+});
+
+test("health distinguishes optional degradation from required-source failure", () => {
+  const optionalFailure = summarizeHealth({
+    required: { status: "ok", required: true, consecutive_failures: 0 },
+    optional: { status: "error", required: false, error: "403", consecutive_failures: 3 },
+  });
+  assert.equal(optionalFailure.overall, "degraded");
+  assert.equal(optionalFailure.counts.required_failed, 0);
+  assert.deepEqual(optionalFailure.alert_sources, []);
+
+  const requiredFailure = summarizeHealth({
+    healthy: { status: "ok", required: true, consecutive_failures: 0 },
+    failed: { status: "error", required: true, error: "timeout", consecutive_failures: 3 },
+  });
+  assert.equal(requiredFailure.overall, "degraded");
+  assert.equal(requiredFailure.counts.required_failed, 1);
+  assert.deepEqual(requiredFailure.alert_sources, ["failed"]);
+});
+
+test("health becomes an error only when every required source is unavailable", () => {
+  const result = summarizeHealth({
+    one: { status: "error", required: true, consecutive_failures: 1 },
+    two: { status: "error", required: true, consecutive_failures: 1 },
+    optional: { status: "ok", required: false, consecutive_failures: 0 },
+  });
+  assert.equal(result.overall, "error");
+  assert.equal(result.counts.required_healthy, 0);
 });
