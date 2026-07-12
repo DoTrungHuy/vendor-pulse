@@ -1,98 +1,35 @@
 {
   "schema_version": 1,
-  "snapshot_id": "snapshot-ad405e4128",
-  "checked_at": "2026-07-12T07:00:49.751Z",
+  "snapshot_id": "snapshot-dd103e9053",
+  "checked_at": "2026-07-12T07:02:09.006Z",
   "content_updated_at": "2026-07-12T07:00:49.751Z",
-  "last_full_success_at": "2026-07-12T06:47:09.096Z",
-  "latest_success_at": "2026-07-12T06:47:09.096Z",
+  "last_full_success_at": "2026-07-12T07:02:09.006Z",
+  "latest_success_at": "2026-07-12T07:02:09.006Z",
   "overall": "degraded",
   "source_counts": {
     "total": 20,
-    "healthy": 10,
-    "failed": 10,
+    "healthy": 19,
+    "failed": 1,
     "required": 14,
-    "required_healthy": 6,
-    "required_failed": 8
+    "required_healthy": 14,
+    "required_failed": 0
   },
   "failed_sources": [
-    {
-      "key": "github:codex:repo",
-      "required": true,
-      "error": "403 rate limit exceeded",
-      "consecutive_failures": 1
-    },
-    {
-      "key": "github:codex:releases",
-      "required": true,
-      "error": "403 rate limit exceeded",
-      "consecutive_failures": 1
-    },
-    {
-      "key": "github:claude-code:repo",
-      "required": true,
-      "error": "403 rate limit exceeded",
-      "consecutive_failures": 1
-    },
-    {
-      "key": "github:claude-code:releases",
-      "required": true,
-      "error": "403 rate limit exceeded",
-      "consecutive_failures": 1
-    },
-    {
-      "key": "github:agy:releases",
-      "required": true,
-      "error": "403 rate limit exceeded",
-      "consecutive_failures": 1
-    },
-    {
-      "key": "github:openclaw:repo",
-      "required": true,
-      "error": "403 rate limit exceeded",
-      "consecutive_failures": 1
-    },
-    {
-      "key": "github:openclaw:releases",
-      "required": true,
-      "error": "403 rate limit exceeded",
-      "consecutive_failures": 1
-    },
     {
       "key": "model:gpt:model-release-notes",
       "required": false,
       "error": "403 Forbidden",
-      "consecutive_failures": 7
-    },
-    {
-      "key": "model:gpt:deprecations",
-      "required": true,
-      "error": "403 Forbidden",
-      "consecutive_failures": 1
-    },
-    {
-      "key": "model:gpt:api-changelog",
-      "required": false,
-      "error": "403 Forbidden",
-      "consecutive_failures": 1
+      "consecutive_failures": 8
     }
   ],
   "alert_sources": [],
   "review_queue": [
     {
-      "id": "event:source_changed:gpt:api-changelog:533b0d500a",
-      "title": "GPT API Changelog 内容变化，待核验",
-      "type": "source_changed",
-      "source_url": "https://developers.openai.com/api/docs/changelog",
-      "occurred_at": "2026-07-10T08:32:33.633Z",
-      "confidence": "needs_review",
-      "reason": "not_verified"
-    },
-    {
       "id": "event:deprecation:claude:deprecations:8f6e6e70d8",
       "title": "Claude: As safer and more capable models launch, Anthropic regularly retires older ones. Applications relying on Anthropic models may need occasional updates to keep working. Impacted customers will always be notified by email a",
       "type": "deprecation",
       "source_url": "https://platform.claude.com/docs/en/about-claude/model-deprecations",
-      "occurred_at": "2026-07-10T08:32:32.432Z",
+      "occurred_at": "2026-07-12T07:02:16.195Z",
       "confidence": "needs_review",
       "reason": "not_verified"
     },
@@ -101,7 +38,7 @@
       "title": "Claude: To help measure the performance of replacement models on your tasks, consider thorough testing of your applications with the new models well before the retirement date. For specific instructions on migrating to the lates",
       "type": "deprecation",
       "source_url": "https://platform.claude.com/docs/en/about-claude/model-deprecations",
-      "occurred_at": "2026-07-10T08:32:32.432Z",
+      "occurred_at": "2026-07-12T07:02:16.195Z",
       "confidence": "needs_review",
       "reason": "not_verified"
     },
@@ -110,16 +47,7 @@
       "title": "Claude: Model deprecations - Claude Platform Docs Claude Platform Docs Messages",
       "type": "deprecation",
       "source_url": "https://platform.claude.com/docs/en/about-claude/model-deprecations",
-      "occurred_at": "2026-07-10T08:32:32.431Z",
-      "confidence": "needs_review",
-      "reason": "not_verified"
-    },
-    {
-      "id": "event:deprecation:gemini:models-page:2590d4ce84",
-      "title": "Gemini: Gemini 2.0 Flash Shut down Our second generation workhorse model, with next-gen features and improved capabilities, including superior speed, native tool use, and a 1M token context window. restore",
-      "type": "deprecation",
-      "source_url": "https://ai.google.dev/gemini-api/docs/models",
-      "occurred_at": "2026-07-10T08:32:31.411Z",
+      "occurred_at": "2026-07-12T07:02:16.194Z",
       "confidence": "needs_review",
       "reason": "not_verified"
     },
@@ -128,7 +56,7 @@
       "title": "Gemini: Imagen 4 Deprecated Text-to-image model yet, featuring fast and ultra-fast generation and exceptional clarity up to 2K resolution. Music generation models",
       "type": "deprecation",
       "source_url": "https://ai.google.dev/gemini-api/docs/models",
-      "occurred_at": "2026-07-10T08:32:31.410Z",
+      "occurred_at": "2026-07-12T07:02:12.448Z",
       "confidence": "needs_review",
       "reason": "not_verified"
     },
@@ -137,7 +65,7 @@
       "title": "Gemini: These models are deprecated and will be shut down soon; migrate to newer models to prevent service interruptions. history Gemini 2.0 Flash Shut down",
       "type": "deprecation",
       "source_url": "https://ai.google.dev/gemini-api/docs/models",
-      "occurred_at": "2026-07-10T08:32:31.410Z",
+      "occurred_at": "2026-07-12T07:02:12.448Z",
       "confidence": "needs_review",
       "reason": "not_verified"
     },
@@ -146,7 +74,16 @@
       "title": "Gemini: history Gemini 2.0 Flash Shut down Our second generation workhorse model, with next-gen features and improved capabilities, including superior speed, native tool use, and a 1M token context window.",
       "type": "deprecation",
       "source_url": "https://ai.google.dev/gemini-api/docs/models",
-      "occurred_at": "2026-07-10T08:32:31.410Z",
+      "occurred_at": "2026-07-12T07:02:12.448Z",
+      "confidence": "needs_review",
+      "reason": "not_verified"
+    },
+    {
+      "id": "event:deprecation:gemini:models-page:2590d4ce84",
+      "title": "Gemini: Gemini 2.0 Flash Shut down Our second generation workhorse model, with next-gen features and improved capabilities, including superior speed, native tool use, and a 1M token context window. restore",
+      "type": "deprecation",
+      "source_url": "https://ai.google.dev/gemini-api/docs/models",
+      "occurred_at": "2026-07-12T07:02:12.448Z",
       "confidence": "needs_review",
       "reason": "not_verified"
     },
@@ -155,7 +92,7 @@
       "title": "Gemini: Migrate to Gen AI SDK Migrate to Interactions API Interactions breaking changes (May 2026)",
       "type": "deprecation",
       "source_url": "https://ai.google.dev/gemini-api/docs/models",
-      "occurred_at": "2026-07-10T08:32:31.409Z",
+      "occurred_at": "2026-07-12T07:02:12.446Z",
       "confidence": "needs_review",
       "reason": "not_verified"
     },
@@ -164,142 +101,7 @@
       "title": "Gemini: Migrate to Interactions API Interactions breaking changes (May 2026) Rate limits",
       "type": "deprecation",
       "source_url": "https://ai.google.dev/gemini-api/docs/models",
-      "occurred_at": "2026-07-10T08:32:31.409Z",
-      "confidence": "needs_review",
-      "reason": "not_verified"
-    },
-    {
-      "id": "event:source_changed:gpt:primary:a32a7bb442",
-      "title": "GPT 官方发布说明页内容变化，待核验",
-      "type": "source_changed",
-      "source_url": "https://openai.com/news/",
-      "occurred_at": "2026-07-10T07:10:59.168Z",
-      "confidence": "needs_review",
-      "reason": "not_verified"
-    },
-    {
-      "id": "event:model:gpt:primary:2b7b975517",
-      "title": "GPT: GPT-5.6 is now the preferred model in Microsoft 365 Copilot",
-      "type": "model",
-      "source_url": "https://openai.com/index/gpt-5-6-preferred-model-microsoft-365-copilot",
-      "occurred_at": "2026-07-09T13:00:00.000Z",
-      "confidence": "needs_review",
-      "reason": "not_verified"
-    },
-    {
-      "id": "event:model:gpt:news-rss:2b7b975517",
-      "title": "GPT: GPT-5.6 is now the preferred model in Microsoft 365 Copilot",
-      "type": "model",
-      "source_url": "https://openai.com/index/gpt-5-6-preferred-model-microsoft-365-copilot",
-      "occurred_at": "2026-07-09T13:00:00.000Z",
-      "confidence": "verified",
-      "reason": "not_a_model_release"
-    },
-    {
-      "id": "event:model:gpt:news-rss:00c22cbb21",
-      "title": "GPT: GPT-5.5 Bio Bug Bounty",
-      "type": "model",
-      "source_url": "https://openai.com/index/bio-bug-bounty",
-      "occurred_at": "2026-07-09T10:00:00.000Z",
-      "confidence": "verified",
-      "reason": "not_a_model_release"
-    },
-    {
-      "id": "event:model:gpt:news-rss:2a2d8c3ab4",
-      "title": "GPT: GPT-5.6: Frontier intelligence that scales with your ambition",
-      "type": "model",
-      "source_url": "https://openai.com/index/gpt-5-6",
-      "occurred_at": "2026-07-09T10:00:00.000Z",
-      "confidence": "verified",
-      "reason": "not_a_model_release"
-    },
-    {
-      "id": "event:model:gpt:news-rss:e79aabb6d1",
-      "title": "GPT: Australian Payments Plus moves faster with ChatGPT and Codex",
-      "type": "model",
-      "source_url": "https://openai.com/index/australian-payments-plus",
-      "occurred_at": "2026-07-07T00:00:00.000Z",
-      "confidence": "verified",
-      "reason": "not_a_model_release"
-    },
-    {
-      "id": "event:model:gpt:news-rss:5b38a8850b",
-      "title": "GPT: Introducing GeneBench-Pro",
-      "type": "model",
-      "source_url": "https://openai.com/index/introducing-genebench-pro",
-      "occurred_at": "2026-06-30T00:00:00.000Z",
-      "confidence": "verified",
-      "reason": "not_a_model_release"
-    },
-    {
-      "id": "event:model:gemini:api-changelog:0fc6e14e5f",
-      "title": "Gemini: Computer Use : Launched public preview support for the",
-      "type": "model",
-      "source_url": "https://ai.google.dev/gemini-api/docs/changelog",
-      "occurred_at": "2026-06-24T00:00:00.000Z",
-      "confidence": "verified",
-      "reason": "not_a_model_release"
-    },
-    {
-      "id": "event:model:gpt:news-rss:4d251d4438",
-      "title": "GPT: How GPT-5 helped immunologist Derya Unutmaz solve a 3-year-old mystery",
-      "type": "model",
-      "source_url": "https://openai.com/index/gpt-5-immunology-mystery",
-      "occurred_at": "2026-06-23T17:00:00.000Z",
-      "confidence": "verified",
-      "reason": "not_a_model_release"
-    },
-    {
-      "id": "event:model:claude:launch:5b92eb71a4",
-      "title": "Claude: It&#x27;s available on Claude Fable 5, Claude Mythos 5, Claude Opus 4.5 and newer, and Claude Sonnet 4.5 and newer; see the model compatibility table .",
-      "type": "model",
-      "source_url": "https://platform.claude.com/docs/en/release-notes/overview",
-      "occurred_at": "2026-06-18T00:00:00.000Z",
-      "confidence": "verified",
-      "reason": "not_a_model_release"
-    },
-    {
-      "id": "event:deprecation:gpt:deprecations:9206f3de27",
-      "title": "GPT: 2026-06-03: Reusable prompts On June 3, 2026, we notified developers using reusable prompts in the dashboard and API that reusable prompt objects are being deprecated. Date Update",
-      "type": "deprecation",
-      "source_url": "https://developers.openai.com/api/docs/deprecations",
-      "occurred_at": "2026-06-03T00:00:00.000Z",
-      "confidence": "needs_review",
-      "reason": "not_verified"
-    },
-    {
-      "id": "event:deprecation:gpt:deprecations:fa8a3ebfc2",
-      "title": "GPT: On June 3, 2026, we notified developers using reusable prompts in the dashboard and API that reusable prompt objects are being deprecated. Date Update June 3, 2026 Deprecation announced and prompt creation de-emphasized ",
-      "type": "deprecation",
-      "source_url": "https://developers.openai.com/api/docs/deprecations",
-      "occurred_at": "2026-06-03T00:00:00.000Z",
-      "confidence": "needs_review",
-      "reason": "not_verified"
-    },
-    {
-      "id": "event:deprecation:gpt:deprecations:3d3f70e021",
-      "title": "GPT: Date Update June 3, 2026 Deprecation announced and prompt creation de-emphasized in the platform. Nov 30, 2026 The v1/prompts API and reusable prompt objects are scheduled to shut down.",
-      "type": "deprecation",
-      "source_url": "https://developers.openai.com/api/docs/deprecations",
-      "occurred_at": "2026-06-03T00:00:00.000Z",
-      "confidence": "needs_review",
-      "reason": "not_verified"
-    },
-    {
-      "id": "event:deprecation:gpt:deprecations:76c36f9632",
-      "title": "GPT: June 3, 2026 Deprecation announced and prompt creation de-emphasized in the platform. Nov 30, 2026 The v1/prompts API and reusable prompt objects are scheduled to shut down. To migrate, move reusable prompt content into ",
-      "type": "deprecation",
-      "source_url": "https://developers.openai.com/api/docs/deprecations",
-      "occurred_at": "2026-06-03T00:00:00.000Z",
-      "confidence": "needs_review",
-      "reason": "not_verified"
-    },
-    {
-      "id": "event:deprecation:gpt:deprecations:12c296fbc6",
-      "title": "GPT: Nov 30, 2026 The v1/prompts API and reusable prompt objects are scheduled to shut down. To migrate, move reusable prompt content into your application code. See Migrate from prompt objects . 2026-06-03: Evals platform",
-      "type": "deprecation",
-      "source_url": "https://developers.openai.com/api/docs/deprecations",
-      "occurred_at": "2026-06-03T00:00:00.000Z",
+      "occurred_at": "2026-07-12T07:02:12.446Z",
       "confidence": "needs_review",
       "reason": "not_verified"
     }
@@ -307,34 +109,34 @@
   "content_hash": "65c2c9dc7c5b9b036e3afde63023d28a12e51912011458bb9622711fe21a2506",
   "sources": {
     "github:codex:repo": {
-      "status": "error",
+      "status": "ok",
       "required": true,
-      "checked_at": "2026-07-12T07:00:52.608Z",
-      "last_success_at": "2026-07-12T06:47:09.465Z",
-      "consecutive_failures": 1,
-      "etag": "W/\"b78a08a02a10a51a70f612cca50c2a6e00f6325cb568344fc5369341de67dd87\"",
-      "last_modified": "Sun, 12 Jul 2026 06:29:30 GMT",
-      "content_hash": "0aa8dab32ae7c1ee2d029f9c09a02f411d5214b4206f70b2ba3284b71c2c1279",
+      "checked_at": "2026-07-12T07:02:09.316Z",
+      "last_success_at": "2026-07-12T07:02:09.316Z",
+      "consecutive_failures": 0,
+      "etag": "W/\"c303d02da62f4082cc014a5e4e3ba3d44c795a3283f6e5d6b21690afe19d4307\"",
+      "last_modified": "Sun, 12 Jul 2026 06:57:54 GMT",
+      "content_hash": "f90a9267a47a6f632e9e39912d6385155eb1bd9aba8572162ef88977c59df446",
       "previous_hash": "0aa8dab32ae7c1ee2d029f9c09a02f411d5214b4206f70b2ba3284b71c2c1279",
-      "error": "403 rate limit exceeded"
+      "error": null
     },
     "github:codex:releases": {
-      "status": "error",
+      "status": "ok",
       "required": true,
-      "checked_at": "2026-07-12T07:00:54.699Z",
-      "last_success_at": "2026-07-12T06:47:11.377Z",
-      "consecutive_failures": 1,
-      "etag": "W/\"f35837befe388d31cf10f3af08ebb571ea21cb18c4ad6faeea451780140465da\"",
+      "checked_at": "2026-07-12T07:02:11.170Z",
+      "last_success_at": "2026-07-12T07:02:11.170Z",
+      "consecutive_failures": 0,
+      "etag": "W/\"8352fd3ebe54fe46be50da36716c8eda64df8891ef43bd5f5fc0b122a661dd4e\"",
       "last_modified": null,
-      "content_hash": "a2b45fcab95b45517b17ba56806a7c8581885659cf1dafe79931a4ab603d5dfe",
+      "content_hash": "781f495f2bfd347684b8e6e3a05405f0816cebbc313e26bc712aa63ca93c8d05",
       "previous_hash": "a2b45fcab95b45517b17ba56806a7c8581885659cf1dafe79931a4ab603d5dfe",
-      "error": "403 rate limit exceeded"
+      "error": null
     },
     "npm:codex": {
       "status": "ok",
       "required": false,
-      "checked_at": "2026-07-12T07:00:55.576Z",
-      "last_success_at": "2026-07-12T07:00:55.576Z",
+      "checked_at": "2026-07-12T07:02:11.637Z",
+      "last_success_at": "2026-07-12T07:02:11.637Z",
       "consecutive_failures": 0,
       "etag": null,
       "last_modified": null,
@@ -343,34 +145,34 @@
       "error": null
     },
     "github:claude-code:repo": {
-      "status": "error",
+      "status": "ok",
       "required": true,
-      "checked_at": "2026-07-12T07:00:52.383Z",
-      "last_success_at": "2026-07-12T06:47:09.463Z",
-      "consecutive_failures": 1,
-      "etag": "W/\"5646be7c73a6680b5d9d35b9b97e1c7522a6dbe11482f1fe6affe8da340841c2\"",
-      "last_modified": "Sun, 12 Jul 2026 06:39:56 GMT",
-      "content_hash": "8aa71587e32c261c9bce85bcecc1a3355f92bd338108343d4c4e2a7b1456a48a",
+      "checked_at": "2026-07-12T07:02:09.312Z",
+      "last_success_at": "2026-07-12T07:02:09.312Z",
+      "consecutive_failures": 0,
+      "etag": "W/\"66dc05de73915cca3e68abd0a55ea8890fe63477b6e6d35307ad489ea04e8071\"",
+      "last_modified": "Sun, 12 Jul 2026 06:58:09 GMT",
+      "content_hash": "66667d27865f1b74e97cff3fafb588a710b44a7a3272e14fd6b2154c22d6dba0",
       "previous_hash": "8aa71587e32c261c9bce85bcecc1a3355f92bd338108343d4c4e2a7b1456a48a",
-      "error": "403 rate limit exceeded"
+      "error": null
     },
     "github:claude-code:releases": {
-      "status": "error",
+      "status": "ok",
       "required": true,
-      "checked_at": "2026-07-12T07:00:54.472Z",
-      "last_success_at": "2026-07-12T06:47:09.905Z",
-      "consecutive_failures": 1,
-      "etag": "W/\"66aea4d028eea0f3cdd615f3132501261ead79c9f8f5395ad30f6d6c5e2c7b33\"",
+      "checked_at": "2026-07-12T07:02:09.706Z",
+      "last_success_at": "2026-07-12T07:02:09.706Z",
+      "consecutive_failures": 0,
+      "etag": "W/\"7b0a5c74871653c0deeab7f00cfb39be661a028399a1fe31b86773a8bc782b57\"",
       "last_modified": null,
-      "content_hash": "5a6dfbcce3a231a8449ac124cee879a4eab28ce2a201fcbbc63786eca68e980a",
+      "content_hash": "894cc9b948cc3a389beda9979df8f7a17fbc7acb21b55800431309c39435625e",
       "previous_hash": "5a6dfbcce3a231a8449ac124cee879a4eab28ce2a201fcbbc63786eca68e980a",
-      "error": "403 rate limit exceeded"
+      "error": null
     },
     "npm:claude-code": {
       "status": "ok",
       "required": false,
-      "checked_at": "2026-07-12T07:00:55.201Z",
-      "last_success_at": "2026-07-12T07:00:55.201Z",
+      "checked_at": "2026-07-12T07:02:09.872Z",
+      "last_success_at": "2026-07-12T07:02:09.872Z",
       "consecutive_failures": 0,
       "etag": null,
       "last_modified": null,
@@ -381,59 +183,59 @@
     "github:agy:repo": {
       "status": "ok",
       "required": true,
-      "checked_at": "2026-07-12T07:00:50.657Z",
-      "last_success_at": "2026-07-12T07:00:50.657Z",
+      "checked_at": "2026-07-12T07:02:09.310Z",
+      "last_success_at": "2026-07-12T07:02:09.310Z",
       "consecutive_failures": 0,
-      "etag": "W/\"4fe69a0f2daa9794b433f5146328dc3d334250f1b8f9958a0cae718fa44d2064\"",
+      "etag": "W/\"eaa1c0e07f2b223faa71ecb5b8c7892d7ef9b2022544ea171e78b5a13926cd1a\"",
       "last_modified": "Sun, 12 Jul 2026 01:34:06 GMT",
-      "content_hash": "ffcc3289b2cda5a9608a2a219e76c313dfa52eceddd85bcb130b311cd26e5393",
-      "previous_hash": "0cd89fcebda4dd0ba0c8467493f7bc004d72e69cd4220c9d93bdd7c189e1643f",
+      "content_hash": "0cd89fcebda4dd0ba0c8467493f7bc004d72e69cd4220c9d93bdd7c189e1643f",
+      "previous_hash": "ffcc3289b2cda5a9608a2a219e76c313dfa52eceddd85bcb130b311cd26e5393",
       "error": null
     },
     "github:agy:releases": {
-      "status": "error",
+      "status": "ok",
       "required": true,
-      "checked_at": "2026-07-12T07:00:52.764Z",
-      "last_success_at": "2026-07-12T06:47:09.855Z",
-      "consecutive_failures": 1,
-      "etag": "W/\"1bafba654e6e6df36568bfb7068e705b47bd0c9273966d2888537693ce54ddd4\"",
+      "checked_at": "2026-07-12T07:02:09.522Z",
+      "last_success_at": "2026-07-12T07:02:09.522Z",
+      "consecutive_failures": 0,
+      "etag": "W/\"18a0be0513368f68222bc5cace104c61627d23669084555a6500fef1470a1153\"",
       "last_modified": null,
-      "content_hash": "ac0d9e48d9cb4b10af3fc568afdd4feaf6754e2aa730435a0159cc65d671db9d",
+      "content_hash": "8093804eb2e2b9458dba3da60745a6c21161d8a2165f1c9d209e62d6c6003fdb",
       "previous_hash": "ac0d9e48d9cb4b10af3fc568afdd4feaf6754e2aa730435a0159cc65d671db9d",
-      "error": "403 rate limit exceeded"
+      "error": null
     },
     "github:openclaw:repo": {
-      "status": "error",
+      "status": "ok",
       "required": true,
-      "checked_at": "2026-07-12T07:00:52.385Z",
-      "last_success_at": "2026-07-12T06:47:09.483Z",
-      "consecutive_failures": 1,
-      "etag": "W/\"8fdf350dc1fa63953325650e9a49b5a06a61524edc27f5264bf4e973df5f5371\"",
-      "last_modified": "Sun, 12 Jul 2026 06:42:25 GMT",
-      "content_hash": "4f1a0d6c80363c4f6b29475bc2551be796ac0ad64a86666204ee31856eea9ccf",
+      "checked_at": "2026-07-12T07:02:09.325Z",
+      "last_success_at": "2026-07-12T07:02:09.325Z",
+      "consecutive_failures": 0,
+      "etag": "W/\"61bc0685b9044311e01445d07344f896fa233cd1f934916b159f5f83eda7012c\"",
+      "last_modified": "Sun, 12 Jul 2026 07:01:19 GMT",
+      "content_hash": "9094f12474e0326fed0265118017b83b8eacc9c394212106bd4d5daad9b85230",
       "previous_hash": "4f1a0d6c80363c4f6b29475bc2551be796ac0ad64a86666204ee31856eea9ccf",
-      "error": "403 rate limit exceeded"
+      "error": null
     },
     "github:openclaw:releases": {
-      "status": "error",
+      "status": "ok",
       "required": true,
-      "checked_at": "2026-07-12T07:00:54.495Z",
-      "last_success_at": "2026-07-12T06:47:10.172Z",
-      "consecutive_failures": 1,
-      "etag": "W/\"55ce4596aedc1cff027035cbdf63da37584cf17c5dc961c0bfab797fb1fd55d7\"",
+      "checked_at": "2026-07-12T07:02:09.919Z",
+      "last_success_at": "2026-07-12T07:02:09.919Z",
+      "consecutive_failures": 0,
+      "etag": "W/\"c90390938e13854a825d0dd903c31ab04b2283d946c34c84cd24f5a3044ecbf9\"",
       "last_modified": null,
-      "content_hash": "f7a9eb40ae325742595e4d2b331a6864520bb96715b3fb4c4cc75eeae8055b41",
+      "content_hash": "5a0a5dab5afe77d2692e419c31349de107daae9cc48f1c00c8fc005631fc47c2",
       "previous_hash": "f7a9eb40ae325742595e4d2b331a6864520bb96715b3fb4c4cc75eeae8055b41",
-      "error": "403 rate limit exceeded"
+      "error": null
     },
     "npm:openclaw": {
       "status": "ok",
       "required": false,
-      "checked_at": "2026-07-12T07:00:55.309Z",
-      "last_success_at": "2026-07-12T07:00:55.309Z",
+      "checked_at": "2026-07-12T07:02:09.939Z",
+      "last_success_at": "2026-07-12T07:02:09.939Z",
       "consecutive_failures": 0,
       "etag": null,
-      "last_modified": "Sun, 12 Jul 2026 06:59:27 GMT",
+      "last_modified": "Sun, 12 Jul 2026 06:58:53 GMT",
       "content_hash": "a04724d9d445e012807e5d0cd3f99541928a7f57ef311238694e514a1e84e552",
       "previous_hash": "a04724d9d445e012807e5d0cd3f99541928a7f57ef311238694e514a1e84e552",
       "error": null
@@ -441,13 +243,13 @@
     "model:gpt:news-rss": {
       "status": "ok",
       "required": true,
-      "checked_at": "2026-07-12T07:00:57.087Z",
-      "last_success_at": "2026-07-12T07:00:57.087Z",
+      "checked_at": "2026-07-12T07:02:12.058Z",
+      "last_success_at": "2026-07-12T07:02:12.058Z",
       "consecutive_failures": 0,
       "etag": null,
       "last_modified": null,
-      "content_hash": "5edf97e9b7cc106441c863eef71721bb0ff8e02e2127ec118725f0784c079849",
-      "previous_hash": "65c5d9e8890d2ba035fbe34553cda7fae54b8dfa5df14dfdb7d14e4de697b6cb",
+      "content_hash": "272aa2c3c7c86898c36d22e7f6eb9f56680a8c831fb96e361076a28b2df7b5aa",
+      "previous_hash": "5edf97e9b7cc106441c863eef71721bb0ff8e02e2127ec118725f0784c079849",
       "error": null,
       "normalized": true,
       "feed_id": "news-rss",
@@ -457,9 +259,9 @@
     "model:gpt:model-release-notes": {
       "status": "error",
       "required": false,
-      "checked_at": "2026-07-12T07:01:01.401Z",
+      "checked_at": "2026-07-12T07:02:13.964Z",
       "last_success_at": null,
-      "consecutive_failures": 7,
+      "consecutive_failures": 8,
       "etag": null,
       "last_modified": null,
       "content_hash": null,
@@ -470,31 +272,33 @@
       "kind": "model"
     },
     "model:gpt:deprecations": {
-      "status": "error",
+      "status": "ok",
       "required": true,
-      "checked_at": "2026-07-12T07:01:04.106Z",
-      "last_success_at": "2026-07-12T06:47:14.226Z",
-      "consecutive_failures": 1,
+      "checked_at": "2026-07-12T07:02:14.238Z",
+      "last_success_at": "2026-07-12T07:02:14.238Z",
+      "consecutive_failures": 0,
       "etag": "W/\"2ce7b5eb73d48fd0c3a3bc1f1b449091\"",
       "last_modified": "Sun, 12 Jul 2026 06:20:03 GMT",
       "content_hash": "e6c1df1a031e68b40d2fedd9fc182c50d76f1ddb3ac30a63efb907920a009d4c",
       "previous_hash": "e6c1df1a031e68b40d2fedd9fc182c50d76f1ddb3ac30a63efb907920a009d4c",
-      "error": "403 Forbidden",
+      "error": null,
+      "normalized": true,
       "feed_id": "deprecations",
       "feed_label": "API Deprecations",
       "kind": "deprecation"
     },
     "model:gpt:api-changelog": {
-      "status": "error",
+      "status": "ok",
       "required": false,
-      "checked_at": "2026-07-12T07:01:06.803Z",
-      "last_success_at": "2026-07-12T06:47:14.288Z",
-      "consecutive_failures": 1,
+      "checked_at": "2026-07-12T07:02:14.299Z",
+      "last_success_at": "2026-07-12T07:02:14.299Z",
+      "consecutive_failures": 0,
       "etag": "W/\"ac5d4c511b69783e971f4b8b45b3de38\"",
       "last_modified": "Sun, 12 Jul 2026 06:20:08 GMT",
       "content_hash": "4c0df7eef712834884e3665f8ddfdad21c266536c2f904aedcfbba6bb5bd643f",
       "previous_hash": "4c0df7eef712834884e3665f8ddfdad21c266536c2f904aedcfbba6bb5bd643f",
-      "error": "403 Forbidden",
+      "error": null,
+      "normalized": true,
       "feed_id": "api-changelog",
       "feed_label": "API Changelog",
       "kind": "model"
@@ -502,8 +306,8 @@
     "model:claude:news": {
       "status": "ok",
       "required": true,
-      "checked_at": "2026-07-12T07:01:00.687Z",
-      "last_success_at": "2026-07-12T07:01:00.687Z",
+      "checked_at": "2026-07-12T07:02:15.357Z",
+      "last_success_at": "2026-07-12T07:02:15.357Z",
       "consecutive_failures": 0,
       "etag": null,
       "last_modified": null,
@@ -518,8 +322,8 @@
     "model:claude:platform-notes": {
       "status": "ok",
       "required": false,
-      "checked_at": "2026-07-12T07:01:02.885Z",
-      "last_success_at": "2026-07-12T07:01:02.885Z",
+      "checked_at": "2026-07-12T07:02:15.869Z",
+      "last_success_at": "2026-07-12T07:02:15.869Z",
       "consecutive_failures": 0,
       "etag": null,
       "last_modified": null,
@@ -534,8 +338,8 @@
     "model:claude:deprecations": {
       "status": "ok",
       "required": true,
-      "checked_at": "2026-07-12T07:01:04.021Z",
-      "last_success_at": "2026-07-12T07:01:04.021Z",
+      "checked_at": "2026-07-12T07:02:16.190Z",
+      "last_success_at": "2026-07-12T07:02:16.190Z",
       "consecutive_failures": 0,
       "etag": null,
       "last_modified": null,
@@ -550,8 +354,8 @@
     "model:gemini:api-changelog": {
       "status": "ok",
       "required": true,
-      "checked_at": "2026-07-12T07:00:56.684Z",
-      "last_success_at": "2026-07-12T07:00:56.684Z",
+      "checked_at": "2026-07-12T07:02:11.983Z",
+      "last_success_at": "2026-07-12T07:02:11.983Z",
       "consecutive_failures": 0,
       "etag": null,
       "last_modified": "Thu, 09 Jul 2026 23:04:22 GMT",
@@ -566,8 +370,8 @@
     "model:gemini:models-page": {
       "status": "ok",
       "required": true,
-      "checked_at": "2026-07-12T07:00:57.219Z",
-      "last_success_at": "2026-07-12T07:00:57.219Z",
+      "checked_at": "2026-07-12T07:02:12.440Z",
+      "last_success_at": "2026-07-12T07:02:12.440Z",
       "consecutive_failures": 0,
       "etag": null,
       "last_modified": "Thu, 09 Jul 2026 23:04:22 GMT",
