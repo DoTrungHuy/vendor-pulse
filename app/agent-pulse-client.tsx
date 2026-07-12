@@ -43,6 +43,20 @@ type ItemKind = "model" | "agent" | "notice";
 type TabId = "models" | "agents" | "notices";
 type Confidence = "verified" | "needs_review";
 type ConfidenceView = Confidence;
+type MobileView = "home" | "today" | TabId;
+
+const MOBILE_BREAKPOINT = "(max-width: 640px)";
+const MOBILE_VIEWS = new Set<MobileView>(["home", "today", "models", "agents", "notices"]);
+
+function mobileViewFromHash(): MobileView {
+  if (typeof window === "undefined") return "home";
+  const candidate = window.location.hash.replace(/^#/, "") as MobileView;
+  return MOBILE_VIEWS.has(candidate) ? candidate : "home";
+}
+
+function isMobileCategory(view: MobileView): view is TabId {
+  return view === "models" || view === "agents" || view === "notices";
+}
 
 type FeedItem = {
   id: string;
@@ -336,10 +350,12 @@ function lifecycleHeadline(item: FeedItem, upcoming: boolean) {
 
 function relativeTime(value: string | null, now = Date.now()) {
   if (!value) return "尚未生成";
-  const mins = Math.max(0, Math.round((now - new Date(value).getTime()) / 60_000));
+  const timestamp = new Date(value).getTime();
+  if (!Number.isFinite(timestamp)) return "时间待确认";
+  const mins = Math.max(0, Math.floor((now - timestamp) / 60_000));
   if (mins < 1) return "刚刚";
   if (mins < 60) return `${mins} 分钟前`;
-  const hours = Math.round(mins / 60);
+  const hours = Math.floor(mins / 60);
   if (hours < 48) return `${hours} 小时前`;
   return `${Math.floor(hours / 24)} 天前`;
 }
@@ -351,7 +367,9 @@ function compactMetric(value: number | null | undefined) {
 
 function snapshotStatus(status: string, generatedAt: string | null, now: number) {
   if (!generatedAt) return { label: "等待快照", detail: "等待首次自动采集" };
-  const minutes = Math.max(0, Math.round((now - new Date(generatedAt).getTime()) / 60_000));
+  const generatedTimestamp = new Date(generatedAt).getTime();
+  if (!Number.isFinite(generatedTimestamp)) return { label: "时间异常", detail: "快照时间无法识别，请重新同步" };
+  const minutes = Math.max(0, Math.floor((now - generatedTimestamp) / 60_000));
   const age = relativeTime(generatedAt, now);
 
   if (minutes >= 150) return { label: "更新延迟", detail: `最近快照生成于 ${age}` };
@@ -550,13 +568,43 @@ export function AgentPulseClient() {
   const [events, setEvents] = useState<EventRecord[]>([]);
   const [ready, setReady] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const [tab, setTab] = useState<TabId>("models");
+  const [tab, setTab] = useState<TabId>(() => {
+    const initialView = mobileViewFromHash();
+    return isMobileCategory(initialView) ? initialView : "models";
+  });
   const [confidenceView, setConfidenceView] = useState<ConfidenceView>("verified");
   const [toast, setToast] = useState<string | null>(null);
   const [clockTick, setClockTick] = useState(() => Date.now());
   const [snapshotSource, setSnapshotSource] = useState<SnapshotSource>("local");
+  const [isMobileLayout, setIsMobileLayout] = useState(() => typeof window !== "undefined" && window.matchMedia(MOBILE_BREAKPOINT).matches);
+  const [mobileView, setMobileView] = useState<MobileView>(() => mobileViewFromHash());
   const signalSectionRef = useRef<HTMLElement>(null);
   const generatedAtRef = useRef<string | null>(null);
+  const mobileFlowRef = useRef<HTMLDivElement>(null);
+  const mobileHomeRef = useRef<HTMLElement>(null);
+  const mobileTodayRef = useRef<HTMLElement>(null);
+
+  const navigateMobile = useCallback((nextView: MobileView, replace = false) => {
+    const currentlyFromToday = window.history.state?.mobileFrom === "today" || mobileView === "today";
+    const nextState = {
+      mobileView: nextView,
+      mobileFrom: isMobileCategory(nextView) && currentlyFromToday ? "today" : undefined,
+    };
+    window.history[replace ? "replaceState" : "pushState"](nextState, "", `#${nextView}`);
+    if (isMobileCategory(nextView)) {
+      setTab(nextView);
+      setConfidenceView("verified");
+    }
+    setMobileView(nextView);
+  }, [mobileView]);
+
+  const returnToMobileToday = useCallback(() => {
+    if (window.history.state?.mobileFrom === "today") {
+      window.history.back();
+      return;
+    }
+    navigateMobile("today", true);
+  }, [navigateMobile]);
 
   const loadData = useCallback(async (manual = false, preferRemote = true) => {
     const startedAt = Date.now();
@@ -628,6 +676,65 @@ export function AgentPulseClient() {
     const timer = window.setInterval(() => setClockTick(Date.now()), 60_000);
     return () => window.clearInterval(timer);
   }, []);
+
+  useEffect(() => {
+    const media = window.matchMedia(MOBILE_BREAKPOINT);
+    const syncLayout = () => setIsMobileLayout(media.matches);
+    syncLayout();
+    media.addEventListener("change", syncLayout);
+    return () => media.removeEventListener("change", syncLayout);
+  }, []);
+
+  useEffect(() => {
+    if (!isMobileLayout) return;
+    const syncView = () => {
+      const nextView = mobileViewFromHash();
+      if (isMobileCategory(nextView)) {
+        setTab(nextView);
+        setConfidenceView("verified");
+      }
+      setMobileView(nextView);
+    };
+    syncView();
+    window.addEventListener("popstate", syncView);
+    window.addEventListener("hashchange", syncView);
+    return () => {
+      window.removeEventListener("popstate", syncView);
+      window.removeEventListener("hashchange", syncView);
+    };
+  }, [isMobileLayout]);
+
+  useEffect(() => {
+    if (!ready || !isMobileLayout || isMobileCategory(mobileView)) return;
+    const target = mobileView === "today" ? mobileTodayRef.current : mobileHomeRef.current;
+    if (!target) return;
+    window.requestAnimationFrame(() => target.scrollIntoView({ block: "start", behavior: "auto" }));
+  }, [isMobileLayout, mobileView, ready]);
+
+  useEffect(() => {
+    if (!ready || !isMobileLayout || isMobileCategory(mobileView)) return;
+    const root = mobileFlowRef.current;
+    const home = mobileHomeRef.current;
+    const today = mobileTodayRef.current;
+    if (!root || !home || !today) return;
+
+    const observer = new IntersectionObserver((entries) => {
+      const visible = entries
+        .filter((entry) => entry.isIntersecting)
+        .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+      if (!visible || visible.intersectionRatio < 0.55) return;
+      const nextView: MobileView = visible.target === today ? "today" : "home";
+      setMobileView((currentView) => {
+        if (currentView === nextView) return currentView;
+        window.history.replaceState({ mobileView: nextView }, "", `#${nextView}`);
+        return nextView;
+      });
+    }, { root, threshold: [0.55, 0.75] });
+
+    observer.observe(home);
+    observer.observe(today);
+    return () => observer.disconnect();
+  }, [isMobileLayout, mobileView, ready]);
 
   const models = useMemo(() => {
     const fromEvents = events.filter((event) => event.type === "model").map(eventToItem).filter(Boolean) as FeedItem[];
@@ -825,6 +932,155 @@ export function AgentPulseClient() {
     { id: "agents", title: "Agent 工具", count: verifiedAgents.length, icon: <MovieIcon />, tags: [`已核验 ${verifiedAgents.length}`, "GitHub", "npm"], copy: "跟踪 Codex、Claude Code 等工具的正式版本与热度变化。" },
     { id: "notices", title: "弃用与迁移", count: verifiedPolicies.length, icon: <LightIcon />, tags: [`已核验 ${verifiedPolicies.length}`, `待核验 ${reviewPolicies.length}`, `官方入口 ${OFFICIAL_NOTICES.length}`], copy: "区分真实停用事件和固定监测入口，优先呈现需要行动的变化。" },
   ];
+
+  if (isMobileLayout && !isMobileCategory(mobileView)) {
+    return (
+      <div className="mobile-experience">
+        <div ref={mobileFlowRef} className="mobile-home-flow">
+          <FadingVideo className="stage-video mobile-flow-video" src={HERO_VIDEO} />
+
+          <section ref={mobileHomeRef} className="mobile-landing-panel" aria-label="Agent Pulse 手机端首页">
+            <header className="mobile-landing-nav">
+              <span className="brand-orb liquid-glass" aria-hidden="true">a</span>
+              <button type="button" className="mobile-sync-button liquid-glass-strong" onClick={() => void loadData(true)} disabled={isRefreshing}>
+                {isRefreshing ? "同步中" : "同步快照"}<ArrowIcon />
+              </button>
+            </header>
+
+            <div className="mobile-landing-content">
+              <div className="mobile-live-badge liquid-glass">
+                <span>{snapshotMeta.label}</span>
+                <p>{snapshotMeta.detail} · {snapshotSource === "github" ? "GitHub main" : "本地回退"}</p>
+              </div>
+              <h1>见微知著</h1>
+              <p>把分散的模型发布、Agent 工具更新与弃用提醒，整理成可以快速判断、随时核验的官方信号。</p>
+            </div>
+
+            <div className="mobile-swipe-cue" aria-hidden="true">
+              <span>向上滑动</span>
+              <b>查看今日重点</b>
+              <i>↑</i>
+            </div>
+          </section>
+
+          <section ref={mobileTodayRef} className="mobile-today-panel" aria-labelledby="mobile-today-title">
+            <header className="mobile-today-header">
+              <div>
+                <p>{"// TODAY'S PULSE"}</p>
+                <h2 id="mobile-today-title">今日重点</h2>
+              </div>
+              <button type="button" className="mobile-sync-button liquid-glass-strong" onClick={() => void loadData(true)} disabled={isRefreshing}>
+                {isRefreshing ? "同步中" : "同步"}<ArrowIcon />
+              </button>
+            </header>
+            <p className="mobile-today-status">{snapshotMeta.detail} · {snapshotSource === "github" ? "GitHub main" : "本地回退"}</p>
+
+            <div className="mobile-highlight-stack">
+              {snapshotHighlights.map(({ label, item, reason, signal }, index) => (
+                <button key={`${label}-${item.id}`} type="button" className="mobile-highlight-card liquid-glass frosted-panel" onClick={() => handleOpen(item)}>
+                  <span className="mobile-highlight-index">{String(index + 1).padStart(2, "0")}</span>
+                  <div>
+                    <p className="mobile-highlight-meta"><span>{label}</span><b>{item.vendor}</b><em>{signal}</em></p>
+                    <h3>{item.title}</h3>
+                    <p className="mobile-highlight-note">{reason}</p>
+                    <span className="mobile-card-link">查看官方原文 <ArrowIcon /></span>
+                  </div>
+                </button>
+              ))}
+            </div>
+
+            <div className="mobile-category-section">
+              <div className="mobile-section-heading">
+                <p>{"// BROWSE BY SIGNAL"}</p>
+                <h2>选择关注方向</h2>
+              </div>
+              <div className="mobile-category-entries">
+                {feedCards.map((card) => (
+                  <button key={card.id} type="button" className="mobile-category-entry liquid-glass frosted-panel" onClick={() => navigateMobile(card.id)}>
+                    <span className="feed-icon liquid-glass">{card.icon}</span>
+                    <div><h3>{card.title}</h3><p>{card.copy}</p></div>
+                    <strong>{String(card.count).padStart(2, "0")}</strong>
+                    <ArrowIcon />
+                  </button>
+                ))}
+              </div>
+            </div>
+          </section>
+        </div>
+        {toast ? <div className="toast liquid-glass" role="status">{toast}</div> : null}
+      </div>
+    );
+  }
+
+  if (isMobileLayout && isMobileCategory(mobileView)) {
+    return (
+      <div className="mobile-category-view">
+        <FadingVideo className="stage-video mobile-category-video" src={SIGNALS_VIDEO} />
+        <header className="mobile-category-header liquid-glass">
+          <div className="mobile-category-toolbar">
+            <button type="button" className="mobile-back-button" onClick={returnToMobileToday} aria-label="返回今日重点"><span aria-hidden="true">←</span></button>
+            <div><p>{activeMeta.label}</p><strong>{activeMeta.title}</strong></div>
+            <button type="button" className="mobile-header-sync" onClick={() => void loadData(true)} disabled={isRefreshing}>{isRefreshing ? "同步中" : "同步"}</button>
+          </div>
+          <nav className="mobile-category-tabs" aria-label="切换情报分类">
+            {feedCards.map((card) => (
+              <button key={card.id} type="button" className={tab === card.id ? "is-active" : ""} onClick={() => navigateMobile(card.id, true)} aria-pressed={tab === card.id}>
+                {card.title}
+              </button>
+            ))}
+          </nav>
+        </header>
+
+        <main className="mobile-category-main">
+          <section className="mobile-category-intro liquid-glass frosted-panel">
+            <p>{snapshotMeta.detail} · {snapshotSource === "github" ? "GitHub main" : "本地回退"}</p>
+            <h1>{activeMeta.title}</h1>
+            <span>{activeIntro}</span>
+          </section>
+
+          <div className="mobile-list-controls">
+            <span>{activeCountLabel}</span>
+            <div className="confidence-switch" aria-label="可信状态筛选">
+              <button type="button" className={confidenceView === "verified" ? "is-active" : ""} onClick={() => setConfidenceView("verified")} aria-pressed={confidenceView === "verified"}>已核验 {activeVerifiedItems.length}</button>
+              {activeReviewItems.length ? (
+                <button type="button" className={confidenceView === "needs_review" ? "is-active is-review" : ""} onClick={() => setConfidenceView("needs_review")} aria-pressed={confidenceView === "needs_review"}>待核验 {activeReviewItems.length}</button>
+              ) : null}
+            </div>
+          </div>
+
+          <div className="mobile-signal-list">
+            {activeItems.length ? activeItems.map((item) => (
+              <button key={item.id} type="button" className="mobile-signal-card liquid-glass frosted-panel" onClick={() => handleOpen(item)}>
+                <p className="row-meta">
+                  <b>{item.vendor}</b>
+                  <em className={`confidence-badge ${item.confidence === "verified" ? "is-verified" : "is-review"}`}>{item.confidence === "verified" ? "已核验" : "待核验"}</em>
+                  {item.topic ? <span>{item.topic}</span> : null}
+                  <time>{item.effectiveAt ? `生效 ${formatCalendarDate(item.effectiveAt)}` : formatDate(item.time)}</time>
+                </p>
+                <h2>{item.title}</h2>
+                <p>{item.note}</p>
+                <span className="mobile-card-link">查看官方原文 <ArrowIcon /></span>
+              </button>
+            )) : <div className="empty">暂时还没有信号。</div>}
+          </div>
+
+          {tab === "notices" ? (
+            <section className="mobile-portals">
+              <div className="mobile-section-heading"><p>{"// OFFICIAL WATCHLIST"}</p><h2>官方监测入口</h2></div>
+              <div className="mobile-portal-list">
+                {OFFICIAL_NOTICES.map((item) => (
+                  <button key={item.id} type="button" className="mobile-portal-card liquid-glass" onClick={() => handleOpen(item)}>
+                    <span>{item.vendor}</span><b>{item.title}</b><ArrowIcon />
+                  </button>
+                ))}
+              </div>
+            </section>
+          ) : null}
+        </main>
+        {toast ? <div className="toast liquid-glass" role="status">{toast}</div> : null}
+      </div>
+    );
+  }
 
   return (
     <div className="space-page">

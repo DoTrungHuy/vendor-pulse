@@ -7,4 +7,7 @@ const base = configuredBase ? `/${configuredBase.replace(/^\/+|\/+$/g, "")}/` : 
 export default defineConfig({
   base,
   plugins: [react()],
+  server: {
+    allowedHosts: [".trycloudflare.com"],
+  },
 });
