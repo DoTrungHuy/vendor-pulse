@@ -71,16 +71,32 @@ test("current model records expose feed health and policy slots when collected",
   });
 });
 
-test("events may include model policy and review metadata", async () => {
-  const events = await json(dataRoot, "events.json");
+test("public events contain only verified official records while review candidates stay internal", async () => {
+  const [events, status] = await Promise.all([json(dataRoot, "events.json"), json(dataRoot, "status.json")]);
   assert.ok(Array.isArray(events));
-  const allowed = new Set(["release", "model", "deprecation", "source_changed"]);
-  events.slice(0, 50).forEach((event) => {
+  const allowed = new Set(["release", "model", "deprecation"]);
+  events.forEach((event) => {
     assert.ok(allowed.has(event.type), `unexpected event type ${event.type}`);
     assert.match(event.source_url, /^https:\/\//);
-    assert.ok(["verified", "needs_review"].includes(event.confidence));
+    assert.equal(event.confidence, "verified");
     assert.equal(event.id, event.canonical_key);
   });
+  assert.ok(Array.isArray(status.review_queue));
   assert.ok(events.some((event) => event.published_at), "expected summary-ready publish dates");
   assert.ok(events.some((event) => event.effective_at), "expected lifecycle effective dates");
+});
+
+test("Claude Sonnet 5 is one dated verified launch, not a duplicate review item", async () => {
+  const events = await json(dataRoot, "events.json");
+  const sonnet = events.filter((event) => /Claude Sonnet 5/i.test(event.title));
+  assert.equal(sonnet.length, 1);
+  assert.equal(sonnet[0].confidence, "verified");
+  assert.equal(sonnet[0].published_at, "2026-06-30T00:00:00.000Z");
+  assert.equal(sonnet[0].source_url, "https://www.anthropic.com/news/claude-sonnet-5");
+});
+
+test("customer stories and compatibility mentions are not published as model launches", async () => {
+  const events = await json(dataRoot, "events.json");
+  const modelTitles = events.filter((event) => event.type === "model").map((event) => event.title).join("\n");
+  assert.doesNotMatch(modelTitles, /Australian Payments Plus|helped immunologist|Bio Bug Bounty|model compatibility table/i);
 });

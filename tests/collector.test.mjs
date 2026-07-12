@@ -14,9 +14,11 @@ import {
   parseDeprecationsPage,
   parseRssModelEvent,
   parseRssModelEvents,
+  publishabilityReason,
   pruneSnapshots,
   shouldSkipCollection,
   summarizeHealth,
+  isStrictModelReleaseTitle,
 } from "../scripts/collect.mjs";
 
 test("five-hour slots remain contiguous across a UTC date boundary", () => {
@@ -186,6 +188,88 @@ test("classifyEventType prefers policy keywords", () => {
   assert.equal(classifyEventType("GPT-5.6 is now available"), "model");
   assert.equal(classifyEventType("Retiring GPT-4.5", "model"), "deprecation");
   assert.equal(classifyEventType("Routine note", "deprecation"), "deprecation");
+});
+
+test("anthropic news cards keep their explicit date and direct article URL", () => {
+  const events = parseAnthropicNews(`
+    <a href="/news/claude-sonnet-5">
+      <span>Product</span><time>Jun 30, 2026</time>
+      <h4>Introducing Claude Sonnet 5</h4>
+    </a>
+  `);
+  assert.equal(events.length, 1);
+  assert.equal(events[0].occurred_at, "2026-06-30T00:00:00.000Z");
+  assert.equal(events[0].source_url, "https://www.anthropic.com/news/claude-sonnet-5");
+  assert.equal(events[0].confidence, "verified");
+});
+
+test("the same model launch merges across official feeds and prefers the direct article", () => {
+  const base = {
+    item_id: "claude",
+    item_name: "Claude",
+    type: "model",
+    provider: "Anthropic",
+  };
+  const result = mergeEvents([], [
+    {
+      ...base,
+      id: "news-fallback",
+      title: "Claude: Introducing Claude Sonnet 5",
+      occurred_at: "2026-07-10T00:00:00Z",
+      published_at: null,
+      source_url: "https://www.anthropic.com/news",
+      feed_id: "news",
+      confidence: "needs_review",
+    },
+    {
+      ...base,
+      id: "platform-release",
+      title: "Claude: We've launched Claude Sonnet 5 (claude-sonnet-5)",
+      occurred_at: "2026-06-30T00:00:00Z",
+      published_at: "2026-06-30T00:00:00Z",
+      source_url: "https://platform.claude.com/docs/en/release-notes/overview",
+      feed_id: "platform-notes",
+      confidence: "verified",
+    },
+    {
+      ...base,
+      id: "news-release",
+      title: "Claude: Introducing Claude Sonnet 5",
+      occurred_at: "2026-06-30T00:00:00Z",
+      published_at: "2026-06-30T00:00:00Z",
+      source_url: "https://www.anthropic.com/news/claude-sonnet-5",
+      feed_id: "news",
+      confidence: "verified",
+    },
+  ]);
+  assert.equal(result.length, 1);
+  assert.equal(result[0].title, "Claude: Introducing Claude Sonnet 5");
+  assert.equal(result[0].source_url, "https://www.anthropic.com/news/claude-sonnet-5");
+  assert.equal(result[0].confidence, "verified");
+});
+
+test("public model events require a dated official release rather than a name mention", () => {
+  assert.equal(isStrictModelReleaseTitle("How GPT-5 helped a researcher solve a mystery"), false);
+  assert.equal(isStrictModelReleaseTitle("GPT-5.6 is now the preferred model in Copilot"), false);
+  assert.equal(isStrictModelReleaseTitle("Claude Fable 5 uses the tokenizer introduced with Claude Opus 4.7"), false);
+  assert.equal(isStrictModelReleaseTitle("Introducing Claude Sonnet 5"), true);
+  const allowed = new Set(["anthropic.com"]);
+  assert.equal(publishabilityReason({
+    type: "model",
+    title: "Introducing Claude Sonnet 5",
+    occurred_at: "2026-06-30T00:00:00Z",
+    published_at: "2026-06-30T00:00:00Z",
+    source_url: "https://www.anthropic.com/news/claude-sonnet-5",
+    confidence: "verified",
+  }, allowed, new Date("2026-07-12T00:00:00Z")), null);
+  assert.equal(publishabilityReason({
+    type: "model",
+    title: "How GPT-5 helped a researcher solve a mystery",
+    occurred_at: "2026-07-01T00:00:00Z",
+    published_at: "2026-07-01T00:00:00Z",
+    source_url: "https://openai.com/example",
+    confidence: "verified",
+  }, new Set(["openai.com"]), new Date("2026-07-12T00:00:00Z")), "not_a_model_release");
 });
 
 test("collection cooldown supplies a staggered schedule without duplicate writes", () => {

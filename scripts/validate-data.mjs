@@ -42,6 +42,7 @@ export async function validatePublishedData() {
   assert.ok(Array.isArray(snapshots), "snapshots must be an array");
 
   assert.equal(status.overall, current.status);
+  assert.ok(Array.isArray(status.review_queue), "status review queue must be available for internal inspection");
   assert.equal(status.source_counts.total, Object.keys(status.sources).length);
   assert.equal(status.source_counts.healthy + status.source_counts.failed, status.source_counts.total);
   Object.entries(status.sources).forEach(([key, source]) => {
@@ -53,6 +54,7 @@ export async function validatePublishedData() {
   });
 
   events.forEach((event) => {
+    assert.equal(event.confidence, "verified", `${event.id} must be verified before publication`);
     assert.equal(event.id, event.canonical_key, `${event.id} must use its canonical identity`);
     assert.match(event.source_url, /^https:\/\//, `${event.id} must link to HTTPS`);
     validTime(event.occurred_at, `${event.id}.occurred_at`);

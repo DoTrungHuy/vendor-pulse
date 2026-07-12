@@ -47,7 +47,7 @@ export function mergeEvents(existing, additions) {
     const lastSeen = [previous.last_seen_at, event.last_seen_at, previous.occurred_at, event.occurred_at]
       .filter(Boolean)
       .sort((a, b) => new Date(b) - new Date(a))[0];
-    const preferred = previous.confidence === "verified" || event.confidence !== "verified" ? previous : event;
+    const preferred = eventQuality(event) > eventQuality(previous) ? event : previous;
     byKey.set(canonicalKey, {
       ...preferred,
       id: canonicalKey,
@@ -58,6 +58,14 @@ export function mergeEvents(existing, additions) {
     });
   }
   return [...byKey.values()].sort((a, b) => new Date(b.occurred_at) - new Date(a.occurred_at));
+}
+
+function eventQuality(event) {
+  const directArticle = /\/news\/[^/]+\/?$/i.test(event.source_url || "");
+  return (event.confidence === "verified" ? 100 : 0)
+    + (event.published_at ? 20 : 0)
+    + (directArticle ? 15 : 0)
+    + (["news", "news-rss"].includes(event.feed_id) ? 5 : 0);
 }
 
 export function normalizeEventTitle(value) {
@@ -72,6 +80,18 @@ export function normalizeEventTitle(value) {
 
 export function canonicalEventKey(event) {
   let titleKey = normalizeEventTitle(event.title).replace(/^[^:]+:\s*/, "").replace(/^model status\s+/, "");
+  const modelLaunch = event.type === "model" && RELEASE_SIGNAL_PATTERN.test(titleKey)
+    ? titleKey.match(/\b(claude\s+(?:sonnet|opus|haiku)\s+\d+(?:\.\d+)?(?:[-\s](?:alpha|beta|preview|rc))?|gpt[-\s]?\d+(?:\.\d+)?(?:[-\s](?:alpha|beta|preview|rc))?|gemini\s+[a-z0-9._-]+)\b/i)?.[1]
+    : null;
+  if (modelLaunch) {
+    return eventId([
+      "event",
+      "model",
+      event.item_id || "unknown",
+      "launch",
+      shortHash(normalizeEventTitle(modelLaunch)),
+    ]);
+  }
   if (event.type === "deprecation") {
     const lifecycleSubject = titleKey.match(/(.+?)\s+will be retired on/i)?.[1]
       || titleKey.match(/fast mode for ([^,]+),\s*with removal/i)?.[1]
@@ -136,6 +156,22 @@ export function classifyEventType(title, preferredKind = "model") {
   return "model";
 }
 
+export function isStrictModelReleaseTitle(title) {
+  const normalized = normalizeEventTitle(title).replace(/^[^:]+:\s*/, "");
+  const model = String.raw`(?:gpt[-\s]?(?:\d+(?:\.\d+)?|live|oss)[a-z0-9._-]*|o[1-9](?:[-.][a-z0-9]+)*|claude\s+(?:sonnet|opus|haiku)\s+\d+(?:\.\d+)?|gemini[-\s][a-z0-9._-]{3,})`;
+  const actionFirst = new RegExp(String.raw`^(?:we(?:'|’)ve\s+)?(?:introduc(?:e|ed|ing)|launch(?:ed|ing)?|release[ds]?|previewing|debut(?:ed)?)\s+(?:the\s+)?${model}\b`, "i");
+  const modelFirst = new RegExp(String.raw`^${model}\b.{0,80}\b(?:is now available|is generally available|has launched|was launched|entered public preview)\b`, "i");
+  const datedSection = new RegExp(String.raw`:\s*(?:introduc(?:ed|ing)|launch(?:ed)?|release[ds]?)\s+${model}\b`, "i");
+  return actionFirst.test(normalized) || modelFirst.test(normalized) || datedSection.test(normalized);
+}
+
+export function isStrictDeprecationTitle(title) {
+  const normalized = normalizeEventTitle(title).replace(/^[^:]+:\s*/, "");
+  const action = /\b(deprecat(?:e|ed|ing|ion)|retir(?:e|ed|ing|ement)|shut(?:ting)?\s*down|sunset(?:ting)?|remov(?:e|ed|ing))\b/i.test(normalized);
+  const subject = /\b(gpt[-\s]?\d+(?:\.\d+)?[a-z0-9._-]*|o[1-9](?:[-.][a-z0-9]+)*|claude\s+(?:sonnet|opus|haiku)\s+\d+(?:\.\d+)?|gemini[-\s][a-z0-9._-]{3,})\b/i.test(normalized);
+  return action && subject;
+}
+
 export function parseDatedModelEvent(content) {
   return parseDatedModelEvents(content, { limit: 1 })[0] || null;
 }
@@ -156,7 +192,10 @@ export function parseDatedModelEvents(content, { limit = 5 } = {}) {
       const sentence = body
         .split(/(?<=[.!?。])\s+|\n+/)
         .map((entry) => entry.replace(/^[-•*#\s]+/, "").trim())
-        .find((entry) => entry.length > 12 && RELEASE_SIGNAL_PATTERN.test(entry));
+        .find((entry) => entry.length > 12 && (
+          isStrictModelReleaseTitle(entry)
+          || (POLICY_SIGNAL_PATTERN.test(entry) && (isConcreteDeprecation(entry) || isStrictDeprecationTitle(entry)))
+        ));
       if (!sentence) continue;
       const type = classifyEventType(sentence);
       const effectiveDate = type === "deprecation" ? extractEffectiveDateFromText(sentence) : null;
@@ -195,7 +234,7 @@ export function parseRssModelEvents(content, { limit = 8 } = {}) {
     const published = body.match(/<pubDate>([\s\S]*?)<\/pubDate>/i)?.[1];
     const url = decode(body.match(/<link>([\s\S]*?)<\/link>/i)?.[1] || "");
     if (!title || !published || !Number.isFinite(new Date(published).getTime())) continue;
-    if (!RSS_SIGNAL_PATTERN.test(title)) continue;
+    if (!(isStrictModelReleaseTitle(title) || (POLICY_SIGNAL_PATTERN.test(title) && (isConcreteDeprecation(title) || isStrictDeprecationTitle(title))))) continue;
     const type = classifyEventType(title);
     const publishedAt = new Date(published).toISOString();
     const effectiveDate = type === "deprecation" ? extractEffectiveDateFromText(title) : null;
@@ -300,7 +339,27 @@ export function parseAnthropicNews(content) {
   const events = [];
   const seen = new Set();
 
-  const datedCards = [
+  const cardPattern = /<a\b[^>]*href=["']([^"']+)["'][^>]*>[\s\S]{0,1400}?<time\b[^>]*>([^<]+)<\/time>[\s\S]{0,900}?<h[1-6]\b[^>]*>([\s\S]*?)<\/h[1-6]>/gi;
+  for (const match of content.matchAll(cardPattern)) {
+    const date = parseFlexibleDate(stripMarkup(match[2]));
+    const title = stripMarkup(match[3]).trim();
+    if (!date || !title || !isStrictModelReleaseTitle(title)) continue;
+    const key = title.toLowerCase();
+    if (seen.has(key)) continue;
+    seen.add(key);
+    events.push({
+      occurred_at: date.toISOString(),
+      published_at: date.toISOString(),
+      effective_at: null,
+      title: title.slice(0, 220),
+      type: classifyEventType(title),
+      source_url: new URL(match[1], "https://www.anthropic.com").href,
+      confidence: "verified",
+    });
+    if (events.length >= 5) break;
+  }
+
+  const datedCards = events.length ? [] : [
     ...text.matchAll(/(Claude[^\n]{0,120})\n+((?:January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{1,2},\s+\d{4}|\d{4}-\d{2}-\d{2})/gi),
     ...text.matchAll(/((?:January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{1,2},\s+\d{4})\n+((?:Introducing|Claude|Announcing)[^\n]{8,160})/gi),
   ];
@@ -316,7 +375,7 @@ export function parseAnthropicNews(content) {
       title = match[2].trim();
     }
     if (!date || !title || title.length < 8) continue;
-    if (!/claude|model|opus|sonnet|haiku|introducing|announcing/i.test(title)) continue;
+    if (!isStrictModelReleaseTitle(title)) continue;
     const key = title.toLowerCase();
     if (seen.has(key)) continue;
     seen.add(key);
@@ -658,13 +717,14 @@ async function collectModel(source, oldModel, sourceStatuses) {
   const signals = feedResults.flatMap((result) => result.signals);
   const reviewEvents = feedResults.map((result) => result.reviewEvent).filter(Boolean);
   const verifiedSignals = signals.filter((signal) => signal.confidence !== "needs_review");
-  const reviewSignals = signals.filter((signal) => signal.confidence === "needs_review");
+  const oldVerifiedModel = oldModel?.latest_model?.confidence === "verified" ? oldModel.latest_model : null;
+  const oldVerifiedPolicy = oldModel?.latest_policy?.confidence === "verified" ? oldModel.latest_policy : null;
   const latestModelSignal = pickSignal(verifiedSignals, "model") || (oldModel?.latest_model
-    ? { ...oldModel.latest_model, type: "model", priority: 9 }
-    : pickSignal(reviewSignals, "model"));
+    ? oldVerifiedModel && { ...oldVerifiedModel, type: "model", priority: 9 }
+    : null);
   const latestPolicySignal = pickSignal(verifiedSignals, "deprecation") || (oldModel?.latest_policy
-    ? { ...oldModel.latest_policy, type: "deprecation", priority: 9 }
-    : pickSignal(reviewSignals, "deprecation"));
+    ? oldVerifiedPolicy && { ...oldVerifiedPolicy, type: "deprecation", priority: 9 }
+    : null);
 
   const feedStatuses = feedResults.map((result) => ({
     id: result.feed.id,
@@ -680,8 +740,8 @@ async function collectModel(source, oldModel, sourceStatuses) {
   const healthy = feedStatuses.filter((feed) => feed.status === "ok").length;
   const status = healthy === 0 ? "error" : healthy < feedStatuses.length ? "degraded" : "ok";
 
-  const title = latestModelSignal?.title || oldModel?.title || "官方发布说明页已建立基线";
-  const occurred_at = latestModelSignal?.occurred_at || oldModel?.occurred_at || null;
+  const title = latestModelSignal?.title || "暂无新的已核验模型发布";
+  const occurred_at = latestModelSignal?.occurred_at || null;
 
   const model = {
     id: source.id,
@@ -839,6 +899,48 @@ function contentFingerprint(tools, models, events) {
   };
 }
 
+function officialHostnames(sources) {
+  const hosts = new Set(["github.com"]);
+  const add = (value) => {
+    if (!value) return;
+    try {
+      const hostname = new URL(value).hostname.replace(/^www\./, "").toLowerCase();
+      hosts.add(hostname);
+      const parts = hostname.split(".");
+      if (parts.length >= 2) hosts.add(parts.slice(-2).join("."));
+    } catch {
+      // Invalid configured URLs are rejected by data validation elsewhere.
+    }
+  };
+  for (const source of sources.tools || []) add(source.official_url);
+  for (const source of sources.models || []) {
+    add(source.source_url);
+    for (const feed of normalizeFeeds(source)) add(feed.url);
+  }
+  return hosts;
+}
+
+export function publishabilityReason(event, allowedHosts, now = new Date()) {
+  if (event.confidence !== "verified") return "not_verified";
+  if (!event.title || event.title.length < 8) return "invalid_title";
+  let source;
+  try {
+    source = new URL(event.source_url);
+  } catch {
+    return "invalid_source_url";
+  }
+  const hostname = source.hostname.replace(/^www\./, "").toLowerCase();
+  const official = [...allowedHosts].some((allowed) => hostname === allowed || hostname.endsWith(`.${allowed}`));
+  if (source.protocol !== "https:" || !official) return "non_official_source";
+  const occurredAt = new Date(event.occurred_at).getTime();
+  if (!Number.isFinite(occurredAt) || occurredAt > now.getTime() + 24 * 60 * 60 * 1000) return "invalid_date";
+  if ((event.type === "model" || event.type === "release") && !event.published_at) return "missing_publish_date";
+  if (event.type === "model" && !isStrictModelReleaseTitle(event.title)) return "not_a_model_release";
+  if (event.type === "deprecation" && !isConcreteDeprecation(event.title) && !isStrictDeprecationTitle(event.title)) return "not_a_concrete_deprecation";
+  if (!['model', 'release', 'deprecation'].includes(event.type)) return "unsupported_event_type";
+  return null;
+}
+
 export async function main(now = new Date()) {
   const [sources, oldCurrent, oldEvents, oldSnapshots, oldStatus] = await Promise.all([
     readJson(sourceFile, { tools: [], models: [] }),
@@ -877,10 +979,24 @@ export async function main(now = new Date()) {
     snapshotsByTool.set(tool.id, pruned);
   });
 
-  const events = mergeEvents(oldEvents, [
+  const mergedEvents = mergeEvents(oldEvents, [
     ...toolResults.flatMap((result) => result.events),
     ...modelResults.flatMap((result) => result.events),
-  ]).filter((event) => event.type !== "deprecation" || isConcreteDeprecation(event.title));
+  ]);
+  const allowedHosts = officialHostnames(sources);
+  const events = mergedEvents.filter((event) => publishabilityReason(event, allowedHosts, now) === null);
+  const reviewQueue = mergedEvents
+    .filter((event) => publishabilityReason(event, allowedHosts, now) !== null)
+    .map((event) => ({
+      id: event.id,
+      title: event.title,
+      type: event.type,
+      source_url: event.source_url,
+      occurred_at: event.occurred_at,
+      confidence: event.confidence,
+      reason: publishabilityReason(event, allowedHosts, now),
+    }))
+    .slice(0, 100);
 
   const models = modelResults.map((result) => result.model);
   const health = summarizeHealth(sourceStatuses);
@@ -919,6 +1035,7 @@ export async function main(now = new Date()) {
     source_counts: health.counts,
     failed_sources: health.failed_sources,
     alert_sources: health.alert_sources,
+    review_queue: reviewQueue,
     content_hash: contentHash,
     sources: sourceStatuses,
   };

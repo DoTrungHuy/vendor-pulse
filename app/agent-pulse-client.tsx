@@ -68,7 +68,6 @@ const CONTACT_EMAIL = "tdo770756@gmail.com";
 type ItemKind = "model" | "agent" | "notice";
 type TabId = "models" | "agents" | "notices";
 type Confidence = "verified" | "needs_review";
-type ConfidenceView = Confidence;
 type MobileView = "home" | "today" | TabId;
 
 const MOBILE_BREAKPOINT = "(max-width: 640px)";
@@ -394,23 +393,20 @@ function compactMetric(value: number | null | undefined) {
   return new Intl.NumberFormat("zh-CN", { notation: "compact", maximumFractionDigits: 1 }).format(value);
 }
 
-function snapshotStatus(current: CurrentData, now: number) {
+function snapshotStatus(current: CurrentData, now: number, source: SnapshotSource) {
   const checkedAt = current.checked_at || current.generated_at;
   if (!checkedAt) return { label: "等待快照", detail: "等待首次自动采集" };
   const generatedTimestamp = new Date(checkedAt).getTime();
   if (!Number.isFinite(generatedTimestamp)) return { label: "时间异常", detail: "快照时间无法识别，请重新同步" };
   const minutes = Math.max(0, Math.floor((now - generatedTimestamp) / 60_000));
-  const checkedAge = relativeTime(checkedAt, now);
   const contentAge = relativeTime(current.content_updated_at || current.generated_at, now);
-  const successAge = relativeTime(current.last_full_success_at || null, now);
-  const counts = current.source_counts;
-  const sourceDetail = counts ? `${counts.healthy}/${counts.total} 个来源正常` : "来源状态待确认";
-  const detail = `${sourceDetail} · ${checkedAge}检查 · 内容${contentAge}更新 · 完整成功${successAge}`;
+  if (source === "local") return { label: "最近有效快照", detail: `内容${contentAge}更新` };
 
-  if (minutes >= 90) return { label: "更新延迟", detail };
-  if (current.status === "error") return { label: "采集异常", detail };
-  if (current.status === "degraded" || current.status === "stale") return { label: "部分来源异常", detail };
-  return { label: "自动检查正常", detail };
+  if (minutes >= 90 || current.status === "error") return { label: "自动更新稍有延迟", detail: "当前展示最近一次核验内容" };
+  if ((current.status === "degraded" || current.status === "stale") && (current.source_counts?.required_failed || 0) > 0) {
+    return { label: "部分信息更新延迟", detail: "当前展示最近一次核验内容" };
+  }
+  return { label: "官方信息已同步", detail: `内容${contentAge}更新` };
 }
 
 function isHttpUrl(value: string | null | undefined): value is string {
@@ -702,7 +698,6 @@ export function AgentPulseClient() {
     const initialView = mobileViewFromHash();
     return isMobileCategory(initialView) ? initialView : "models";
   });
-  const [confidenceView, setConfidenceView] = useState<ConfidenceView>("verified");
   const [toast, setToast] = useState<string | null>(null);
   const [clockTick, setClockTick] = useState(() => Date.now());
   const [snapshotSource, setSnapshotSource] = useState<SnapshotSource>("local");
@@ -725,7 +720,6 @@ export function AgentPulseClient() {
     window.history[replace ? "replaceState" : "pushState"](nextState, "", `#${nextView}`);
     if (isMobileCategory(nextView)) {
       setTab(nextView);
-      setConfidenceView("verified");
     }
     setMobileView(nextView);
   }, [mobileView]);
@@ -840,7 +834,6 @@ export function AgentPulseClient() {
       const nextView = mobileViewFromHash();
       if (isMobileCategory(nextView)) {
         setTab(nextView);
-        setConfidenceView("verified");
       }
       setMobileView(nextView);
     };
@@ -939,14 +932,10 @@ export function AgentPulseClient() {
   }, [events]);
 
   const verifiedModels = models.filter((item) => item.confidence === "verified");
-  const reviewModels = models.filter((item) => item.confidence === "needs_review");
   const verifiedAgents = agents.filter((item) => item.confidence === "verified");
-  const reviewAgents = agents.filter((item) => item.confidence === "needs_review");
   const verifiedPolicies = policies.filter((item) => item.confidence === "verified");
-  const reviewPolicies = policies.filter((item) => item.confidence === "needs_review");
   const activeVerifiedItems = tab === "models" ? verifiedModels : tab === "agents" ? verifiedAgents : verifiedPolicies;
-  const activeReviewItems = tab === "models" ? reviewModels : tab === "agents" ? reviewAgents : reviewPolicies;
-  const activeItems = (confidenceView === "verified" ? activeVerifiedItems : activeReviewItems).slice(0, 16);
+  const activeItems = activeVerifiedItems.slice(0, 16);
   const totalSignals = verifiedModels.length + verifiedAgents.length + verifiedPolicies.length;
   const providers = new Set([...models, ...agents, ...policies, ...OFFICIAL_NOTICES].map((item) => item.vendor)).size;
   const snapshotHighlights = useMemo(() => {
@@ -954,15 +943,19 @@ export function AgentPulseClient() {
     const usedLinks = new Set<string>();
     const snapshotTimeValue = current.checked_at || current.generated_at;
     const snapshotTime = snapshotTimeValue ? new Date(snapshotTimeValue).getTime() : clockTick;
+    const day = 24 * 60 * 60 * 1000;
     const verifiedNewsItems = [...models, ...agents]
       .filter((item) => item.confidence === "verified")
       .filter((item) => item.time && new Date(item.time).getTime() <= snapshotTime);
-    const latestItem = sortByTime(dedupeItems(verifiedNewsItems))[0];
+    const recentReleaseItems = sortByTime(dedupeItems(verifiedNewsItems))
+      .filter((item) => item.time && clockTick - new Date(item.time).getTime() <= 7 * day);
+    const latestItem = recentReleaseItems[0];
 
     if (latestItem) {
       const previewRelease = /(?:alpha|beta|preview|rc)[.-]?\d*/i.test(latestItem.title);
+      const releaseAge = clockTick - new Date(latestItem.time as string).getTime();
       highlights.push({
-        label: "刚刚发布",
+        label: releaseAge <= day ? "刚刚发布" : "近期发布",
         item: latestItem,
         signal: `${relativeTime(latestItem.time, clockTick)}发布`,
         reason: previewRelease
@@ -1002,7 +995,6 @@ export function AgentPulseClient() {
       usedLinks.add(hottestItem.href);
     }
 
-    const day = 24 * 60 * 60 * 1000;
     const lifecycleItems = policies
       .filter((item) => item.confidence === "verified" && item.effectiveAt && !usedLinks.has(item.href))
       .map((item) => ({ item, effectiveTime: new Date(item.effectiveAt as string).getTime() }));
@@ -1032,7 +1024,7 @@ export function AgentPulseClient() {
     }
 
     if (highlights.length < 3) {
-      const fallback = sortByTime(verifiedNewsItems).find((item) => !usedLinks.has(item.href));
+      const fallback = recentReleaseItems.find((item) => !usedLinks.has(item.href));
       if (fallback) {
         highlights.push({
           label: "重要更新",
@@ -1050,12 +1042,10 @@ export function AgentPulseClient() {
     : tab === "agents"
       ? { title: "Agent 工具", label: "工具更新", copy: "跟踪 Agent 工具的正式版本与开源发布，快速确认工作流中值得升级的变化。", icon: <MovieIcon />, tags: ["版本发布", "GitHub", "工具链"] }
       : { title: "弃用与迁移", label: "风险提醒", copy: "集中查看模型停用、接口弃用与迁移说明，为替换和调整提前留出时间。", icon: <LightIcon />, tags: ["弃用迁移", "官方文档", "政策提醒"] };
-  const snapshotMeta = snapshotStatus(current, clockTick);
-  const activeTotal = confidenceView === "verified" ? activeVerifiedItems.length : activeReviewItems.length;
-  const activeCountLabel = `${activeItems.length < activeTotal ? `最近 ${activeItems.length} 条 · 共 ` : ""}${activeTotal} 条${confidenceView === "verified" ? "已核验更新" : "待核验线索"}`;
-  const activeIntro = confidenceView === "verified"
-    ? activeMeta.copy
-    : "这些内容来自官方页面变化，但还没有足够证据确认是正式发布。它们不会进入首页摘要，请结合原文人工判断。";
+  const snapshotMeta = snapshotStatus(current, clockTick, snapshotSource);
+  const activeTotal = activeVerifiedItems.length;
+  const activeCountLabel = `${activeItems.length < activeTotal ? `最近 ${activeItems.length} 条 · 共 ` : ""}${activeTotal} 条官方已核验更新`;
+  const activeIntro = activeMeta.copy;
 
   const handleOpen = (item: FeedItem) => {
     if (!isHttpUrl(item.href)) {
@@ -1069,16 +1059,15 @@ export function AgentPulseClient() {
 
   const selectFeed = (nextTab: TabId, shouldScroll = false) => {
     setTab(nextTab);
-    setConfidenceView("verified");
     if (shouldScroll) signalSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
   const scrollToSignals = () => signalSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
 
   const feedCards: Array<{ id: TabId; title: string; count: number; icon: React.ReactNode; tags: string[]; copy: string }> = [
-    { id: "models", title: "模型发布", count: verifiedModels.length, icon: <ImageIcon />, tags: [`已核验 ${verifiedModels.length}`, `待核验 ${reviewModels.length}`, "官方原文"], copy: "默认只展示已确认的模型与能力变化，待核验页面线索独立查看。" },
+    { id: "models", title: "模型发布", count: verifiedModels.length, icon: <ImageIcon />, tags: [`已核验 ${verifiedModels.length}`, "明确日期", "官方原文"], copy: "只展示带有明确发布日期、并可直达官方原文的模型与能力变化。" },
     { id: "agents", title: "Agent 工具", count: verifiedAgents.length, icon: <MovieIcon />, tags: [`已核验 ${verifiedAgents.length}`, "GitHub", "npm"], copy: "跟踪 Codex、Claude Code 等工具的正式版本与热度变化。" },
-    { id: "notices", title: "弃用与迁移", count: verifiedPolicies.length, icon: <LightIcon />, tags: [`已核验 ${verifiedPolicies.length}`, `待核验 ${reviewPolicies.length}`, `官方入口 ${OFFICIAL_NOTICES.length}`], copy: "区分真实停用事件和固定监测入口，优先呈现需要行动的变化。" },
+    { id: "notices", title: "弃用与迁移", count: verifiedPolicies.length, icon: <LightIcon />, tags: [`已核验 ${verifiedPolicies.length}`, "明确日期", `官方入口 ${OFFICIAL_NOTICES.length}`], copy: "只呈现有明确对象、日期和官方迁移依据的停用事件。" },
   ];
 
   if (isMobileLayout && !isMobileCategory(mobileView)) {
@@ -1098,7 +1087,7 @@ export function AgentPulseClient() {
             <div className="mobile-landing-content">
               <div className="mobile-live-badge liquid-glass">
                 <span>{snapshotMeta.label}</span>
-                <p>{snapshotMeta.detail} · {snapshotSource === "github" ? "GitHub main" : "本地回退"}</p>
+                <p>{snapshotMeta.detail}</p>
               </div>
               <h1>见微知著</h1>
               <p>把分散的模型发布、Agent 工具更新与弃用提醒，整理成可以快速判断、随时核验的官方信号。</p>
@@ -1121,7 +1110,7 @@ export function AgentPulseClient() {
                 {isRefreshing ? "读取中" : "读取"}<ArrowIcon />
               </button>
             </header>
-            <p className="mobile-today-status">{snapshotMeta.detail} · {snapshotSource === "github" ? "GitHub main" : "本地回退"}</p>
+            <p className="mobile-today-status">{snapshotMeta.label} · {snapshotMeta.detail}</p>
 
             <div className="mobile-highlight-stack">
               {snapshotHighlights.map(({ label, item, reason, signal }, index) => (
@@ -1181,19 +1170,14 @@ export function AgentPulseClient() {
 
         <main className="mobile-category-main">
           <section className="mobile-category-intro liquid-glass frosted-panel">
-            <p>{snapshotMeta.detail} · {snapshotSource === "github" ? "GitHub main" : "本地回退"}</p>
+            <p>{snapshotMeta.label} · {snapshotMeta.detail}</p>
             <h1>{activeMeta.title}</h1>
             <span>{activeIntro}</span>
           </section>
 
           <div className="mobile-list-controls">
             <span>{activeCountLabel}</span>
-            <div className="confidence-switch" aria-label="可信状态筛选">
-              <button type="button" className={confidenceView === "verified" ? "is-active" : ""} onClick={() => setConfidenceView("verified")} aria-pressed={confidenceView === "verified"}>已核验 {activeVerifiedItems.length}</button>
-              {activeReviewItems.length ? (
-                <button type="button" className={confidenceView === "needs_review" ? "is-active is-review" : ""} onClick={() => setConfidenceView("needs_review")} aria-pressed={confidenceView === "needs_review"}>待核验 {activeReviewItems.length}</button>
-              ) : null}
-            </div>
+            <span className="verified-only-label">仅展示官方已核验</span>
           </div>
 
           <div className="mobile-signal-list">
@@ -1201,7 +1185,7 @@ export function AgentPulseClient() {
               <button key={item.id} type="button" className="mobile-signal-card liquid-glass frosted-panel" onClick={() => handleOpen(item)}>
                 <p className="row-meta">
                   <b>{item.vendor}</b>
-                  <em className={`confidence-badge ${item.confidence === "verified" ? "is-verified" : "is-review"}`}>{item.confidence === "verified" ? "已核验" : "待核验"}</em>
+                  <em className="confidence-badge is-verified">官方已核验</em>
                   {item.topic ? <span>{item.topic}</span> : null}
                   <time>{item.effectiveAt ? `生效 ${formatCalendarDate(item.effectiveAt)}` : formatDate(item.time)}</time>
                 </p>
@@ -1251,7 +1235,7 @@ export function AgentPulseClient() {
         <div className="hero-content">
           <div className="live-badge liquid-glass reveal reveal-one">
             <span>{snapshotMeta.label}</span>
-            <p>{snapshotMeta.detail} · {snapshotSource === "github" ? "GitHub main" : "本地回退"}</p>
+            <p>{snapshotMeta.detail}</p>
           </div>
           <h1 className="hero-title reveal reveal-two">见微知著</h1>
           <p className="hero-copy reveal reveal-three">把散落在官网、GitHub 与 npm 的模型发布、Agent 工具更新和弃用提醒，整理成可核验、可直达原文的更新清单。</p>
@@ -1282,7 +1266,9 @@ export function AgentPulseClient() {
       </section>
 
       <section ref={signalSectionRef} className="signals-stage" aria-label="情报信号流">
-        <FadingVideo className="stage-video signals-video" src={SIGNALS_VIDEO} mobileSrc={SIGNALS_VIDEO_MOBILE} poster={SIGNALS_POSTER} loadStrategy="visible" />
+        <div className="signals-media" aria-hidden="true">
+          <FadingVideo className="stage-video signals-video" src={SIGNALS_VIDEO} mobileSrc={SIGNALS_VIDEO_MOBILE} poster={SIGNALS_POSTER} loadStrategy="visible" />
+        </div>
         <div className="signals-content">
           <div className="signals-heading">
             <p>{"// Official update stream"}</p>
@@ -1348,16 +1334,7 @@ export function AgentPulseClient() {
               </div>
               <div className="signal-list-controls">
                 <span>{activeCountLabel}</span>
-                <div className="confidence-switch" aria-label="可信状态筛选">
-                  <button type="button" className={confidenceView === "verified" ? "is-active" : ""} onClick={() => setConfidenceView("verified")} aria-pressed={confidenceView === "verified"}>
-                    已核验 {activeVerifiedItems.length}
-                  </button>
-                  {activeReviewItems.length ? (
-                    <button type="button" className={confidenceView === "needs_review" ? "is-active is-review" : ""} onClick={() => setConfidenceView("needs_review")} aria-pressed={confidenceView === "needs_review"}>
-                      待核验 {activeReviewItems.length}
-                    </button>
-                  ) : null}
-                </div>
+                <span className="verified-only-label">仅展示官方已核验</span>
               </div>
             </div>
             <p className="signal-list-intro">{activeIntro}</p>
@@ -1367,7 +1344,7 @@ export function AgentPulseClient() {
                   <div>
                     <p className="row-meta">
                       <b>{item.vendor}</b>
-                      <em className={`confidence-badge ${item.confidence === "verified" ? "is-verified" : "is-review"}`}>{item.confidence === "verified" ? "已核验" : "待核验"}</em>
+                      <em className="confidence-badge is-verified">官方已核验</em>
                       {item.topic ? <span>{item.topic}</span> : null}
                       <time>{item.effectiveAt ? `生效 ${formatCalendarDate(item.effectiveAt)}` : formatDate(item.time)}</time>
                     </p>
