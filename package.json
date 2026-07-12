@@ -6,9 +6,9 @@
     "node": ">=22.13.0"
   },
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "start": "vite preview",
+    "dev": "vinext dev",
+    "build": "vinext build",
+    "start": "vinext start",
     "collect": "node scripts/collect.mjs",
     "test": "npm run build && node --test tests/*.test.mjs",
     "typecheck": "tsc --noEmit",
