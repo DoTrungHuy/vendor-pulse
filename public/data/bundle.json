@@ -1,14 +1,14 @@
 {
   "schema_version": 1,
-  "snapshot_id": "snapshot-f525547b6e",
-  "checked_at": "2026-07-12T05:15:25.048Z",
+  "snapshot_id": "snapshot-57be19425d",
+  "checked_at": "2026-07-12T05:16:22.667Z",
   "current": {
     "schema_version": 1,
-    "snapshot_id": "snapshot-f525547b6e",
-    "generated_at": "2026-07-12T05:15:25.048Z",
-    "checked_at": "2026-07-12T05:15:25.048Z",
+    "snapshot_id": "snapshot-57be19425d",
+    "generated_at": "2026-07-12T05:16:22.667Z",
+    "checked_at": "2026-07-12T05:16:22.667Z",
     "content_updated_at": "2026-07-12T05:15:25.048Z",
-    "last_full_success_at": "2026-07-12T05:15:25.048Z",
+    "last_full_success_at": "2026-07-12T05:16:22.667Z",
     "timezone": "Asia/Shanghai",
     "status": "degraded",
     "source_counts": {
@@ -160,7 +160,7 @@
             "required": true,
             "url": "https://openai.com/news/rss.xml",
             "status": "ok",
-            "checked_at": "2026-07-12T05:15:27.690Z",
+            "checked_at": "2026-07-12T05:16:26.279Z",
             "error": null
           },
           {
@@ -170,7 +170,7 @@
             "required": false,
             "url": "https://help.openai.com/en/articles/9624314-model-release-notes",
             "status": "error",
-            "checked_at": "2026-07-12T05:15:29.563Z",
+            "checked_at": "2026-07-12T05:16:28.267Z",
             "error": "403 Forbidden"
           },
           {
@@ -180,7 +180,7 @@
             "required": true,
             "url": "https://developers.openai.com/api/docs/deprecations",
             "status": "ok",
-            "checked_at": "2026-07-12T05:15:29.718Z",
+            "checked_at": "2026-07-12T05:16:28.514Z",
             "error": null
           },
           {
@@ -190,7 +190,7 @@
             "required": false,
             "url": "https://developers.openai.com/api/docs/changelog",
             "status": "ok",
-            "checked_at": "2026-07-12T05:15:29.752Z",
+            "checked_at": "2026-07-12T05:16:28.620Z",
             "error": null
           }
         ]
@@ -229,7 +229,7 @@
             "required": true,
             "url": "https://www.anthropic.com/news",
             "status": "ok",
-            "checked_at": "2026-07-12T05:15:31.317Z",
+            "checked_at": "2026-07-12T05:16:29.095Z",
             "error": null
           },
           {
@@ -239,7 +239,7 @@
             "required": false,
             "url": "https://platform.claude.com/docs/en/release-notes/overview",
             "status": "ok",
-            "checked_at": "2026-07-12T05:15:31.670Z",
+            "checked_at": "2026-07-12T05:16:29.638Z",
             "error": null
           },
           {
@@ -249,7 +249,7 @@
             "required": true,
             "url": "https://platform.claude.com/docs/en/about-claude/model-deprecations",
             "status": "ok",
-            "checked_at": "2026-07-12T05:15:32.098Z",
+            "checked_at": "2026-07-12T05:16:29.969Z",
             "error": null
           }
         ]
@@ -288,7 +288,7 @@
             "required": true,
             "url": "https://ai.google.dev/gemini-api/docs/changelog",
             "status": "ok",
-            "checked_at": "2026-07-12T05:15:27.842Z",
+            "checked_at": "2026-07-12T05:16:26.380Z",
             "error": null
           },
           {
@@ -298,7 +298,7 @@
             "required": true,
             "url": "https://ai.google.dev/gemini-api/docs/models",
             "status": "ok",
-            "checked_at": "2026-07-12T05:15:28.070Z",
+            "checked_at": "2026-07-12T05:16:26.590Z",
             "error": null
           }
         ]
@@ -406,7 +406,7 @@
       "published_at": null,
       "effective_at": null,
       "first_seen_at": "2026-07-10T08:32:32.432Z",
-      "last_seen_at": "2026-07-12T05:15:32.103Z"
+      "last_seen_at": "2026-07-12T05:16:29.974Z"
     },
     {
       "id": "event:deprecation:claude:deprecations:b2e95fd4ce",
@@ -423,7 +423,7 @@
       "published_at": null,
       "effective_at": null,
       "first_seen_at": "2026-07-10T08:32:32.432Z",
-      "last_seen_at": "2026-07-12T05:15:32.103Z"
+      "last_seen_at": "2026-07-12T05:16:29.974Z"
     },
     {
       "id": "event:deprecation:claude:deprecations:b1c7c0ee04",
@@ -440,7 +440,7 @@
       "published_at": null,
       "effective_at": null,
       "first_seen_at": "2026-07-10T08:32:32.431Z",
-      "last_seen_at": "2026-07-12T05:15:32.102Z"
+      "last_seen_at": "2026-07-12T05:16:29.973Z"
     },
     {
       "id": "event:model:claude:news:9817cc08a3",
@@ -457,7 +457,7 @@
       "published_at": null,
       "effective_at": null,
       "first_seen_at": "2026-07-10T08:32:31.676Z",
-      "last_seen_at": "2026-07-12T05:15:31.319Z"
+      "last_seen_at": "2026-07-12T05:16:29.097Z"
     },
     {
       "id": "event:deprecation:gemini:models-page:2590d4ce84",
@@ -474,7 +474,7 @@
       "published_at": null,
       "effective_at": null,
       "first_seen_at": "2026-07-10T08:32:31.411Z",
-      "last_seen_at": "2026-07-12T05:15:28.080Z"
+      "last_seen_at": "2026-07-12T05:16:26.599Z"
     },
     {
       "id": "event:deprecation:gemini:models-page:1f46ddb53b",
@@ -491,7 +491,7 @@
       "published_at": null,
       "effective_at": null,
       "first_seen_at": "2026-07-10T08:32:31.410Z",
-      "last_seen_at": "2026-07-12T05:15:28.079Z"
+      "last_seen_at": "2026-07-12T05:16:26.599Z"
     },
     {
       "id": "event:deprecation:gemini:models-page:76140e01b7",
@@ -508,7 +508,7 @@
       "published_at": null,
       "effective_at": null,
       "first_seen_at": "2026-07-10T08:32:31.410Z",
-      "last_seen_at": "2026-07-12T05:15:28.080Z"
+      "last_seen_at": "2026-07-12T05:16:26.599Z"
     },
     {
       "id": "event:deprecation:gemini:models-page:a651b18a32",
@@ -525,7 +525,7 @@
       "published_at": null,
       "effective_at": null,
       "first_seen_at": "2026-07-10T08:32:31.410Z",
-      "last_seen_at": "2026-07-12T05:15:28.080Z"
+      "last_seen_at": "2026-07-12T05:16:26.599Z"
     },
     {
       "id": "event:deprecation:gemini:models-page:b91e330192",
@@ -542,7 +542,7 @@
       "published_at": null,
       "effective_at": null,
       "first_seen_at": "2026-07-10T08:32:31.409Z",
-      "last_seen_at": "2026-07-12T05:15:28.077Z"
+      "last_seen_at": "2026-07-12T05:16:26.597Z"
     },
     {
       "id": "event:deprecation:gemini:models-page:cac246339b",
@@ -559,7 +559,7 @@
       "published_at": null,
       "effective_at": null,
       "first_seen_at": "2026-07-10T08:32:31.409Z",
-      "last_seen_at": "2026-07-12T05:15:28.077Z"
+      "last_seen_at": "2026-07-12T05:16:26.597Z"
     },
     {
       "id": "event:source_changed:gpt:primary:a32a7bb442",
@@ -2258,11 +2258,11 @@
   ],
   "health": {
     "schema_version": 1,
-    "snapshot_id": "snapshot-f525547b6e",
-    "checked_at": "2026-07-12T05:15:25.048Z",
+    "snapshot_id": "snapshot-57be19425d",
+    "checked_at": "2026-07-12T05:16:22.667Z",
     "content_updated_at": "2026-07-12T05:15:25.048Z",
-    "last_full_success_at": "2026-07-12T05:15:25.048Z",
-    "latest_success_at": "2026-07-12T05:15:25.048Z",
+    "last_full_success_at": "2026-07-12T05:16:22.667Z",
+    "latest_success_at": "2026-07-12T05:16:22.667Z",
     "overall": "degraded",
     "source_counts": {
       "total": 20,
@@ -2277,7 +2277,7 @@
         "key": "model:gpt:model-release-notes",
         "required": false,
         "error": "403 Forbidden",
-        "consecutive_failures": 4
+        "consecutive_failures": 5
       }
     ],
     "alert_sources": [],
@@ -2286,32 +2286,32 @@
       "github:codex:repo": {
         "status": "ok",
         "required": true,
-        "checked_at": "2026-07-12T05:15:25.444Z",
-        "last_success_at": "2026-07-12T05:15:25.444Z",
+        "checked_at": "2026-07-12T05:16:23.089Z",
+        "last_success_at": "2026-07-12T05:16:23.089Z",
         "consecutive_failures": 0,
-        "etag": "W/\"b013706ba104adcfab859c48f92f7f778ec20ce3690e7792062c443172c11d73\"",
+        "etag": "W/\"4ef95981d4d35e2ebfc4ea32c1495949c8277d64203477df5a3503afd6dc0c97\"",
         "last_modified": "Sun, 12 Jul 2026 05:14:29 GMT",
         "content_hash": "fade878508f51c09390f598bf8ad950f56ea4f6909c6574b81eb564b7396adfb",
-        "previous_hash": "05c92299dbf8e8e741f0db7e6983d23d41a31058daee33475d6f31250db4ea63",
+        "previous_hash": "fade878508f51c09390f598bf8ad950f56ea4f6909c6574b81eb564b7396adfb",
         "error": null
       },
       "github:codex:releases": {
         "status": "ok",
         "required": true,
-        "checked_at": "2026-07-12T05:15:27.178Z",
-        "last_success_at": "2026-07-12T05:15:27.178Z",
+        "checked_at": "2026-07-12T05:16:25.498Z",
+        "last_success_at": "2026-07-12T05:16:25.498Z",
         "consecutive_failures": 0,
-        "etag": "W/\"c15a0d50980f26e3a6197d7b49a7dd25956fcac207e2c6d57fd25aefccd28a47\"",
+        "etag": "W/\"c6d68abb8a67a8c9a337be505d045a4bbe486065b1aa216e8098653c044b4d54\"",
         "last_modified": null,
-        "content_hash": "36e9e2a98bd340ecfba9cb2030086fd4ffaadc66790cc799256c576d27ec71cb",
-        "previous_hash": "7d30c6c54b9eadc0ed42126d4f32c5d7d12b61c7835d5702453aba7a2ff19884",
+        "content_hash": "8368de13a64afe5b2114a87af435f61c67aece05eef12c5a8cbe2f76ff3cb4dc",
+        "previous_hash": "36e9e2a98bd340ecfba9cb2030086fd4ffaadc66790cc799256c576d27ec71cb",
         "error": null
       },
       "npm:codex": {
         "status": "ok",
         "required": false,
-        "checked_at": "2026-07-12T05:15:27.395Z",
-        "last_success_at": "2026-07-12T05:15:27.395Z",
+        "checked_at": "2026-07-12T05:16:25.755Z",
+        "last_success_at": "2026-07-12T05:16:25.755Z",
         "consecutive_failures": 0,
         "etag": null,
         "last_modified": null,
@@ -2322,32 +2322,32 @@
       "github:claude-code:repo": {
         "status": "ok",
         "required": true,
-        "checked_at": "2026-07-12T05:15:25.486Z",
-        "last_success_at": "2026-07-12T05:15:25.486Z",
+        "checked_at": "2026-07-12T05:16:23.098Z",
+        "last_success_at": "2026-07-12T05:16:23.098Z",
         "consecutive_failures": 0,
-        "etag": "W/\"03d0568a33d15499e15bfd63b1a9190d46c3cdcc9be0fe1fbf2cf6b068ec3de1\"",
+        "etag": "W/\"655e184ffb6b898378779ead4c338de157d638529bb4654f8408a92be69e1558\"",
         "last_modified": "Sun, 12 Jul 2026 05:12:45 GMT",
         "content_hash": "5cb062708160c540ee7d99f3a07913e0c86cf9c561a496e006d857222413ada9",
-        "previous_hash": "865500e40611a19d3e1d5b01c77bde0469eefa4196935a9636d49fe19ebb7cf2",
+        "previous_hash": "5cb062708160c540ee7d99f3a07913e0c86cf9c561a496e006d857222413ada9",
         "error": null
       },
       "github:claude-code:releases": {
         "status": "ok",
         "required": true,
-        "checked_at": "2026-07-12T05:15:26.006Z",
-        "last_success_at": "2026-07-12T05:15:26.006Z",
+        "checked_at": "2026-07-12T05:16:23.570Z",
+        "last_success_at": "2026-07-12T05:16:23.570Z",
         "consecutive_failures": 0,
-        "etag": "W/\"88248e7a1c8a3ff32818a7b778502f64a7463407306832fb006e54853cd5add5\"",
+        "etag": "W/\"c146631dcb755161dfd1f79366c9099b737d2888803a79caab3cb5503ce9d84f\"",
         "last_modified": null,
         "content_hash": "8cd8e09dc89d146ebd69dcf727648a37d50b32cf2cbee68681d8871a3df945ab",
-        "previous_hash": "972082de3cf530879c7fb01ca8c536402cb273fd100248d8c5f8ef601b1eb278",
+        "previous_hash": "8cd8e09dc89d146ebd69dcf727648a37d50b32cf2cbee68681d8871a3df945ab",
         "error": null
       },
       "npm:claude-code": {
         "status": "ok",
         "required": false,
-        "checked_at": "2026-07-12T05:15:26.213Z",
-        "last_success_at": "2026-07-12T05:15:26.213Z",
+        "checked_at": "2026-07-12T05:16:23.738Z",
+        "last_success_at": "2026-07-12T05:16:23.738Z",
         "consecutive_failures": 0,
         "etag": null,
         "last_modified": null,
@@ -2358,10 +2358,10 @@
       "github:agy:repo": {
         "status": "ok",
         "required": true,
-        "checked_at": "2026-07-12T05:15:25.473Z",
-        "last_success_at": "2026-07-12T05:15:25.473Z",
+        "checked_at": "2026-07-12T05:16:23.087Z",
+        "last_success_at": "2026-07-12T05:16:23.087Z",
         "consecutive_failures": 0,
-        "etag": "W/\"cf79533dd999f37ab039a8705ac2c950afdc838289ea0af7269b3d71f1a17670\"",
+        "etag": "W/\"9e5929f6352a15691950b7566d1aeb972c9acc4e02be10b2f468db3130957de2\"",
         "last_modified": "Sun, 12 Jul 2026 01:34:06 GMT",
         "content_hash": "0cd89fcebda4dd0ba0c8467493f7bc004d72e69cd4220c9d93bdd7c189e1643f",
         "previous_hash": "0cd89fcebda4dd0ba0c8467493f7bc004d72e69cd4220c9d93bdd7c189e1643f",
@@ -2370,47 +2370,47 @@
       "github:agy:releases": {
         "status": "ok",
         "required": true,
-        "checked_at": "2026-07-12T05:15:25.804Z",
-        "last_success_at": "2026-07-12T05:15:25.804Z",
+        "checked_at": "2026-07-12T05:16:23.555Z",
+        "last_success_at": "2026-07-12T05:16:23.555Z",
         "consecutive_failures": 0,
-        "etag": "W/\"9db5d56e9dc8fcbf5dec10b405471e6a4d2330bc29d37a1c89aeeef145854908\"",
+        "etag": "W/\"8e1db5bc447e844331780b132348091f0ef3418dfaf90e00efd676363a12f28f\"",
         "last_modified": null,
         "content_hash": "eabac3b940fdb73dc269a50c9473469ff0c05f79b3cfb8d04261aecc5a3e078b",
-        "previous_hash": "a2211509f070386ca70bc40e35511415bffbc3c6bd2a117d5427520b2ae09227",
+        "previous_hash": "eabac3b940fdb73dc269a50c9473469ff0c05f79b3cfb8d04261aecc5a3e078b",
         "error": null
       },
       "github:openclaw:repo": {
         "status": "ok",
         "required": true,
-        "checked_at": "2026-07-12T05:15:25.439Z",
-        "last_success_at": "2026-07-12T05:15:25.439Z",
+        "checked_at": "2026-07-12T05:16:23.083Z",
+        "last_success_at": "2026-07-12T05:16:23.083Z",
         "consecutive_failures": 0,
-        "etag": "W/\"54f0f01baf70532075df8a12844aa8bba6881a699936efa0475765257b5d8866\"",
+        "etag": "W/\"d3679d44d01c1578394441fd2a521c46982e4200076f77595273d2d50a38af39\"",
         "last_modified": "Sun, 12 Jul 2026 05:13:50 GMT",
-        "content_hash": "adbc3d1f6068af335d7aec3b5c3b4901d83f5bd8112b2c147430c14c657e63fc",
-        "previous_hash": "cc6c38fa2fa6e8f68c545fdc2521dd9927c9a2331b9378e2904271a36e3cc58c",
+        "content_hash": "393a2da7f4bd2c8ccf48e2b97cd3d8c597a9b1421a1c87a6fddfc5be2252bb68",
+        "previous_hash": "adbc3d1f6068af335d7aec3b5c3b4901d83f5bd8112b2c147430c14c657e63fc",
         "error": null
       },
       "github:openclaw:releases": {
         "status": "ok",
         "required": true,
-        "checked_at": "2026-07-12T05:15:26.164Z",
-        "last_success_at": "2026-07-12T05:15:26.164Z",
+        "checked_at": "2026-07-12T05:16:23.924Z",
+        "last_success_at": "2026-07-12T05:16:23.924Z",
         "consecutive_failures": 0,
-        "etag": "W/\"06702e2ae27f6305d20b47e78c6f606b8af6659dc5ee75b879f685b7535367e5\"",
+        "etag": "W/\"f8ac4d3bb33aa763fa6d6b71300dbf1f27f574e2343eb61971d123e804534dd4\"",
         "last_modified": null,
-        "content_hash": "d7f673919ce3f6e0b54243e8318c98223e275163ecaf4c12dc73b7efc95d0225",
+        "content_hash": "53186c4050d9ac6131b7dbfa2fbbb4605dc2f50e6ee4cfa5c4d8ea34964a3506",
         "previous_hash": "d7f673919ce3f6e0b54243e8318c98223e275163ecaf4c12dc73b7efc95d0225",
         "error": null
       },
       "npm:openclaw": {
         "status": "ok",
         "required": false,
-        "checked_at": "2026-07-12T05:15:26.199Z",
-        "last_success_at": "2026-07-12T05:15:26.199Z",
+        "checked_at": "2026-07-12T05:16:23.995Z",
+        "last_success_at": "2026-07-12T05:16:23.995Z",
         "consecutive_failures": 0,
         "etag": null,
-        "last_modified": "Sun, 12 Jul 2026 05:14:26 GMT",
+        "last_modified": "Sun, 12 Jul 2026 05:11:46 GMT",
         "content_hash": "a04724d9d445e012807e5d0cd3f99541928a7f57ef311238694e514a1e84e552",
         "previous_hash": "a04724d9d445e012807e5d0cd3f99541928a7f57ef311238694e514a1e84e552",
         "error": null
@@ -2418,13 +2418,13 @@
       "model:gpt:news-rss": {
         "status": "ok",
         "required": true,
-        "checked_at": "2026-07-12T05:15:27.690Z",
-        "last_success_at": "2026-07-12T05:15:27.690Z",
+        "checked_at": "2026-07-12T05:16:26.279Z",
+        "last_success_at": "2026-07-12T05:16:26.279Z",
         "consecutive_failures": 0,
         "etag": null,
         "last_modified": null,
-        "content_hash": "f655e36c59b1073b7316f34f2af38a61852d45abd3246bee773c46d758de420b",
-        "previous_hash": "e23b426a8efc69ec769c6cfabb92026c5e78669d01b8d76a86cb3bc074aa95c7",
+        "content_hash": "bd2cf06b0deb4b6e7d90996a71ebe46305d1fd19f2a03f16da4b246cf0f6ee1e",
+        "previous_hash": "f655e36c59b1073b7316f34f2af38a61852d45abd3246bee773c46d758de420b",
         "error": null,
         "normalized": true,
         "feed_id": "news-rss",
@@ -2434,9 +2434,9 @@
       "model:gpt:model-release-notes": {
         "status": "error",
         "required": false,
-        "checked_at": "2026-07-12T05:15:29.563Z",
+        "checked_at": "2026-07-12T05:16:28.267Z",
         "last_success_at": null,
-        "consecutive_failures": 4,
+        "consecutive_failures": 5,
         "etag": null,
         "last_modified": null,
         "content_hash": null,
@@ -2449,8 +2449,8 @@
       "model:gpt:deprecations": {
         "status": "ok",
         "required": true,
-        "checked_at": "2026-07-12T05:15:29.718Z",
-        "last_success_at": "2026-07-12T05:15:29.718Z",
+        "checked_at": "2026-07-12T05:16:28.514Z",
+        "last_success_at": "2026-07-12T05:16:28.514Z",
         "consecutive_failures": 0,
         "etag": "W/\"8c1b220c7e92b8d5c53572731ee4de1a\"",
         "last_modified": "Sat, 11 Jul 2026 06:33:04 GMT",
@@ -2465,8 +2465,8 @@
       "model:gpt:api-changelog": {
         "status": "ok",
         "required": false,
-        "checked_at": "2026-07-12T05:15:29.752Z",
-        "last_success_at": "2026-07-12T05:15:29.752Z",
+        "checked_at": "2026-07-12T05:16:28.620Z",
+        "last_success_at": "2026-07-12T05:16:28.620Z",
         "consecutive_failures": 0,
         "etag": "W/\"9ad4679d51ab9f01d85a2333e6194a7d\"",
         "last_modified": "Sat, 11 Jul 2026 06:08:52 GMT",
@@ -2481,8 +2481,8 @@
       "model:claude:news": {
         "status": "ok",
         "required": true,
-        "checked_at": "2026-07-12T05:15:31.317Z",
-        "last_success_at": "2026-07-12T05:15:31.317Z",
+        "checked_at": "2026-07-12T05:16:29.095Z",
+        "last_success_at": "2026-07-12T05:16:29.095Z",
         "consecutive_failures": 0,
         "etag": null,
         "last_modified": null,
@@ -2497,8 +2497,8 @@
       "model:claude:platform-notes": {
         "status": "ok",
         "required": false,
-        "checked_at": "2026-07-12T05:15:31.670Z",
-        "last_success_at": "2026-07-12T05:15:31.670Z",
+        "checked_at": "2026-07-12T05:16:29.638Z",
+        "last_success_at": "2026-07-12T05:16:29.638Z",
         "consecutive_failures": 0,
         "etag": null,
         "last_modified": null,
@@ -2513,8 +2513,8 @@
       "model:claude:deprecations": {
         "status": "ok",
         "required": true,
-        "checked_at": "2026-07-12T05:15:32.098Z",
-        "last_success_at": "2026-07-12T05:15:32.098Z",
+        "checked_at": "2026-07-12T05:16:29.969Z",
+        "last_success_at": "2026-07-12T05:16:29.969Z",
         "consecutive_failures": 0,
         "etag": null,
         "last_modified": null,
@@ -2529,8 +2529,8 @@
       "model:gemini:api-changelog": {
         "status": "ok",
         "required": true,
-        "checked_at": "2026-07-12T05:15:27.842Z",
-        "last_success_at": "2026-07-12T05:15:27.842Z",
+        "checked_at": "2026-07-12T05:16:26.380Z",
+        "last_success_at": "2026-07-12T05:16:26.380Z",
         "consecutive_failures": 0,
         "etag": null,
         "last_modified": "Thu, 09 Jul 2026 23:04:22 GMT",
@@ -2545,8 +2545,8 @@
       "model:gemini:models-page": {
         "status": "ok",
         "required": true,
-        "checked_at": "2026-07-12T05:15:28.070Z",
-        "last_success_at": "2026-07-12T05:15:28.070Z",
+        "checked_at": "2026-07-12T05:16:26.590Z",
+        "last_success_at": "2026-07-12T05:16:26.590Z",
         "consecutive_failures": 0,
         "etag": null,
         "last_modified": "Thu, 09 Jul 2026 23:04:22 GMT",
