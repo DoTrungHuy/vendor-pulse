@@ -220,10 +220,18 @@ button:disabled { cursor: wait; }
 
 .stage-video {
   position: absolute;
-  z-index: -1;
   display: block;
   object-fit: cover;
   pointer-events: none;
+}
+
+.stage-poster {
+  z-index: -2;
+}
+
+.stage-motion {
+  z-index: -1;
+  opacity: 0;
   will-change: opacity;
 }
 

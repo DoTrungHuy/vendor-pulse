@@ -5,6 +5,7 @@ import type { CurrentData, EventRecord } from "./site-types";
 
 const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
 const dataPath = (name: string) => `${basePath}/data/${name}`;
+const assetPath = (path: string) => `${basePath}${path}`;
 const remoteDataPath = (name: string) => `https://raw.githubusercontent.com/DoTrungHuy/vendor-pulse/main/public/data/${name}`;
 
 type SnapshotSource = "github" | "local";
@@ -36,8 +37,12 @@ async function fetchSnapshotBundle(version: number, preferRemote = true) {
   throw lastError || new Error("snapshot bundle unavailable");
 }
 
-const HERO_VIDEO = "https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260418_080021_d598092b-c4c2-4e53-8e46-94cf9064cd50.mp4";
-const SIGNALS_VIDEO = "https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260418_094631_d30ab262-45ee-4b7d-99f3-5d5848c8ef13.mp4";
+const HERO_VIDEO = assetPath("/videos/hero-desktop.mp4");
+const HERO_VIDEO_MOBILE = assetPath("/videos/hero-mobile.mp4");
+const HERO_POSTER = assetPath("/media/hero-poster.webp");
+const SIGNALS_VIDEO = assetPath("/videos/signals-desktop.mp4");
+const SIGNALS_VIDEO_MOBILE = assetPath("/videos/signals-mobile.mp4");
+const SIGNALS_POSTER = assetPath("/media/signals-poster.webp");
 const PROJECT_REPOSITORY = "https://github.com/DoTrungHuy/vendor-pulse";
 const CONTACT_EMAIL = "tdo770756@gmail.com";
 
@@ -536,10 +541,19 @@ function CornerLinks() {
   );
 }
 
-function FadingVideo({ src, className }: { src: string; className?: string }) {
+type FadingVideoProps = {
+  src: string;
+  mobileSrc?: string;
+  poster: string;
+  className?: string;
+  loadStrategy?: "eager" | "visible";
+};
+
+function FadingVideo({ src, mobileSrc, poster, className, loadStrategy = "eager" }: FadingVideoProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const frameRef = useRef<number | null>(null);
   const fadingOutRef = useRef(false);
+  const [shouldLoad, setShouldLoad] = useState(loadStrategy === "eager");
 
   const fadeTo = useCallback((target: number, duration = 500) => {
     const video = videoRef.current;
@@ -559,13 +573,33 @@ function FadingVideo({ src, className }: { src: string; className?: string }) {
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
+
+    if (loadStrategy === "eager") return;
+
+    const observer = new IntersectionObserver((entries) => {
+      if (!entries.some((entry) => entry.isIntersecting)) return;
+      setShouldLoad(true);
+      observer.disconnect();
+    }, { threshold: 0.01 });
+
+    observer.observe(video);
+    return () => observer.disconnect();
+  }, [loadStrategy]);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video || !shouldLoad) return;
     let restartTimer: number | undefined;
 
-    const start = () => {
+    const start = async () => {
       fadingOutRef.current = false;
       video.style.opacity = "0";
-      void video.play().catch(() => undefined);
-      fadeTo(1);
+      try {
+        await video.play();
+        fadeTo(1);
+      } catch {
+        video.style.opacity = "0";
+      }
     };
     const fadeBeforeEnd = () => {
       if (fadingOutRef.current || !Number.isFinite(video.duration)) return;
@@ -579,15 +613,20 @@ function FadingVideo({ src, className }: { src: string; className?: string }) {
       restartTimer = window.setTimeout(() => {
         video.currentTime = 0;
         fadingOutRef.current = false;
-        void video.play().catch(() => undefined);
-        fadeTo(1);
+        void start();
       }, 100);
+    };
+    const showPoster = () => {
+      if (frameRef.current !== null) window.cancelAnimationFrame(frameRef.current);
+      video.style.opacity = "0";
     };
 
     video.addEventListener("loadeddata", start);
     video.addEventListener("timeupdate", fadeBeforeEnd);
     video.addEventListener("ended", restart);
-    if (video.readyState >= 2) start();
+    video.addEventListener("error", showPoster);
+    video.load();
+    if (video.readyState >= 2) void start();
 
     return () => {
       if (frameRef.current !== null) window.cancelAnimationFrame(frameRef.current);
@@ -595,10 +634,36 @@ function FadingVideo({ src, className }: { src: string; className?: string }) {
       video.removeEventListener("loadeddata", start);
       video.removeEventListener("timeupdate", fadeBeforeEnd);
       video.removeEventListener("ended", restart);
+      video.removeEventListener("error", showPoster);
     };
-  }, [fadeTo]);
+  }, [fadeTo, shouldLoad]);
 
-  return <video ref={videoRef} className={className} src={src} autoPlay muted playsInline preload="auto" />;
+  return (
+    <>
+      {/* A plain image keeps the exact video crop and provides a zero-JS first-frame fallback. */}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        className={`${className || ""} stage-poster`}
+        src={poster}
+        alt=""
+        aria-hidden="true"
+        loading={loadStrategy === "eager" ? "eager" : "lazy"}
+        fetchPriority={loadStrategy === "eager" ? "high" : "low"}
+      />
+      <video
+        ref={videoRef}
+        className={`${className || ""} stage-motion`}
+        poster={poster}
+        autoPlay
+        muted
+        playsInline
+        preload={loadStrategy === "eager" ? "auto" : "none"}
+      >
+        {shouldLoad && mobileSrc ? <source src={mobileSrc} media={MOBILE_BREAKPOINT} type="video/mp4" /> : null}
+        {shouldLoad ? <source src={src} type="video/mp4" /> : null}
+      </video>
+    </>
+  );
 }
 
 export function AgentPulseClient() {
@@ -963,8 +1028,6 @@ export function AgentPulseClient() {
 
   const scrollToSignals = () => signalSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
 
-  if (!ready) return <div className="loading">正在连接信号源…</div>;
-
   const feedCards: Array<{ id: TabId; title: string; count: number; icon: React.ReactNode; tags: string[]; copy: string }> = [
     { id: "models", title: "模型发布", count: verifiedModels.length, icon: <ImageIcon />, tags: [`已核验 ${verifiedModels.length}`, `待核验 ${reviewModels.length}`, "官方原文"], copy: "默认只展示已确认的模型与能力变化，待核验页面线索独立查看。" },
     { id: "agents", title: "Agent 工具", count: verifiedAgents.length, icon: <MovieIcon />, tags: [`已核验 ${verifiedAgents.length}`, "GitHub", "npm"], copy: "跟踪 Codex、Claude Code 等工具的正式版本与热度变化。" },
@@ -975,7 +1038,7 @@ export function AgentPulseClient() {
     return (
       <div className="mobile-experience">
         <div ref={mobileFlowRef} className="mobile-home-flow">
-          <FadingVideo className="stage-video mobile-flow-video" src={HERO_VIDEO} />
+          <FadingVideo className="stage-video mobile-flow-video" src={HERO_VIDEO} mobileSrc={HERO_VIDEO_MOBILE} poster={HERO_POSTER} />
 
           <section ref={mobileHomeRef} className="mobile-landing-panel" aria-label="Agent Pulse 手机端首页">
             <header className="mobile-landing-nav">
@@ -1053,7 +1116,7 @@ export function AgentPulseClient() {
   if (isMobileLayout && isMobileCategory(mobileView)) {
     return (
       <div className="mobile-category-view">
-        <FadingVideo className="stage-video mobile-category-video" src={SIGNALS_VIDEO} />
+        <FadingVideo className="stage-video mobile-category-video" src={SIGNALS_VIDEO} mobileSrc={SIGNALS_VIDEO_MOBILE} poster={SIGNALS_POSTER} />
         <header className="mobile-category-header liquid-glass">
           <div className="mobile-category-toolbar">
             <button type="button" className="mobile-back-button" onClick={returnToMobileToday} aria-label="返回今日重点"><span aria-hidden="true">←</span></button>
@@ -1123,7 +1186,7 @@ export function AgentPulseClient() {
   return (
     <div className="space-page">
       <section className="hero-stage" aria-label="Agent Pulse 概览">
-        <FadingVideo className="stage-video hero-video" src={HERO_VIDEO} />
+        <FadingVideo className="stage-video hero-video" src={HERO_VIDEO} mobileSrc={HERO_VIDEO_MOBILE} poster={HERO_POSTER} />
 
         <header className="floating-nav">
           <CornerLinks />
@@ -1172,7 +1235,7 @@ export function AgentPulseClient() {
       </section>
 
       <section ref={signalSectionRef} className="signals-stage" aria-label="情报信号流">
-        <FadingVideo className="stage-video signals-video" src={SIGNALS_VIDEO} />
+        <FadingVideo className="stage-video signals-video" src={SIGNALS_VIDEO} mobileSrc={SIGNALS_VIDEO_MOBILE} poster={SIGNALS_POSTER} loadStrategy="visible" />
         <div className="signals-content">
           <div className="signals-heading">
             <p>{"// Official update stream"}</p>
