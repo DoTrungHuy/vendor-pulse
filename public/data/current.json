@@ -1,19 +1,19 @@
 {
   "schema_version": 1,
-  "snapshot_id": "snapshot-977074f620",
-  "generated_at": "2026-07-12T13:40:21.243Z",
-  "checked_at": "2026-07-12T13:40:21.243Z",
-  "content_updated_at": "2026-07-12T13:40:21.243Z",
-  "last_full_success_at": "2026-07-12T12:42:42.876Z",
+  "snapshot_id": "snapshot-e7bd0706c7",
+  "generated_at": "2026-07-12T13:42:10.618Z",
+  "checked_at": "2026-07-12T13:42:10.618Z",
+  "content_updated_at": "2026-07-12T13:42:10.618Z",
+  "last_full_success_at": "2026-07-12T13:42:10.618Z",
   "timezone": "Asia/Shanghai",
   "status": "degraded",
   "source_counts": {
     "total": 20,
-    "healthy": 17,
-    "failed": 3,
+    "healthy": 19,
+    "failed": 1,
     "required": 14,
-    "required_healthy": 13,
-    "required_failed": 1
+    "required_healthy": 14,
+    "required_failed": 0
   },
   "tools": [
     {
@@ -143,7 +143,7 @@
         "occurred_at": "2026-07-08T00:00:00.000Z",
         "published_at": "2026-07-08T00:00:00.000Z",
         "effective_at": null,
-        "detected_at": "2026-07-12T13:40:28.475Z",
+        "detected_at": "2026-07-12T13:42:13.234Z",
         "source_url": "https://openai.com/index/introducing-gpt-live",
         "feed_id": "news-rss",
         "confidence": "verified",
@@ -157,7 +157,7 @@
         "occurred_at": "2026-01-29T00:00:00.000Z",
         "published_at": "2026-01-29T00:00:00.000Z",
         "effective_at": "2026-02-13T00:00:00.000Z",
-        "detected_at": "2026-07-12T13:40:28.478Z",
+        "detected_at": "2026-07-12T13:42:13.239Z",
         "source_url": "https://openai.com/index/retiring-gpt-4o-and-older-models",
         "feed_id": "news-rss",
         "confidence": "verified",
@@ -174,7 +174,7 @@
           "required": true,
           "url": "https://openai.com/news/rss.xml",
           "status": "ok",
-          "checked_at": "2026-07-12T13:40:28.465Z",
+          "checked_at": "2026-07-12T13:42:13.227Z",
           "error": null
         },
         {
@@ -184,7 +184,7 @@
           "required": false,
           "url": "https://help.openai.com/en/articles/9624314-model-release-notes",
           "status": "error",
-          "checked_at": "2026-07-12T13:40:33.004Z",
+          "checked_at": "2026-07-12T13:42:15.106Z",
           "error": "403 Forbidden"
         },
         {
@@ -193,9 +193,9 @@
           "kind": "deprecation",
           "required": true,
           "url": "https://developers.openai.com/api/docs/deprecations",
-          "status": "error",
-          "checked_at": "2026-07-12T13:40:36.117Z",
-          "error": "403 Forbidden"
+          "status": "ok",
+          "checked_at": "2026-07-12T13:42:15.171Z",
+          "error": null
         },
         {
           "id": "api-changelog",
@@ -203,9 +203,9 @@
           "kind": "model",
           "required": false,
           "url": "https://developers.openai.com/api/docs/changelog",
-          "status": "error",
-          "checked_at": "2026-07-12T13:40:39.616Z",
-          "error": "403 Forbidden"
+          "status": "ok",
+          "checked_at": "2026-07-12T13:42:15.198Z",
+          "error": null
         }
       ]
     },
@@ -222,7 +222,7 @@
         "occurred_at": "2026-06-30T00:00:00.000Z",
         "published_at": "2026-06-30T00:00:00.000Z",
         "effective_at": null,
-        "detected_at": "2026-07-12T13:40:32.264Z",
+        "detected_at": "2026-07-12T13:42:14.515Z",
         "source_url": "https://www.anthropic.com/news/claude-sonnet-5",
         "feed_id": "news",
         "confidence": "verified",
@@ -233,10 +233,10 @@
       },
       "latest_policy": {
         "title": "claude-opus-4-1-20250805 Deprecated June 5, 2026 August 5, 2026",
-        "occurred_at": "2026-07-12T13:40:36.518Z",
+        "occurred_at": "2026-07-12T13:42:15.237Z",
         "published_at": null,
         "effective_at": "2026-08-05T00:00:00.000Z",
-        "detected_at": "2026-07-12T13:40:36.518Z",
+        "detected_at": "2026-07-12T13:42:15.237Z",
         "source_url": "https://platform.claude.com/docs/en/about-claude/model-deprecations",
         "feed_id": "deprecations",
         "confidence": "verified",
@@ -253,7 +253,7 @@
           "required": true,
           "url": "https://www.anthropic.com/news",
           "status": "ok",
-          "checked_at": "2026-07-12T13:40:32.261Z",
+          "checked_at": "2026-07-12T13:42:14.513Z",
           "error": null
         },
         {
@@ -263,7 +263,7 @@
           "required": false,
           "url": "https://platform.claude.com/docs/en/release-notes/overview",
           "status": "ok",
-          "checked_at": "2026-07-12T13:40:35.692Z",
+          "checked_at": "2026-07-12T13:42:14.895Z",
           "error": null
         },
         {
@@ -273,7 +273,7 @@
           "required": true,
           "url": "https://platform.claude.com/docs/en/about-claude/model-deprecations",
           "status": "ok",
-          "checked_at": "2026-07-12T13:40:36.509Z",
+          "checked_at": "2026-07-12T13:42:15.229Z",
           "error": null
         }
       ]
@@ -291,7 +291,7 @@
         "occurred_at": "2026-06-30T00:00:00.000Z",
         "published_at": "2026-06-30T00:00:00.000Z",
         "effective_at": null,
-        "detected_at": "2026-07-12T13:40:28.055Z",
+        "detected_at": "2026-07-12T13:42:13.197Z",
         "source_url": "https://ai.google.dev/gemini-api/docs/changelog",
         "feed_id": "api-changelog",
         "confidence": "verified",
@@ -305,7 +305,7 @@
         "occurred_at": "2026-06-01T00:00:00.000Z",
         "published_at": "2026-06-01T00:00:00.000Z",
         "effective_at": "2026-06-01T00:00:00.000Z",
-        "detected_at": "2026-07-12T13:40:28.059Z",
+        "detected_at": "2026-07-12T13:42:13.201Z",
         "source_url": "https://ai.google.dev/gemini-api/docs/changelog",
         "feed_id": "api-changelog",
         "confidence": "verified",
@@ -322,7 +322,7 @@
           "required": true,
           "url": "https://ai.google.dev/gemini-api/docs/changelog",
           "status": "ok",
-          "checked_at": "2026-07-12T13:40:28.049Z",
+          "checked_at": "2026-07-12T13:42:13.191Z",
           "error": null
         },
         {
@@ -332,7 +332,7 @@
           "required": true,
           "url": "https://ai.google.dev/gemini-api/docs/models",
           "status": "ok",
-          "checked_at": "2026-07-12T13:40:28.878Z",
+          "checked_at": "2026-07-12T13:42:13.550Z",
           "error": null
         }
       ]
