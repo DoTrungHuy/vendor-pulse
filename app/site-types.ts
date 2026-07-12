@@ -19,7 +19,14 @@ export type ToolRecord = {
   stars: number | null;
   stars_delta_24h: number | null;
   stars_delta_7d: number | null;
-  latest_release: { tag: string; title: string; published_at: string; url: string } | null;
+  latest_release: {
+    tag: string;
+    title: string;
+    published_at: string;
+    url: string;
+    release_channel?: "stable" | "prerelease" | null;
+    summary?: string | null;
+  } | null;
   release_cadence_30d: { count: number; median_days: number | null };
   npm: { package: string; version: string | null; weekly_downloads: number | null } | null;
   status: SourceHealth;
@@ -30,9 +37,14 @@ export type SignalRecord = {
   occurred_at: string;
   published_at?: string | null;
   effective_at?: string | null;
+  detected_at?: string | null;
   source_url: string;
   feed_id: string | null;
   confidence?: "verified" | "needs_review";
+  source_status?: "official";
+  information_status?: "complete" | "partial";
+  release_channel?: "stable" | "prerelease" | null;
+  summary?: string | null;
 };
 
 export type ModelFeedStatus = {
@@ -71,10 +83,15 @@ export type EventRecord = {
   effective_at?: string | null;
   first_seen_at?: string | null;
   last_seen_at?: string | null;
+  detected_at?: string | null;
   source_url: string;
   provider?: string | null;
   feed_id?: string | null;
   confidence?: "verified" | "needs_review";
+  source_status?: "official";
+  information_status?: "complete" | "partial";
+  release_channel?: "stable" | "prerelease" | null;
+  summary?: string | null;
 };
 
 export type CurrentData = {
@@ -99,6 +116,13 @@ export type SnapshotHealth = {
   last_full_success_at: string | null;
   overall: SourceHealth;
   source_counts: SourceCounts;
+  publication_stats?: {
+    complete: number;
+    partial: number;
+    stable: number;
+    prerelease: number;
+    quarantined: number;
+  };
 };
 
 export type SnapshotBundle = {

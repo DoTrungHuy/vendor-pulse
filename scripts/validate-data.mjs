@@ -43,6 +43,7 @@ export async function validatePublishedData() {
 
   assert.equal(status.overall, current.status);
   assert.ok(Array.isArray(status.review_queue), "status review queue must be available for internal inspection");
+  assert.equal(typeof status.publication_stats, "object", "publication stats must be available for internal inspection");
   assert.equal(status.source_counts.total, Object.keys(status.sources).length);
   assert.equal(status.source_counts.healthy + status.source_counts.failed, status.source_counts.total);
   Object.entries(status.sources).forEach(([key, source]) => {
@@ -54,11 +55,18 @@ export async function validatePublishedData() {
   });
 
   events.forEach((event) => {
-    assert.equal(event.confidence, "verified", `${event.id} must be verified before publication`);
+    assert.equal(event.source_status, "official", `${event.id} must come from an official source`);
+    assert.ok(["complete", "partial"].includes(event.information_status), `${event.id} must expose information completeness`);
+    assert.ok(["stable", "prerelease", null].includes(event.release_channel), `${event.id} has an invalid release channel`);
     assert.equal(event.id, event.canonical_key, `${event.id} must use its canonical identity`);
     assert.match(event.source_url, /^https:\/\//, `${event.id} must link to HTTPS`);
     validTime(event.occurred_at, `${event.id}.occurred_at`);
+    validTime(event.detected_at, `${event.id}.detected_at`);
+    assert.equal(typeof event.summary, "string", `${event.id}.summary must be available`);
+    assert.ok(event.summary.length >= 12, `${event.id}.summary must be meaningful`);
+    if (event.information_status === "partial" && event.type !== "deprecation") assert.equal(event.published_at || null, null, `${event.id} partial releases must not invent publish dates`);
   });
+  assert.equal(status.publication_stats.complete + status.publication_stats.partial, events.length);
 
   return { snapshot_id: bundle.snapshot_id, status: current.status, events: events.length };
 }

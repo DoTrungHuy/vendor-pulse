@@ -68,6 +68,9 @@ const CONTACT_EMAIL = "tdo770756@gmail.com";
 type ItemKind = "model" | "agent" | "notice";
 type TabId = "models" | "agents" | "notices";
 type Confidence = "verified" | "needs_review";
+type InformationStatus = "complete" | "partial";
+type ReleaseChannel = "stable" | "prerelease" | null;
+type ChannelFilter = "all" | "stable" | "prerelease";
 type MobileView = "home" | "today" | TabId;
 
 const MOBILE_BREAKPOINT = "(max-width: 640px)";
@@ -91,11 +94,16 @@ type FeedItem = {
   time: string | null;
   href: string;
   confidence: Confidence;
+  sourceStatus?: "official";
+  informationStatus?: InformationStatus;
+  releaseChannel?: ReleaseChannel;
+  detectedAt?: string | null;
   kind: ItemKind;
   publishedAt?: string | null;
   effectiveAt?: string | null;
   isPortal?: boolean;
   topic?: string;
+  summary?: string | null;
 };
 
 type SnapshotHighlight = {
@@ -400,17 +408,40 @@ function snapshotStatus(current: CurrentData, now: number, source: SnapshotSourc
   if (!Number.isFinite(generatedTimestamp)) return { label: "时间异常", detail: "快照时间无法识别，请重新同步" };
   const minutes = Math.max(0, Math.floor((now - generatedTimestamp) / 60_000));
   const contentAge = relativeTime(current.content_updated_at || current.generated_at, now);
-  if (source === "local") return { label: "最近有效快照", detail: `内容${contentAge}更新` };
+  const checkedAge = relativeTime(checkedAt, now);
+  const timing = `最近检查 ${checkedAge}｜新内容 ${contentAge}更新`;
+  if (source === "local") return { label: "最近有效快照", detail: timing };
 
-  if (minutes >= 90 || current.status === "error") return { label: "自动更新稍有延迟", detail: "当前展示最近一次核验内容" };
+  if (minutes >= 90 || current.status === "error") return { label: "自动更新稍有延迟", detail: timing };
   if ((current.status === "degraded" || current.status === "stale") && (current.source_counts?.required_failed || 0) > 0) {
-    return { label: "部分信息更新延迟", detail: "当前展示最近一次核验内容" };
+    return { label: "部分信息更新延迟", detail: timing };
   }
-  return { label: "官方信息已同步", detail: `内容${contentAge}更新` };
+  return { label: "官方信息已同步", detail: timing };
 }
 
 function isHttpUrl(value: string | null | undefined): value is string {
   return Boolean(value && /^https?:\/\//i.test(value));
+}
+
+function inferredReleaseChannel(value: string, declared?: ReleaseChannel): ReleaseChannel {
+  if (declared) return declared;
+  return /(?:alpha|beta|preview|release candidate|nightly|canary|(?:^|[._-])rc(?:[._-]?\d+)?)/i.test(value) ? "prerelease" : "stable";
+}
+
+function inferredInformationStatus(event: EventRecord): InformationStatus {
+  if (event.information_status) return event.information_status;
+  if (event.type === "deprecation") return event.effective_at ? "complete" : "partial";
+  return event.published_at ? "complete" : "partial";
+}
+
+function informationBadge(item: FeedItem) {
+  return item.informationStatus === "partial" ? "官方消息 · 信息待补充" : "官方发布";
+}
+
+function itemTimeLabel(item: FeedItem) {
+  if (item.effectiveAt) return `生效 ${formatCalendarDate(item.effectiveAt)}`;
+  if (item.publishedAt) return formatDate(item.publishedAt);
+  return "时间以官方原文为准";
 }
 
 function dedupeItems(items: FeedItem[]) {
@@ -425,7 +456,7 @@ function dedupeItems(items: FeedItem[]) {
       : clean;
     const key = `${item.kind}|${item.vendor}|${lifecycleSubject}|${item.effectiveAt?.slice(0, 10) || ""}`.toLowerCase();
     const previous = unique.get(key);
-    if (!previous || (previous.confidence === "needs_review" && item.confidence === "verified")) unique.set(key, item);
+    if (!previous || (previous.informationStatus === "partial" && item.informationStatus === "complete")) unique.set(key, item);
   }
   return [...unique.values()];
 }
@@ -442,19 +473,23 @@ function eventToItem(event: EventRecord): FeedItem | null {
   const product = event.item_name || vendor.label;
   const confidence: Confidence = event.confidence === "verified" ? "verified" : "needs_review";
   const effectiveAt = event.effective_at || (kind === "notice" ? dateFromTitle(event.title) : null);
+  const informationStatus = inferredInformationStatus(event);
   return {
     id: event.id,
     vendor: vendor.label,
     title: kind === "notice" ? policyDisplayTitle(removeRepeatedProduct(event.title, product)) : displayTitle(removeRepeatedProduct(event.title, product)),
-    note: confidence === "verified"
-      ? writeNote(kind, { product, href: event.source_url })
-      : "页面变化已被捕获，但尚未确认是正式发布；请以官方原文为准。",
-    time: event.published_at || event.occurred_at,
+    note: event.summary || writeNote(kind, { product, href: event.source_url }),
+    time: event.published_at || event.detected_at || event.occurred_at,
     href: event.source_url,
     confidence,
+    sourceStatus: "official",
+    informationStatus,
+    releaseChannel: kind === "notice" ? null : inferredReleaseChannel(event.title, event.release_channel),
+    detectedAt: event.detected_at || event.last_seen_at || event.occurred_at,
     kind,
-    publishedAt: event.published_at || (kind === "notice" ? null : event.occurred_at),
+    publishedAt: event.published_at || null,
     effectiveAt,
+    summary: event.summary || null,
   };
 }
 
@@ -572,11 +607,20 @@ type FadingVideoProps = {
   loadStrategy?: "eager" | "visible";
 };
 
+type NetworkInformationLike = EventTarget & { saveData?: boolean };
+
+function motionVideoAllowed() {
+  if (typeof window === "undefined") return true;
+  const connection = (navigator as Navigator & { connection?: NetworkInformationLike }).connection;
+  return !window.matchMedia("(prefers-reduced-motion: reduce)").matches && !connection?.saveData;
+}
+
 function FadingVideo({ src, mobileSrc, poster, className, loadStrategy = "eager" }: FadingVideoProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const frameRef = useRef<number | null>(null);
   const fadingOutRef = useRef(false);
-  const [shouldLoad, setShouldLoad] = useState(loadStrategy === "eager");
+  const [motionAllowed, setMotionAllowed] = useState(motionVideoAllowed);
+  const [shouldLoad, setShouldLoad] = useState(() => loadStrategy === "eager" && motionVideoAllowed());
 
   const fadeTo = useCallback((target: number, duration = 500) => {
     const video = videoRef.current;
@@ -594,8 +638,25 @@ function FadingVideo({ src, mobileSrc, poster, className, loadStrategy = "eager"
   }, []);
 
   useEffect(() => {
+    const media = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const connection = (navigator as Navigator & { connection?: NetworkInformationLike }).connection;
+    const sync = () => {
+      const allowed = motionVideoAllowed();
+      setMotionAllowed(allowed);
+      if (allowed && loadStrategy === "eager") setShouldLoad(true);
+    };
+    sync();
+    media.addEventListener("change", sync);
+    connection?.addEventListener("change", sync);
+    return () => {
+      media.removeEventListener("change", sync);
+      connection?.removeEventListener("change", sync);
+    };
+  }, [loadStrategy]);
+
+  useEffect(() => {
     const video = videoRef.current;
-    if (!video) return;
+    if (!video || !motionAllowed) return;
 
     if (loadStrategy === "eager") return;
 
@@ -607,11 +668,11 @@ function FadingVideo({ src, mobileSrc, poster, className, loadStrategy = "eager"
 
     observer.observe(video);
     return () => observer.disconnect();
-  }, [loadStrategy]);
+  }, [loadStrategy, motionAllowed]);
 
   useEffect(() => {
     const video = videoRef.current;
-    if (!video || !shouldLoad) return;
+    if (!video || !shouldLoad || !motionAllowed) return;
     let restartTimer: number | undefined;
 
     const start = async () => {
@@ -643,11 +704,19 @@ function FadingVideo({ src, mobileSrc, poster, className, loadStrategy = "eager"
       if (frameRef.current !== null) window.cancelAnimationFrame(frameRef.current);
       video.style.opacity = "0";
     };
+    const syncVisibility = () => {
+      if (document.visibilityState === "hidden") {
+        video.pause();
+        return;
+      }
+      void start();
+    };
 
     video.addEventListener("loadeddata", start);
     video.addEventListener("timeupdate", fadeBeforeEnd);
     video.addEventListener("ended", restart);
     video.addEventListener("error", showPoster);
+    document.addEventListener("visibilitychange", syncVisibility);
     video.load();
     if (video.readyState >= 2) void start();
 
@@ -658,8 +727,9 @@ function FadingVideo({ src, mobileSrc, poster, className, loadStrategy = "eager"
       video.removeEventListener("timeupdate", fadeBeforeEnd);
       video.removeEventListener("ended", restart);
       video.removeEventListener("error", showPoster);
+      document.removeEventListener("visibilitychange", syncVisibility);
     };
-  }, [fadeTo, shouldLoad]);
+  }, [fadeTo, motionAllowed, shouldLoad]);
 
   return (
     <>
@@ -682,8 +752,8 @@ function FadingVideo({ src, mobileSrc, poster, className, loadStrategy = "eager"
         playsInline
         preload={loadStrategy === "eager" ? "auto" : "none"}
       >
-        {shouldLoad && mobileSrc ? <source src={mobileSrc} media={MOBILE_BREAKPOINT} type="video/mp4" /> : null}
-        {shouldLoad ? <source src={src} type="video/mp4" /> : null}
+        {shouldLoad && motionAllowed && mobileSrc ? <source src={mobileSrc} media={MOBILE_BREAKPOINT} type="video/mp4" /> : null}
+        {shouldLoad && motionAllowed ? <source src={src} type="video/mp4" /> : null}
       </video>
     </>
   );
@@ -703,6 +773,9 @@ export function AgentPulseClient() {
   const [snapshotSource, setSnapshotSource] = useState<SnapshotSource>("local");
   const [isMobileLayout, setIsMobileLayout] = useState(() => typeof window !== "undefined" && window.matchMedia(MOBILE_BREAKPOINT).matches);
   const [mobileView, setMobileView] = useState<MobileView>(() => mobileViewFromHash());
+  const [searchQuery, setSearchQuery] = useState("");
+  const [vendorFilter, setVendorFilter] = useState("all");
+  const [channelFilter, setChannelFilter] = useState<ChannelFilter>("all");
   const signalSectionRef = useRef<HTMLElement>(null);
   const snapshotIdRef = useRef<string | null>(null);
   const requestControllerRef = useRef<AbortController | null>(null);
@@ -720,6 +793,8 @@ export function AgentPulseClient() {
     window.history[replace ? "replaceState" : "pushState"](nextState, "", `#${nextView}`);
     if (isMobileCategory(nextView)) {
       setTab(nextView);
+      setVendorFilter("all");
+      setChannelFilter("all");
     }
     setMobileView(nextView);
   }, [mobileView]);
@@ -742,7 +817,7 @@ export function AgentPulseClient() {
     const timeout = window.setTimeout(() => controller.abort(), 8_000);
     if (manual) {
       setIsRefreshing(true);
-      setToast("正在读取 GitHub 最新公开快照…");
+      setToast("正在读取最新公开快照…");
     }
     try {
       const version = Date.now();
@@ -759,9 +834,9 @@ export function AgentPulseClient() {
       if (manual) {
         setToast(source === "github"
           ? previousSnapshotId && previousSnapshotId === snapshotIdRef.current
-            ? "当前已是 GitHub main 最新公开快照"
-            : "已读取 GitHub main 更新后的公开快照"
-          : "GitHub 暂时不可用，已整体回退本地快照");
+            ? "当前已是最新公开快照"
+            : "已读取新的公开快照"
+          : "远端快照暂时不可用，已保留站点内置快照");
       }
     } catch (error) {
       if (manual && sequence === requestSequenceRef.current) {
@@ -890,15 +965,18 @@ export function AgentPulseClient() {
         id: `current-model-${model.id}`,
         vendor: vendor.label,
         title: displayTitle(removeRepeatedProduct(signal.title, model.name)),
-        note: confidence === "verified"
-          ? writeNote("model", { product: model.name, href })
-          : "页面变化已被捕获，但尚未确认是正式模型发布。",
-        time: signal.published_at || signal.occurred_at || model.occurred_at,
+        note: signal.summary || writeNote("model", { product: model.name, href }),
+        time: signal.published_at || signal.detected_at || signal.occurred_at || model.occurred_at,
         href,
         confidence,
+        sourceStatus: "official",
+        informationStatus: signal.information_status || (signal.published_at ? "complete" : "partial"),
+        releaseChannel: inferredReleaseChannel(signal.title, signal.release_channel),
+        detectedAt: signal.detected_at || signal.occurred_at || model.occurred_at,
         kind: "model",
-        publishedAt: signal.published_at || signal.occurred_at || model.occurred_at,
+        publishedAt: signal.published_at || null,
         effectiveAt: signal.effective_at || null,
+        summary: signal.summary || null,
       } satisfies FeedItem];
     });
     return sortByTime(dedupeItems([...fromEvents, ...fromCurrent]));
@@ -914,13 +992,18 @@ export function AgentPulseClient() {
         id: `current-tool-${tool.id}`,
         vendor: vendor.label === "其他" ? tool.name : vendor.label,
         title: releaseTitle(tool.name, version),
-        note: writeNote("agent", { product: tool.name, href: tool.latest_release.url, version: tool.latest_release.tag }),
+        note: tool.latest_release.summary || writeNote("agent", { product: tool.name, href: tool.latest_release.url, version: tool.latest_release.tag }),
         time: tool.latest_release.published_at,
         href: tool.latest_release.url,
         confidence: "verified",
+        sourceStatus: "official",
+        informationStatus: "complete",
+        releaseChannel: inferredReleaseChannel(`${tool.latest_release.tag} ${version}`, tool.latest_release.release_channel),
+        detectedAt: tool.latest_release.published_at,
         kind: "agent",
         publishedAt: tool.latest_release.published_at,
         effectiveAt: null,
+        summary: tool.latest_release.summary || null,
       } satisfies FeedItem];
     });
     return sortByTime(dedupeItems([...fromEvents, ...fromTools]));
@@ -931,12 +1014,20 @@ export function AgentPulseClient() {
     return sortByTime(dedupeItems(items));
   }, [events]);
 
-  const verifiedModels = models.filter((item) => item.confidence === "verified");
-  const verifiedAgents = agents.filter((item) => item.confidence === "verified");
-  const verifiedPolicies = policies.filter((item) => item.confidence === "verified");
-  const activeVerifiedItems = tab === "models" ? verifiedModels : tab === "agents" ? verifiedAgents : verifiedPolicies;
-  const activeItems = activeVerifiedItems.slice(0, 16);
-  const totalSignals = verifiedModels.length + verifiedAgents.length + verifiedPolicies.length;
+  const officialModels = models.filter((item) => item.sourceStatus === "official");
+  const officialAgents = agents.filter((item) => item.sourceStatus === "official");
+  const officialPolicies = policies.filter((item) => item.sourceStatus === "official");
+  const activeOfficialItems = tab === "models" ? officialModels : tab === "agents" ? officialAgents : officialPolicies;
+  const vendorOptions = [...new Set(activeOfficialItems.map((item) => item.vendor))].sort((a, b) => a.localeCompare(b, "zh-CN"));
+  const normalizedQuery = searchQuery.trim().toLocaleLowerCase("zh-CN");
+  const activeFilteredItems = activeOfficialItems.filter((item) => {
+    if (vendorFilter !== "all" && item.vendor !== vendorFilter) return false;
+    if (channelFilter !== "all" && item.releaseChannel !== channelFilter) return false;
+    if (!normalizedQuery) return true;
+    return `${item.vendor} ${item.title} ${item.note}`.toLocaleLowerCase("zh-CN").includes(normalizedQuery);
+  });
+  const activeItems = activeFilteredItems.slice(0, 24);
+  const totalSignals = officialModels.length + officialAgents.length + officialPolicies.length;
   const providers = new Set([...models, ...agents, ...policies, ...OFFICIAL_NOTICES].map((item) => item.vendor)).size;
   const snapshotHighlights = useMemo(() => {
     const highlights: SnapshotHighlight[] = [];
@@ -944,29 +1035,28 @@ export function AgentPulseClient() {
     const snapshotTimeValue = current.checked_at || current.generated_at;
     const snapshotTime = snapshotTimeValue ? new Date(snapshotTimeValue).getTime() : clockTick;
     const day = 24 * 60 * 60 * 1000;
-    const verifiedNewsItems = [...models, ...agents]
-      .filter((item) => item.confidence === "verified")
+    const officialNewsItems = [...models, ...agents]
+      .filter((item) => item.sourceStatus === "official")
       .filter((item) => item.time && new Date(item.time).getTime() <= snapshotTime);
-    const recentReleaseItems = sortByTime(dedupeItems(verifiedNewsItems))
+    const recentReleaseItems = sortByTime(dedupeItems(officialNewsItems))
       .filter((item) => item.time && clockTick - new Date(item.time).getTime() <= 7 * day);
-    const latestItem = recentReleaseItems[0];
+    const latestItem = recentReleaseItems.find((item) => item.informationStatus === "complete" && item.releaseChannel !== "prerelease")
+      || recentReleaseItems.find((item) => item.informationStatus === "complete")
+      || recentReleaseItems.find((item) => item.informationStatus === "partial" && /\/news\/[^/]+\/?$/i.test(item.href));
 
     if (latestItem) {
-      const previewRelease = /(?:alpha|beta|preview|rc)[.-]?\d*/i.test(latestItem.title);
       const releaseAge = clockTick - new Date(latestItem.time as string).getTime();
       highlights.push({
-        label: releaseAge <= day ? "刚刚发布" : "近期发布",
+        label: latestItem.informationStatus === "partial" ? "官方消息" : releaseAge <= day ? "刚刚发布" : "近期发布",
         item: latestItem,
-        signal: `${relativeTime(latestItem.time, clockTick)}发布`,
-        reason: previewRelease
-          ? `${latestItem.vendor} 发布了新的测试版本。建议先查看变更日志并完成验证，再决定是否用于正式工作流。`
-          : `${latestItem.vendor} 发布了当前时间最近的正式更新。建议先确认能力变化与现有工作流是否相关。`,
+        signal: latestItem.publishedAt ? `${relativeTime(latestItem.publishedAt, clockTick)}发布` : "时间以原文为准",
+        reason: latestItem.note,
       });
       usedLinks.add(latestItem.href);
     }
 
     const heatCandidates = [...(current.tools || [])]
-      .filter((tool) => tool.latest_release && isHttpUrl(tool.latest_release.url))
+      .filter((tool) => tool.latest_release && isHttpUrl(tool.latest_release.url) && inferredReleaseChannel(`${tool.latest_release.tag} ${tool.latest_release.title}`, tool.latest_release.release_channel) === "stable")
       .map((tool) => ({
         tool,
         stars: Math.max(0, tool.stars_delta_24h || 0),
@@ -996,7 +1086,7 @@ export function AgentPulseClient() {
     }
 
     const lifecycleItems = policies
-      .filter((item) => item.confidence === "verified" && item.effectiveAt && !usedLinks.has(item.href))
+      .filter((item) => item.sourceStatus === "official" && item.informationStatus === "complete" && item.effectiveAt && !usedLinks.has(item.href))
       .map((item) => ({ item, effectiveTime: new Date(item.effectiveAt as string).getTime() }));
     const upcomingRisk = lifecycleItems
       .filter(({ effectiveTime }) => effectiveTime > clockTick && effectiveTime - clockTick <= 90 * day)
@@ -1024,13 +1114,14 @@ export function AgentPulseClient() {
     }
 
     if (highlights.length < 3) {
-      const fallback = recentReleaseItems.find((item) => !usedLinks.has(item.href));
+      const fallback = recentReleaseItems.find((item) => item.releaseChannel !== "prerelease" && !usedLinks.has(item.href))
+        || recentReleaseItems.find((item) => item.informationStatus === "partial" && /\/news\/[^/]+\/?$/i.test(item.href) && !usedLinks.has(item.href));
       if (fallback) {
         highlights.push({
           label: "重要更新",
           item: fallback,
-          signal: `${relativeTime(fallback.time, clockTick)}发布`,
-          reason: `${fallback.vendor} 的这项更新已经过来源核验，适合结合当前项目需求判断是否需要进一步测试。`,
+          signal: fallback.publishedAt ? `${relativeTime(fallback.publishedAt, clockTick)}发布` : "时间以原文为准",
+          reason: fallback.note,
         });
       }
     }
@@ -1043,9 +1134,46 @@ export function AgentPulseClient() {
       ? { title: "Agent 工具", label: "工具更新", copy: "跟踪 Agent 工具的正式版本与开源发布，快速确认工作流中值得升级的变化。", icon: <MovieIcon />, tags: ["版本发布", "GitHub", "工具链"] }
       : { title: "弃用与迁移", label: "风险提醒", copy: "集中查看模型停用、接口弃用与迁移说明，为替换和调整提前留出时间。", icon: <LightIcon />, tags: ["弃用迁移", "官方文档", "政策提醒"] };
   const snapshotMeta = snapshotStatus(current, clockTick, snapshotSource);
-  const activeTotal = activeVerifiedItems.length;
-  const activeCountLabel = `${activeItems.length < activeTotal ? `最近 ${activeItems.length} 条 · 共 ` : ""}${activeTotal} 条官方已核验更新`;
+  const activeTotal = activeOfficialItems.length;
+  const activeCountLabel = activeFilteredItems.length === activeTotal
+    ? `${activeTotal} 条官方更新`
+    : `筛选出 ${activeFilteredItems.length} 条，共 ${activeTotal} 条官方更新`;
   const activeIntro = activeMeta.copy;
+  const filterControls = (
+    <div className="feed-filter-bar" aria-label="筛选官方更新">
+      <label className="feed-search">
+        <span>搜索</span>
+        <input
+          type="search"
+          value={searchQuery}
+          onChange={(event) => setSearchQuery(event.target.value)}
+          placeholder="搜索模型、工具或摘要"
+        />
+      </label>
+      <label className="feed-vendor-filter">
+        <span>来源</span>
+        <select value={vendorFilter} onChange={(event) => setVendorFilter(event.target.value)}>
+          <option value="all">全部来源</option>
+          {vendorOptions.map((vendor) => <option key={vendor} value={vendor}>{vendor}</option>)}
+        </select>
+      </label>
+      {tab !== "notices" ? (
+        <div className="feed-channel-filter" role="group" aria-label="版本类型">
+          {(["all", "stable", "prerelease"] as ChannelFilter[]).map((channel) => (
+            <button
+              key={channel}
+              type="button"
+              className={channelFilter === channel ? "is-active" : ""}
+              onClick={() => setChannelFilter(channel)}
+              aria-pressed={channelFilter === channel}
+            >
+              {channel === "all" ? "全部" : channel === "stable" ? "正式版" : "预览版"}
+            </button>
+          ))}
+        </div>
+      ) : null}
+    </div>
+  );
 
   const handleOpen = (item: FeedItem) => {
     if (!isHttpUrl(item.href)) {
@@ -1059,15 +1187,17 @@ export function AgentPulseClient() {
 
   const selectFeed = (nextTab: TabId, shouldScroll = false) => {
     setTab(nextTab);
+    setVendorFilter("all");
+    setChannelFilter("all");
     if (shouldScroll) signalSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
   const scrollToSignals = () => signalSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
 
   const feedCards: Array<{ id: TabId; title: string; count: number; icon: React.ReactNode; tags: string[]; copy: string }> = [
-    { id: "models", title: "模型发布", count: verifiedModels.length, icon: <ImageIcon />, tags: [`已核验 ${verifiedModels.length}`, "明确日期", "官方原文"], copy: "只展示带有明确发布日期、并可直达官方原文的模型与能力变化。" },
-    { id: "agents", title: "Agent 工具", count: verifiedAgents.length, icon: <MovieIcon />, tags: [`已核验 ${verifiedAgents.length}`, "GitHub", "npm"], copy: "跟踪 Codex、Claude Code 等工具的正式版本与热度变化。" },
-    { id: "notices", title: "弃用与迁移", count: verifiedPolicies.length, icon: <LightIcon />, tags: [`已核验 ${verifiedPolicies.length}`, "明确日期", `官方入口 ${OFFICIAL_NOTICES.length}`], copy: "只呈现有明确对象、日期和官方迁移依据的停用事件。" },
+    { id: "models", title: "模型发布", count: officialModels.length, icon: <ImageIcon />, tags: [`官方消息 ${officialModels.length}`, "完整与待补充", "官方原文"], copy: "收录官方发布的模型与能力消息；日期缺失时会明确标记，不再直接隐藏。" },
+    { id: "agents", title: "Agent 工具", count: officialAgents.length, icon: <MovieIcon />, tags: [`官方版本 ${officialAgents.length}`, "正式与预览", "GitHub"], copy: "跟踪 Codex、Claude Code 等工具的正式版本、预览版本与热度变化。" },
+    { id: "notices", title: "弃用与迁移", count: officialPolicies.length, icon: <LightIcon />, tags: [`官方提醒 ${officialPolicies.length}`, "日期分层", `固定入口 ${OFFICIAL_NOTICES.length}`], copy: "呈现对象明确的停用与迁移消息；日期不完整时直接说明，以官方原文为准。" },
   ];
 
   if (isMobileLayout && !isMobileCategory(mobileView)) {
@@ -1080,7 +1210,7 @@ export function AgentPulseClient() {
             <header className="mobile-landing-nav">
               <CornerLinks />
               <button type="button" className="mobile-sync-button liquid-glass-strong" onClick={() => void loadData(true)} disabled={isRefreshing}>
-                {isRefreshing ? "读取中" : "读取快照"}<ArrowIcon />
+                {isRefreshing ? "读取中" : "最新快照"}<ArrowIcon />
               </button>
             </header>
 
@@ -1107,7 +1237,7 @@ export function AgentPulseClient() {
                 <h2 id="mobile-today-title">今日重点</h2>
               </div>
               <button type="button" className="mobile-sync-button liquid-glass-strong" onClick={() => void loadData(true)} disabled={isRefreshing}>
-                {isRefreshing ? "读取中" : "读取"}<ArrowIcon />
+                {isRefreshing ? "读取中" : "最新快照"}<ArrowIcon />
               </button>
             </header>
             <p className="mobile-today-status">{snapshotMeta.label} · {snapshotMeta.detail}</p>
@@ -1157,7 +1287,7 @@ export function AgentPulseClient() {
           <div className="mobile-category-toolbar">
             <button type="button" className="mobile-back-button" onClick={returnToMobileToday} aria-label="返回今日重点"><span aria-hidden="true">←</span></button>
             <div><p>{activeMeta.label}</p><strong>{activeMeta.title}</strong></div>
-            <button type="button" className="mobile-header-sync" onClick={() => void loadData(true)} disabled={isRefreshing}>{isRefreshing ? "读取中" : "读取"}</button>
+            <button type="button" className="mobile-header-sync" onClick={() => void loadData(true)} disabled={isRefreshing} aria-label="读取最新快照" title="读取最新快照">{isRefreshing ? "读取中" : "更新"}</button>
           </div>
           <nav className="mobile-category-tabs" aria-label="切换情报分类">
             {feedCards.map((card) => (
@@ -1177,23 +1307,23 @@ export function AgentPulseClient() {
 
           <div className="mobile-list-controls">
             <span>{activeCountLabel}</span>
-            <span className="verified-only-label">仅展示官方已核验</span>
           </div>
+          {filterControls}
 
           <div className="mobile-signal-list">
             {activeItems.length ? activeItems.map((item) => (
               <button key={item.id} type="button" className="mobile-signal-card liquid-glass frosted-panel" onClick={() => handleOpen(item)}>
                 <p className="row-meta">
                   <b>{item.vendor}</b>
-                  <em className="confidence-badge is-verified">官方已核验</em>
+                  <em className={`confidence-badge ${item.informationStatus === "partial" ? "is-partial" : "is-official"}`}>{informationBadge(item)}</em>
                   {item.topic ? <span>{item.topic}</span> : null}
-                  <time>{item.effectiveAt ? `生效 ${formatCalendarDate(item.effectiveAt)}` : formatDate(item.time)}</time>
+                  <time>{itemTimeLabel(item)}</time>
                 </p>
                 <h2>{item.title}</h2>
                 <p>{item.note}</p>
                 <span className="mobile-card-link">查看官方原文 <ArrowIcon /></span>
               </button>
-            )) : <div className="empty">暂时还没有信号。</div>}
+            )) : <div className="empty">没有匹配的官方更新，请调整搜索或筛选条件。</div>}
           </div>
 
           {tab === "notices" ? (
@@ -1225,8 +1355,8 @@ export function AgentPulseClient() {
             <button type="button" onClick={() => selectFeed("models", true)}>模型发布</button>
             <button type="button" onClick={() => selectFeed("agents", true)}>Agent 工具</button>
             <button type="button" onClick={() => selectFeed("notices", true)}>弃用提醒</button>
-            <button type="button" className="nav-refresh" onClick={() => void loadData(true)} disabled={isRefreshing} title="读取 GitHub main 已完成采集的最新公开快照">
-              {isRefreshing ? "读取中" : "读取快照"}<ArrowIcon />
+            <button type="button" className="nav-refresh" onClick={() => void loadData(true)} disabled={isRefreshing} title="读取自动采集完成的最新公开快照">
+              {isRefreshing ? "读取中" : "最新快照"}<ArrowIcon />
             </button>
           </nav>
           <div className="nav-spacer" aria-hidden="true" />
@@ -1240,7 +1370,7 @@ export function AgentPulseClient() {
           <h1 className="hero-title reveal reveal-two">见微知著</h1>
           <p className="hero-copy reveal reveal-three">把散落在官网、GitHub 与 npm 的模型发布、Agent 工具更新和弃用提醒，整理成可核验、可直达原文的更新清单。</p>
           <div className="hero-actions reveal reveal-four">
-            <button type="button" className="liquid-glass-strong primary-action" onClick={() => void loadData(true)} disabled={isRefreshing} title="读取 GitHub main 已完成采集的最新公开快照">
+            <button type="button" className="liquid-glass-strong primary-action" onClick={() => void loadData(true)} disabled={isRefreshing} title="读取自动采集完成的最新公开快照">
               {isRefreshing ? "正在读取" : "读取最新快照"}<ArrowIcon />
             </button>
             <button type="button" className="quiet-action" onClick={scrollToSignals}>查看更新清单<PlayIcon /></button>
@@ -1249,7 +1379,7 @@ export function AgentPulseClient() {
             <div className="stat-card liquid-glass frosted-panel">
               <ClockIcon />
               <strong>{totalSignals}</strong>
-              <span>已收录已核验更新</span>
+              <span>已收录官方更新</span>
             </div>
             <div className="stat-card liquid-glass frosted-panel">
               <GlobeIcon />
@@ -1277,7 +1407,7 @@ export function AgentPulseClient() {
 
           <section className="snapshot-summary liquid-glass frosted-panel" aria-labelledby="snapshot-summary-title">
             <div className="summary-intro">
-              <p className="summary-kicker">最新与热点 · 仅展示已核验信号</p>
+              <p className="summary-kicker">正式发布、重要迁移与官方消息</p>
               <h3 id="snapshot-summary-title">现在值得关注</h3>
               <p className="summary-copy">
                 不再按分类各取一条，而是结合发布时间、24 小时热度和迁移影响筛选。最近于 {relativeTime(current.checked_at || current.generated_at, clockTick)}完成检查，内容于 {relativeTime(current.content_updated_at || current.generated_at, clockTick)}更新。
@@ -1334,26 +1464,26 @@ export function AgentPulseClient() {
               </div>
               <div className="signal-list-controls">
                 <span>{activeCountLabel}</span>
-                <span className="verified-only-label">仅展示官方已核验</span>
               </div>
             </div>
             <p className="signal-list-intro">{activeIntro}</p>
+            {filterControls}
             <div className="signal-rows">
               {activeItems.length ? activeItems.map((item) => (
                 <button key={item.id} type="button" className="signal-row" onClick={() => handleOpen(item)} title={item.href}>
                   <div>
                     <p className="row-meta">
                       <b>{item.vendor}</b>
-                      <em className="confidence-badge is-verified">官方已核验</em>
+                      <em className={`confidence-badge ${item.informationStatus === "partial" ? "is-partial" : "is-official"}`}>{informationBadge(item)}</em>
                       {item.topic ? <span>{item.topic}</span> : null}
-                      <time>{item.effectiveAt ? `生效 ${formatCalendarDate(item.effectiveAt)}` : formatDate(item.time)}</time>
+                      <time>{itemTimeLabel(item)}</time>
                     </p>
                     <h4>{item.title}</h4>
                     <p className="row-note">{item.note}</p>
                   </div>
                   <span className="row-open">查看原文<ArrowIcon /></span>
                 </button>
-              )) : <div className="empty">暂时还没有信号。</div>}
+              )) : <div className="empty">没有匹配的官方更新，请调整搜索或筛选条件。</div>}
             </div>
             {tab === "notices" ? (
               <div className="portal-section">

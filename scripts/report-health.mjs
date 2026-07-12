@@ -13,6 +13,9 @@ const summary = [
   `- Sources: ${status.source_counts?.healthy || 0}/${status.source_counts?.total || 0} healthy`,
   `- Required failures: ${status.source_counts?.required_failed || 0}`,
   `- Content updated: ${status.content_updated_at || "unknown"}`,
+  `- Public events: ${status.publication_stats?.complete || 0} complete, ${status.publication_stats?.partial || 0} partial`,
+  `- Release channels: ${status.publication_stats?.stable || 0} stable, ${status.publication_stats?.prerelease || 0} prerelease`,
+  `- Quarantined fragments: ${status.publication_stats?.quarantined || 0}`,
   "",
   ...(failed.length
     ? ["### Failed sources", "", ...failed.map((source) => `- \`${source.key}\`: ${source.error} (${source.consecutive_failures} consecutive)`)]

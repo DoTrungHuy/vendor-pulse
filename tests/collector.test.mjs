@@ -4,6 +4,7 @@ import {
   calculateDelta,
   canonicalEventKey,
   classifyEventType,
+  decoratePublicEvent,
   getFiveHourSlot,
   isConcreteDeprecation,
   mergeEvents,
@@ -19,6 +20,8 @@ import {
   shouldSkipCollection,
   summarizeHealth,
   isStrictModelReleaseTitle,
+  informationStatus,
+  releaseChannel,
 } from "../scripts/collect.mjs";
 
 test("five-hour slots remain contiguous across a UTC date boundary", () => {
@@ -248,7 +251,7 @@ test("the same model launch merges across official feeds and prefers the direct 
   assert.equal(result[0].confidence, "verified");
 });
 
-test("public model events require a dated official release rather than a name mention", () => {
+test("public model events require an official release action rather than a name mention", () => {
   assert.equal(isStrictModelReleaseTitle("How GPT-5 helped a researcher solve a mystery"), false);
   assert.equal(isStrictModelReleaseTitle("GPT-5.6 is now the preferred model in Copilot"), false);
   assert.equal(isStrictModelReleaseTitle("Claude Fable 5 uses the tokenizer introduced with Claude Opus 4.7"), false);
@@ -270,6 +273,59 @@ test("public model events require a dated official release rather than a name me
     source_url: "https://openai.com/example",
     confidence: "verified",
   }, new Set(["openai.com"]), new Date("2026-07-12T00:00:00Z")), "not_a_model_release");
+});
+
+test("an undated official announcement is public but marked as partial", () => {
+  const event = {
+    item_id: "claude",
+    item_name: "Claude",
+    type: "model",
+    title: "Introducing Claude Sonnet 5",
+    occurred_at: "2026-07-12T08:00:00Z",
+    published_at: null,
+    detected_at: "2026-07-12T08:00:00Z",
+    source_url: "https://www.anthropic.com/news/claude-sonnet-5",
+    confidence: "needs_review",
+  };
+  assert.equal(publishabilityReason(event, new Set(["anthropic.com"]), new Date("2026-07-12T09:00:00Z")), null);
+  const decorated = decoratePublicEvent(event, new Date("2026-07-12T09:00:00Z"));
+  assert.equal(decorated.source_status, "official");
+  assert.equal(decorated.information_status, "partial");
+  assert.equal(decorated.occurred_at, event.detected_at);
+  assert.equal(informationStatus(event), "partial");
+});
+
+test("official page chrome is quarantined even when it mentions lifecycle terms", () => {
+  const reason = publishabilityReason({
+    type: "deprecation",
+    title: "This page lists active, deprecated, and retired Claude models",
+    occurred_at: "2026-07-12T08:00:00Z",
+    published_at: null,
+    source_url: "https://platform.claude.com/docs/en/about-claude/model-deprecations",
+    confidence: "needs_review",
+  }, new Set(["claude.com"]), new Date("2026-07-12T09:00:00Z"));
+  assert.ok(
+    ["not_a_concrete_deprecation", "mixed_lifecycle_rows"].includes(reason),
+  );
+});
+
+test("model ids do not supply publication dates and lifecycle table rows stay separate", () => {
+  const events = parseDeprecationsPage(`
+    <table>
+      <tr><td>o3-pro-2025-06-10</td><td>Deprecated</td><td>Shut down on December 11, 2026</td></tr>
+      <tr><td>claude-3-haiku-20240307</td><td>Retired</td><td>February 19, 2026</td></tr>
+    </table>
+  `);
+  assert.equal(events.length, 2);
+  assert.ok(events.every((event) => !/o3-pro.*claude-3-haiku/i.test(event.title)));
+  const o3 = events.find((event) => /o3-pro/i.test(event.title));
+  assert.equal(o3?.effective_at, "2026-12-11T00:00:00.000Z");
+  assert.notEqual(o3?.occurred_at.slice(0, 10), "2025-06-10");
+});
+
+test("release channel distinguishes stable and prerelease versions", () => {
+  assert.equal(releaseChannel("Codex 0.145.0-alpha.4"), "prerelease");
+  assert.equal(releaseChannel("Claude Code 2.1.7"), "stable");
 });
 
 test("collection cooldown supplies a staggered schedule without duplicate writes", () => {

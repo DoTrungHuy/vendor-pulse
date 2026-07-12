@@ -71,17 +71,24 @@ test("current model records expose feed health and policy slots when collected",
   });
 });
 
-test("public events contain only verified official records while review candidates stay internal", async () => {
+test("public events contain official action records with explicit completeness", async () => {
   const [events, status] = await Promise.all([json(dataRoot, "events.json"), json(dataRoot, "status.json")]);
   assert.ok(Array.isArray(events));
   const allowed = new Set(["release", "model", "deprecation"]);
   events.forEach((event) => {
     assert.ok(allowed.has(event.type), `unexpected event type ${event.type}`);
     assert.match(event.source_url, /^https:\/\//);
-    assert.equal(event.confidence, "verified");
+    assert.equal(event.source_status, "official");
+    assert.ok(["complete", "partial"].includes(event.information_status));
+    assert.ok(["stable", "prerelease", null].includes(event.release_channel));
+    assert.equal(typeof event.summary, "string");
+    assert.ok(event.summary.length >= 12);
+    assert.ok(event.detected_at);
+    if (event.information_status === "partial") assert.equal(event.published_at || null, null);
     assert.equal(event.id, event.canonical_key);
   });
   assert.ok(Array.isArray(status.review_queue));
+  assert.equal(status.publication_stats.complete + status.publication_stats.partial, events.length);
   assert.ok(events.some((event) => event.published_at), "expected summary-ready publish dates");
   assert.ok(events.some((event) => event.effective_at), "expected lifecycle effective dates");
 });
@@ -90,7 +97,8 @@ test("Claude Sonnet 5 is one dated verified launch, not a duplicate review item"
   const events = await json(dataRoot, "events.json");
   const sonnet = events.filter((event) => /Claude Sonnet 5/i.test(event.title));
   assert.equal(sonnet.length, 1);
-  assert.equal(sonnet[0].confidence, "verified");
+  assert.equal(sonnet[0].source_status, "official");
+  assert.equal(sonnet[0].information_status, "complete");
   assert.equal(sonnet[0].published_at, "2026-06-30T00:00:00.000Z");
   assert.equal(sonnet[0].source_url, "https://www.anthropic.com/news/claude-sonnet-5");
 });
@@ -99,4 +107,11 @@ test("customer stories and compatibility mentions are not published as model lau
   const events = await json(dataRoot, "events.json");
   const modelTitles = events.filter((event) => event.type === "model").map((event) => event.title).join("\n");
   assert.doesNotMatch(modelTitles, /Australian Payments Plus|helped immunologist|Bio Bug Bounty|model compatibility table/i);
+});
+
+test("published lifecycle records do not use model-id dates as discovery time", async () => {
+  const events = await json(dataRoot, "events.json");
+  const suspicious = events.filter((event) => event.type === "deprecation" && /o3-pro-2025-06-10/i.test(event.title));
+  suspicious.forEach((event) => assert.notEqual(event.occurred_at.slice(0, 10), "2025-06-10"));
+  assert.ok(events.every((event) => event.title.length <= 200));
 });

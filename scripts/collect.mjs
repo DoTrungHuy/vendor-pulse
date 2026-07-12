@@ -13,6 +13,8 @@ export const RSS_SIGNAL_PATTERN = /\b(GPT[-\s.]?\d|gpt-oss|o[1-9]\b|Codex|Claude
 export const RELEASE_SIGNAL_PATTERN = /(released|launch|introduc|available|deprecated|deprecat|retir|shut\s*down|sunset|发布|上线|弃用|下线)/i;
 export const POLICY_SIGNAL_PATTERN = /(deprecat|retir|shut\s*down|sunset|migration|end of (life|support)|no longer available|will be removed|弃用|下线|迁移)/i;
 
+export const PRERELEASE_PATTERN = /(?:^|[._-])(alpha|beta|preview|pre|rc|canary|nightly)(?:[._-]?\d+)?(?:$|[._-])/i;
+
 export function getFiveHourSlot(date = new Date()) {
   return new Date(Math.floor(date.getTime() / fiveHours) * fiveHours).toISOString();
 }
@@ -23,13 +25,16 @@ export function mergeEvents(existing, additions) {
     const confidence = rawEvent.confidence === "verified" ? "verified" : "needs_review";
     const canonicalKey = canonicalEventKey({ ...rawEvent, confidence });
     const parsedEffectiveDate = rawEvent.type === "deprecation" ? extractEffectiveDateFromText(rawEvent.title) : null;
+    const detectedAt = rawEvent.detected_at || rawEvent.last_seen_at || rawEvent.first_seen_at || rawEvent.occurred_at;
     const event = {
       ...rawEvent,
       id: canonicalKey,
       canonical_key: canonicalKey,
       confidence,
       published_at: rawEvent.published_at ?? ((rawEvent.type === "release" || rawEvent.type === "model") && confidence === "verified" ? rawEvent.occurred_at : null),
-      effective_at: rawEvent.type === "deprecation" ? parsedEffectiveDate?.toISOString() || null : rawEvent.effective_at || null,
+      effective_at: rawEvent.type === "deprecation" ? rawEvent.effective_at || parsedEffectiveDate?.toISOString() || null : rawEvent.effective_at || null,
+      detected_at: detectedAt,
+      release_channel: rawEvent.release_channel || releaseChannel(rawEvent.title),
     };
     const previous = byKey.get(canonicalKey);
     if (!previous) {
@@ -47,7 +52,10 @@ export function mergeEvents(existing, additions) {
     const lastSeen = [previous.last_seen_at, event.last_seen_at, previous.occurred_at, event.occurred_at]
       .filter(Boolean)
       .sort((a, b) => new Date(b) - new Date(a))[0];
-    const preferred = eventQuality(event) > eventQuality(previous) ? event : previous;
+    const preferred = eventQuality(event) >= eventQuality(previous) ? event : previous;
+    const newestDetectedAt = [previous.detected_at, event.detected_at, previous.last_seen_at, event.last_seen_at]
+      .filter(Boolean)
+      .sort((a, b) => new Date(b) - new Date(a))[0];
     byKey.set(canonicalKey, {
       ...preferred,
       id: canonicalKey,
@@ -55,6 +63,7 @@ export function mergeEvents(existing, additions) {
       first_seen_at: firstSeen,
       last_seen_at: lastSeen,
       occurred_at: preferred.confidence === "needs_review" ? firstSeen : preferred.occurred_at,
+      detected_at: newestDetectedAt || lastSeen,
     });
   }
   return [...byKey.values()].sort((a, b) => new Date(b.occurred_at) - new Date(a.occurred_at));
@@ -66,6 +75,43 @@ function eventQuality(event) {
     + (event.published_at ? 20 : 0)
     + (directArticle ? 15 : 0)
     + (["news", "news-rss"].includes(event.feed_id) ? 5 : 0);
+}
+
+export function releaseChannel(value) {
+  const title = normalizeEventTitle(value);
+  if (/(?:alpha|beta|preview|release candidate|nightly|canary)/i.test(title)) return "prerelease";
+  if (PRERELEASE_PATTERN.test(title)) return "prerelease";
+  return "stable";
+}
+
+export function informationStatus(event) {
+  if (event.type === "deprecation") return event.effective_at ? "complete" : "partial";
+  if (event.type === "model" || event.type === "release") return event.published_at ? "complete" : "partial";
+  return "partial";
+}
+
+export function deterministicSummary(value, max = 190) {
+  const text = stripMarkup(String(value || ""))
+    .replace(/&#x27;|&#39;/gi, "'")
+    .replace(/&quot;/gi, '"')
+    .replace(/&amp;/gi, "&")
+    .replace(/^#+\s*/gm, "")
+    .replace(/[*_`]+/g, "")
+    .replace(/[—–]/g, "-")
+    .replace(/[ \t]+/g, " ")
+    .trim();
+  if (!text) return null;
+  const sentence = text
+    .split(/\n+|(?<=[.!?。！？])\s+/)
+    .map((part) => part.replace(/^[-*#\s]+/, "").trim())
+    .find((part) => part.length >= 18 && part.length <= 360 && !/(full changelog|compare changes|contributors|what's changed)/i.test(part));
+  const selected = (sentence || text).replace(/\b([a-z]+)\s+\1\b/gi, "$1");
+  return selected.length <= max ? selected : `${selected.slice(0, max - 1).trim()}…`;
+}
+
+function releaseEventTitle(product, value) {
+  const title = String(value || "").replace(/\s+/g, " ").trim();
+  return new RegExp(`^${product.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\b`, "i").test(title) ? title : `${product} ${title}`;
 }
 
 export function normalizeEventTitle(value) {
@@ -80,6 +126,10 @@ export function normalizeEventTitle(value) {
 
 export function canonicalEventKey(event) {
   let titleKey = normalizeEventTitle(event.title).replace(/^[^:]+:\s*/, "").replace(/^model status\s+/, "");
+  if (event.type === "release") {
+    const version = titleKey.match(/\bv?\d+(?:\.\d+){1,3}(?:[-.](?:alpha|beta|preview|pre|rc)[-.]?\d*)?/i)?.[0];
+    if (version) return eventId(["event", "release", event.item_id || "unknown", shortHash(version.replace(/^v/i, ""))]);
+  }
   const modelLaunch = event.type === "model" && RELEASE_SIGNAL_PATTERN.test(titleKey)
     ? titleKey.match(/\b(claude\s+(?:sonnet|opus|haiku)\s+\d+(?:\.\d+)?(?:[-\s](?:alpha|beta|preview|rc))?|gpt[-\s]?\d+(?:\.\d+)?(?:[-\s](?:alpha|beta|preview|rc))?|gemini\s+[a-z0-9._-]+)\b/i)?.[1]
     : null;
@@ -198,12 +248,15 @@ export function parseDatedModelEvents(content, { limit = 5 } = {}) {
         ));
       if (!sentence) continue;
       const type = classifyEventType(sentence);
-      const effectiveDate = type === "deprecation" ? extractEffectiveDateFromText(sentence) : null;
+      const explicitEffectiveDate = type === "deprecation" ? extractEffectiveDateFromText(sentence) : null;
+      const effectiveDate = explicitEffectiveDate || (type === "deprecation" && /\b(?:we(?:'|’)?ve\s+retired|was retired|are now shut down|has been shut down)\b/i.test(sentence) ? date : null);
       events.push({
         occurred_at: date.toISOString(),
         published_at: date.toISOString(),
         effective_at: effectiveDate?.toISOString() || null,
+        detected_at: new Date().toISOString(),
         title: sentence.slice(0, 220),
+        summary: deterministicSummary(sentence),
         type,
       });
       if (events.length >= limit) return events;
@@ -233,16 +286,20 @@ export function parseRssModelEvents(content, { limit = 8 } = {}) {
     const title = decode(body.match(/<title>([\s\S]*?)<\/title>/i)?.[1] || "");
     const published = body.match(/<pubDate>([\s\S]*?)<\/pubDate>/i)?.[1];
     const url = decode(body.match(/<link>([\s\S]*?)<\/link>/i)?.[1] || "");
+    const description = decode(body.match(/<(?:description|content:encoded)>([\s\S]*?)<\/(?:description|content:encoded)>/i)?.[1] || "");
     if (!title || !published || !Number.isFinite(new Date(published).getTime())) continue;
     if (!(isStrictModelReleaseTitle(title) || (POLICY_SIGNAL_PATTERN.test(title) && (isConcreteDeprecation(title) || isStrictDeprecationTitle(title))))) continue;
     const type = classifyEventType(title);
     const publishedAt = new Date(published).toISOString();
-    const effectiveDate = type === "deprecation" ? extractEffectiveDateFromText(title) : null;
+    const explicitEffectiveDate = type === "deprecation" ? extractEffectiveDateFromText(`${title} ${description}`) : null;
+    const effectiveDate = explicitEffectiveDate || (type === "deprecation" && /\b(?:we(?:'|’)?ve\s+retired|was retired|are now shut down|has been shut down)\b/i.test(`${title} ${description}`) ? new Date(publishedAt) : null);
     events.push({
       occurred_at: publishedAt,
       published_at: publishedAt,
       effective_at: effectiveDate?.toISOString() || null,
+      detected_at: new Date().toISOString(),
       title,
+      summary: deterministicSummary(description || title),
       source_url: url || null,
       type,
     });
@@ -271,6 +328,8 @@ export function isConcreteDeprecation(title) {
     /\blegacy:\s*the model will no longer/i,
     /\bdeprecated:\s*the model is still functional/i,
     /recommended for use/i,
+    /for information about model deprecations/i,
+    /visit the .*deprecations page/i,
     /overview\b/i,
     /table of contents/i,
     /copy page/i,
@@ -280,46 +339,61 @@ export function isConcreteDeprecation(title) {
   ];
   if (noise.some((pattern) => pattern.test(text))) return false;
 
-  const hasAction = /(deprecat|retir|shutdown|shut down|sunset|no longer available|will be removed|migrate|end of (life|support)|下线|弃用|迁移)/i.test(text);
-  const hasModel = /\b(gpt[-\s]?\d|o[1-9]\b|claude[-\s]?|gemini[-\s]?|imagen|sonnet|opus|haiku|flash|codex)\b/i.test(text);
+  const hasAction = /(deprecat|retir|shutdown|shut down|sunset|no longer available|will be removed|end of (life|support)|下线|弃用)/i.test(text);
+  const hasSubject = /\b(gpt[-\s]?\d|o[1-9]\b|claude(?:[-\s]+(?:\d|sonnet|opus|haiku|[a-z][a-z0-9.-]+\s+(?:preview|\d)))|gemini(?:[-\s]+(?:\d|flash|pro|ultra|nano))|imagen\s*\d|sonnet\s*\d|opus\s*\d|haiku\s*\d|flash[-\s]?\d|codex|reusable prompts?|api endpoints?|fast mode|sdk)\b/i.test(text);
   const hasDate = /\b(20\d{2}|january|february|march|april|may|june|july|august|september|october|november|december)\b/i.test(text);
 
   // 必须有动作，且最好点名模型或带日期；纯“Deprecated”词条不够
   if (!hasAction) return false;
-  if (!hasModel && !hasDate) return false;
+  if (!hasSubject) return false;
   // 过短且像标签
-  if (text.split(" ").length < 6 && !hasDate) return false;
+  if (text.split(" ").length < 6 && !hasDate && !/\b(?:deprecated|retired|shut\s*down|sunset)\b/i.test(text)) return false;
   return true;
 }
 
 export function parseDeprecationsPage(content) {
-  const text = stripMarkup(content)
+  const normalizeCandidate = (value) => stripMarkup(value)
     .replace(/&#x27;/g, "'")
     .replace(/&quot;/g, '"')
-    .replace(/⌘K/g, " ");
-  const lines = text.split("\n").map((line) => line.trim()).filter(Boolean);
+    .replace(/⌘K/g, " ")
+    .replace(/[\u0000-\u001F\u007F-\u009F\uE000-\uF8FF]/g, " ")
+    .replace(/^(Copy page|See also|On this page)\s*/i, "")
+    .replace(/\s+/g, " ")
+    .trim();
+  const tableRows = [...content.matchAll(/<tr\b[^>]*>([\s\S]*?)<\/tr>/gi)]
+    .map((match) => [...match[1].matchAll(/<t[dh]\b[^>]*>([\s\S]*?)<\/t[dh]>/gi)]
+      .map((cell) => normalizeCandidate(cell[1]))
+      .filter(Boolean)
+      .join(" "))
+    .filter(Boolean);
+  const blocks = [...content.matchAll(/<(?:p|li|h[2-6])\b[^>]*>([\s\S]*?)<\/(?:p|li|h[2-6])>/gi)]
+    .map((match) => normalizeCandidate(match[1]))
+    .filter(Boolean);
+  const lines = stripMarkup(content).split("\n").map(normalizeCandidate).filter(Boolean);
+  const candidates = [...tableRows, ...blocks, ...lines];
   const events = [];
   const seen = new Set();
   const modelIdPattern = /\b((?:gpt|o\d|claude|gemini|imagen)[a-z0-9._-]{2,}|sonnet|opus|haiku)\b/i;
+  const detectedAt = new Date().toISOString();
 
-  for (let index = 0; index < lines.length; index += 1) {
-    const window = [lines[index], lines[index + 1], lines[index + 2]].filter(Boolean).join(" ");
-    const compact = window
-      .replace(/[\u0000-\u001F\u007F-\u009F\uE000-\uF8FF]/g, " ")
-      .replace(/\s+/g, " ")
-      .replace(/^(Copy page|See also|On this page)\s*/i, "")
-      .trim();
-    if (!isConcreteDeprecation(compact)) continue;
+  for (const candidate of candidates) {
+    const fragments = candidate.length > 280
+      ? candidate.split(/(?<=[.!?。！？])\s+/).map(normalizeCandidate).filter(Boolean)
+      : [candidate];
+    const compact = fragments.find((fragment) => isConcreteDeprecation(fragment));
+    if (!compact) continue;
 
-    const date = extractEffectiveDateFromText(compact) || extractDateFromText(compact) || extractDateFromText(lines[index - 1] || "") || extractDateFromText(lines[index + 1] || "");
+    const date = extractLastLifecycleDate(compact) || extractEffectiveDateFromText(compact) || extractDateFromText(compact);
     const key = compact.toLowerCase().slice(0, 120);
     if (seen.has(key)) continue;
     seen.add(key);
     events.push({
-      occurred_at: (date || new Date()).toISOString(),
+      occurred_at: detectedAt,
       published_at: null,
       effective_at: date?.toISOString() || null,
-      title: compact.slice(0, 220),
+      detected_at: detectedAt,
+      title: compact.slice(0, 200),
+      summary: deterministicSummary(compact),
       type: "deprecation",
       confidence: date && modelIdPattern.test(compact) ? "verified" : "needs_review",
     });
@@ -351,7 +425,9 @@ export function parseAnthropicNews(content) {
       occurred_at: date.toISOString(),
       published_at: date.toISOString(),
       effective_at: null,
+      detected_at: new Date().toISOString(),
       title: title.slice(0, 220),
+      summary: deterministicSummary(title),
       type: classifyEventType(title),
       source_url: new URL(match[1], "https://www.anthropic.com").href,
       confidence: "verified",
@@ -383,7 +459,9 @@ export function parseAnthropicNews(content) {
       occurred_at: date.toISOString(),
       published_at: date.toISOString(),
       effective_at: null,
+      detected_at: new Date().toISOString(),
       title: title.slice(0, 220),
+      summary: deterministicSummary(title),
       type: classifyEventType(title),
     });
     if (events.length >= 5) break;
@@ -399,7 +477,9 @@ export function parseAnthropicNews(content) {
         occurred_at: new Date().toISOString(),
         published_at: null,
         effective_at: null,
+        detected_at: new Date().toISOString(),
         title: fallback.slice(0, 220),
+        summary: deterministicSummary(fallback),
         type: "model",
         confidence: "needs_review",
       });
@@ -460,13 +540,33 @@ function parseFlexibleDate(value) {
 
 function extractDateFromText(text) {
   if (!text) return null;
-  const iso = text.match(/\b(20\d{2}-\d{2}-\d{2})\b/);
-  if (iso) return parseFlexibleDate(iso[1]);
+  for (const iso of text.matchAll(/\b(20\d{2}-\d{2}-\d{2})\b/g)) {
+    const prefix = text.slice(Math.max(0, (iso.index || 0) - 36), iso.index || 0);
+    const embeddedInModelId = /(?:gpt|o\d|claude|gemini|imagen|sonnet|opus|haiku)[a-z0-9._-]*-$/i.test(prefix);
+    if (!embeddedInModelId) return parseFlexibleDate(iso[1]);
+  }
   const long = text.match(/\b((?:January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{1,2},\s+\d{4})\b/i);
   if (long) return parseFlexibleDate(long[1]);
   const dayMonth = text.match(/\b((?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\s+\d{1,2},\s+\d{4})\b/i);
   if (dayMonth) return parseFlexibleDate(dayMonth[1]);
   return null;
+}
+
+function extractLastLifecycleDate(text) {
+  if (!text || !/\b(?:deprecated|retired|shut\s*down)\b/i.test(text)) return null;
+  const candidates = [];
+  for (const match of text.matchAll(/\b(20\d{2}-\d{2}-\d{2})\b/g)) {
+    const prefix = text.slice(Math.max(0, (match.index || 0) - 36), match.index || 0);
+    if (/(?:gpt|o\d|claude|gemini|imagen|sonnet|opus|haiku)[a-z0-9._-]*-$/i.test(prefix)) continue;
+    const date = parseFlexibleDate(match[1]);
+    if (date) candidates.push({ index: match.index || 0, date });
+  }
+  for (const match of text.matchAll(/\b((?:January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{1,2},\s+\d{4})\b/gi)) {
+    const date = parseFlexibleDate(match[1]);
+    if (date) candidates.push({ index: match.index || 0, date });
+  }
+  if (candidates.length < 2) return null;
+  return candidates.sort((a, b) => a.index - b.index).at(-1)?.date || null;
 }
 
 function extractEffectiveDateFromText(text) {
@@ -561,6 +661,8 @@ function pickSignal(candidates, kind) {
   const filtered = candidates
     .filter((item) => item && (kind === "deprecation" ? item.type === "deprecation" : item.type !== "deprecation"))
     .sort((a, b) => {
+      const completenessDiff = (informationStatus(a) === "complete" ? 0 : 1) - (informationStatus(b) === "complete" ? 0 : 1);
+      if (completenessDiff !== 0) return completenessDiff;
       const priorityDiff = (a.priority ?? 2) - (b.priority ?? 2);
       if (priorityDiff !== 0) return priorityDiff;
       return new Date(b.occurred_at).getTime() - new Date(a.occurred_at).getTime();
@@ -625,7 +727,14 @@ async function collectTool(source, oldTool, sourceStatuses, now) {
       stars_delta_24h: null,
       stars_delta_7d: null,
       latest_release: latest
-        ? { tag: latest.tag_name, title: latest.name || latest.tag_name, published_at: latest.published_at, url: latest.html_url }
+        ? {
+            tag: latest.tag_name,
+            title: latest.name || latest.tag_name,
+            published_at: latest.published_at,
+            url: latest.html_url,
+            release_channel: latest.prerelease ? "prerelease" : releaseChannel(`${latest.tag_name} ${latest.name || ""}`),
+            summary: deterministicSummary(latest.body) || `${source.name} 发布了 ${latest.name || latest.tag_name}。`,
+          }
         : oldTool?.latest_release || null,
       release_cadence_30d: releases.length ? cadence(releases, now) : oldTool?.release_cadence_30d || { count: 0, median_days: null },
       npm,
@@ -636,14 +745,17 @@ async function collectTool(source, oldTool, sourceStatuses, now) {
       item_id: source.id,
       item_name: source.name,
       type: "release",
-      title: `${source.name} ${release.name || release.tag_name}`,
+      title: releaseEventTitle(source.name, release.name || release.tag_name),
       occurred_at: release.published_at,
       published_at: release.published_at,
       effective_at: null,
+      detected_at: now.toISOString(),
       source_url: release.html_url,
       provider: null,
       feed_id: null,
       confidence: "verified",
+      release_channel: release.prerelease ? "prerelease" : releaseChannel(`${release.tag_name} ${release.name || ""}`),
+      summary: deterministicSummary(release.body) || `${source.name} 发布了 ${release.name || release.tag_name}。`,
     })),
   };
 }
@@ -677,6 +789,9 @@ async function collectFeed(source, feed, sourceStatuses) {
       feed_id: feed.id,
       priority: feed.priority,
       confidence: item.confidence || "verified",
+      detected_at: item.detected_at || new Date().toISOString(),
+      release_channel: item.release_channel || releaseChannel(item.title),
+      summary: item.summary || deterministicSummary(item.title),
     }));
 
     const changed = Boolean(previous.normalized && normalizedHash && normalizedHash !== previous.content_hash);
@@ -685,6 +800,7 @@ async function collectFeed(source, feed, sourceStatuses) {
           occurred_at: new Date().toISOString(),
           published_at: null,
           effective_at: null,
+          detected_at: new Date().toISOString(),
           title: `${source.name} ${feed.label} 内容变化，待核验`,
           type: "source_changed",
           source_url: feed.url,
@@ -716,15 +832,13 @@ async function collectModel(source, oldModel, sourceStatuses) {
 
   const signals = feedResults.flatMap((result) => result.signals);
   const reviewEvents = feedResults.map((result) => result.reviewEvent).filter(Boolean);
-  const verifiedSignals = signals.filter((signal) => signal.confidence !== "needs_review");
-  const oldVerifiedModel = oldModel?.latest_model?.confidence === "verified" ? oldModel.latest_model : null;
-  const oldVerifiedPolicy = oldModel?.latest_policy?.confidence === "verified" ? oldModel.latest_policy : null;
-  const latestModelSignal = pickSignal(verifiedSignals, "model") || (oldModel?.latest_model
-    ? oldVerifiedModel && { ...oldVerifiedModel, type: "model", priority: 9 }
-    : null);
-  const latestPolicySignal = pickSignal(verifiedSignals, "deprecation") || (oldModel?.latest_policy
-    ? oldVerifiedPolicy && { ...oldVerifiedPolicy, type: "deprecation", priority: 9 }
-    : null);
+  const officialSignals = signals.filter((signal) => signal.type === "model"
+    ? isStrictModelReleaseTitle(signal.title)
+    : signal.type === "deprecation" && (isConcreteDeprecation(signal.title) || isStrictDeprecationTitle(signal.title)));
+  const oldOfficialModel = oldModel?.latest_model && isStrictModelReleaseTitle(oldModel.latest_model.title) ? oldModel.latest_model : null;
+  const oldOfficialPolicy = oldModel?.latest_policy && (isConcreteDeprecation(oldModel.latest_policy.title) || isStrictDeprecationTitle(oldModel.latest_policy.title)) ? oldModel.latest_policy : null;
+  const latestModelSignal = pickSignal(officialSignals, "model") || (oldOfficialModel ? { ...oldOfficialModel, type: "model", priority: 9 } : null);
+  const latestPolicySignal = pickSignal(officialSignals, "deprecation") || (oldOfficialPolicy ? { ...oldOfficialPolicy, type: "deprecation", priority: 9 } : null);
 
   const feedStatuses = feedResults.map((result) => ({
     id: result.feed.id,
@@ -740,7 +854,7 @@ async function collectModel(source, oldModel, sourceStatuses) {
   const healthy = feedStatuses.filter((feed) => feed.status === "ok").length;
   const status = healthy === 0 ? "error" : healthy < feedStatuses.length ? "degraded" : "ok";
 
-  const title = latestModelSignal?.title || "暂无新的已核验模型发布";
+  const title = latestModelSignal?.title || "暂无新的官方模型消息";
   const occurred_at = latestModelSignal?.occurred_at || null;
 
   const model = {
@@ -755,11 +869,16 @@ async function collectModel(source, oldModel, sourceStatuses) {
       ? {
           title: latestModelSignal.title,
           occurred_at: latestModelSignal.occurred_at,
-          published_at: latestModelSignal.published_at || latestModelSignal.occurred_at,
+          published_at: latestModelSignal.published_at || null,
           effective_at: latestModelSignal.effective_at || null,
+          detected_at: latestModelSignal.detected_at || latestModelSignal.occurred_at,
           source_url: latestModelSignal.source_url,
           feed_id: latestModelSignal.feed_id || null,
           confidence: latestModelSignal.confidence || "verified",
+          information_status: informationStatus(latestModelSignal),
+          source_status: "official",
+          release_channel: latestModelSignal.release_channel || releaseChannel(latestModelSignal.title),
+          summary: latestModelSignal.summary || deterministicSummary(latestModelSignal.title),
         }
       : oldModel?.latest_model || null,
     latest_policy: latestPolicySignal
@@ -768,9 +887,14 @@ async function collectModel(source, oldModel, sourceStatuses) {
           occurred_at: latestPolicySignal.occurred_at,
           published_at: latestPolicySignal.published_at || null,
           effective_at: latestPolicySignal.effective_at || null,
+          detected_at: latestPolicySignal.detected_at || latestPolicySignal.occurred_at,
           source_url: latestPolicySignal.source_url,
           feed_id: latestPolicySignal.feed_id || null,
           confidence: latestPolicySignal.confidence || "verified",
+          information_status: informationStatus(latestPolicySignal),
+          source_status: "official",
+          release_channel: null,
+          summary: latestPolicySignal.summary || deterministicSummary(latestPolicySignal.title),
         }
       : oldModel?.latest_policy || null,
     feeds: feedStatuses,
@@ -790,12 +914,15 @@ async function collectModel(source, oldModel, sourceStatuses) {
       type: signal.type,
       title: `${source.name}: ${signal.title}`,
       occurred_at: signal.occurred_at,
-      published_at: signal.published_at || (signal.type === "deprecation" ? null : signal.occurred_at),
+      published_at: signal.published_at || null,
       effective_at: signal.effective_at || null,
+      detected_at: signal.detected_at || signal.occurred_at,
       source_url: signal.source_url,
       provider: source.provider,
       feed_id: signal.feed_id || null,
       confidence: signal.confidence || "verified",
+      release_channel: signal.type === "deprecation" ? null : signal.release_channel || releaseChannel(signal.title),
+      summary: signal.summary || deterministicSummary(signal.title),
     })),
     ...reviewEvents.map((signal) => ({
       id: eventId(["source", source.id, signal.feed_id, shortHash(signal.title + signal.occurred_at)]),
@@ -806,6 +933,7 @@ async function collectModel(source, oldModel, sourceStatuses) {
       occurred_at: signal.occurred_at,
       published_at: null,
       effective_at: null,
+      detected_at: signal.detected_at || signal.occurred_at,
       source_url: signal.source_url,
       provider: source.provider,
       feed_id: signal.feed_id || null,
@@ -875,6 +1003,10 @@ function contentFingerprint(tools, models, events) {
     feed_id: signal.feed_id || null,
     effective_at: signal.effective_at || null,
     confidence: signal.confidence || "verified",
+    information_status: signal.information_status || informationStatus(signal),
+    detected_at: signal.detected_at || null,
+    release_channel: signal.release_channel || null,
+    summary: signal.summary || null,
   } : null;
   return {
     tools: tools.map((tool) => ({
@@ -895,6 +1027,11 @@ function contentFingerprint(tools, models, events) {
       effective_at: event.effective_at || null,
       source_url: event.source_url,
       confidence: event.confidence,
+      source_status: event.source_status,
+      information_status: event.information_status,
+      detected_at: event.detected_at,
+      release_channel: event.release_channel,
+      summary: event.summary,
     })),
   };
 }
@@ -921,8 +1058,8 @@ function officialHostnames(sources) {
 }
 
 export function publishabilityReason(event, allowedHosts, now = new Date()) {
-  if (event.confidence !== "verified") return "not_verified";
   if (!event.title || event.title.length < 8) return "invalid_title";
+  if (event.title.length > 200) return "title_too_long";
   let source;
   try {
     source = new URL(event.source_url);
@@ -932,13 +1069,64 @@ export function publishabilityReason(event, allowedHosts, now = new Date()) {
   const hostname = source.hostname.replace(/^www\./, "").toLowerCase();
   const official = [...allowedHosts].some((allowed) => hostname === allowed || hostname.endsWith(`.${allowed}`));
   if (source.protocol !== "https:" || !official) return "non_official_source";
-  const occurredAt = new Date(event.occurred_at).getTime();
-  if (!Number.isFinite(occurredAt) || occurredAt > now.getTime() + 24 * 60 * 60 * 1000) return "invalid_date";
-  if ((event.type === "model" || event.type === "release") && !event.published_at) return "missing_publish_date";
+  const publishedAt = event.published_at ? new Date(event.published_at).getTime() : null;
+  if (publishedAt !== null && (!Number.isFinite(publishedAt) || publishedAt > now.getTime() + 24 * 60 * 60 * 1000)) return "invalid_publish_date";
   if (event.type === "model" && !isStrictModelReleaseTitle(event.title)) return "not_a_model_release";
-  if (event.type === "deprecation" && !isConcreteDeprecation(event.title) && !isStrictDeprecationTitle(event.title)) return "not_a_concrete_deprecation";
+  if (event.type === "deprecation") {
+    if ((event.title.match(/\b(?:retired|deprecated|shut\s*down)\b/gi) || []).length > 1) return "mixed_lifecycle_rows";
+    if (!isConcreteDeprecation(event.title)) return "not_a_concrete_deprecation";
+  }
   if (!['model', 'release', 'deprecation'].includes(event.type)) return "unsupported_event_type";
   return null;
+}
+
+function fallbackSummary(event) {
+  if (event.type === "release") return `${event.item_name} 发布了新的官方版本，具体变化请查看发布说明。`;
+  if (event.type === "deprecation") {
+    return event.effective_at
+      ? `官方已公布生命周期调整，预计于 ${String(event.effective_at).slice(0, 10)} 生效。`
+      : "官方已公布生命周期调整，具体日期以原文为准。";
+  }
+  return "官方渠道发布了新的模型或能力消息，具体变化请查看原文。";
+}
+
+export function decoratePublicEvent(event, now = new Date()) {
+  const detectedAt = event.detected_at || event.last_seen_at || event.first_seen_at || now.toISOString();
+  const normalizedTitle = String(event.title || "").replace(/&#x27;|&#39;/gi, "'").replace(/&quot;/gi, '"');
+  const inferredEffectiveAt = event.effective_at || (event.type === "deprecation" && event.published_at && /\b(?:we(?:'|’)?ve\s+retired|was retired|are now shut down|has been shut down)\b/i.test(normalizedTitle)
+    ? event.published_at
+    : null);
+  const status = informationStatus({ ...event, effective_at: inferredEffectiveAt });
+  const occurredAt = event.published_at || (event.type === "deprecation" || status === "partial" ? detectedAt : event.occurred_at || detectedAt);
+  const comparableTitle = normalizeEventTitle(event.title).replace(/^[^:]{1,40}:\s*/, "");
+  const comparableSummary = normalizeEventTitle(event.summary);
+  const extractedSummary = event.summary && comparableSummary !== comparableTitle
+    ? event.summary
+    : null;
+  const decodedTitle = normalizedTitle.replace(/&amp;/gi, "&").replace(/\s+/g, " ").trim();
+  const publicTitle = (event.type === "release"
+    ? decodedTitle.replace(new RegExp(`^(${String(event.item_name || "").replace(/[.*+?^${}()|[\]\\]/g, "\\$&")})\\s+\\1\\b`, "i"), "$1")
+    : decodedTitle).replace(/[—–]/g, "-");
+  const publicSummary = String(extractedSummary || fallbackSummary(event))
+    .replace(/&#x27;|&#39;/gi, "'")
+    .replace(/&quot;/gi, '"')
+    .replace(/&amp;/gi, "&")
+    .replace(/[*_`]+/g, "")
+    .replace(/[—–]/g, "-")
+    .replace(/\b([a-z]+)\s+\1\b/gi, "$1")
+    .replace(/\s+/g, " ")
+    .trim();
+  return {
+    ...event,
+    title: publicTitle,
+    occurred_at: occurredAt,
+    effective_at: inferredEffectiveAt,
+    detected_at: detectedAt,
+    source_status: "official",
+    information_status: status,
+    release_channel: event.type === "deprecation" ? null : event.release_channel || releaseChannel(event.title),
+    summary: publicSummary,
+  };
 }
 
 export async function main(now = new Date()) {
@@ -984,7 +1172,10 @@ export async function main(now = new Date()) {
     ...modelResults.flatMap((result) => result.events),
   ]);
   const allowedHosts = officialHostnames(sources);
-  const events = mergedEvents.filter((event) => publishabilityReason(event, allowedHosts, now) === null);
+  const events = mergedEvents
+    .filter((event) => publishabilityReason(event, allowedHosts, now) === null)
+    .map((event) => decoratePublicEvent(event, now))
+    .sort((a, b) => new Date(b.published_at || b.detected_at).getTime() - new Date(a.published_at || a.detected_at).getTime());
   const reviewQueue = mergedEvents
     .filter((event) => publishabilityReason(event, allowedHosts, now) !== null)
     .map((event) => ({
@@ -993,10 +1184,18 @@ export async function main(now = new Date()) {
       type: event.type,
       source_url: event.source_url,
       occurred_at: event.occurred_at,
+      detected_at: event.detected_at || event.last_seen_at || null,
       confidence: event.confidence,
       reason: publishabilityReason(event, allowedHosts, now),
     }))
     .slice(0, 100);
+  const publicationStats = {
+    complete: events.filter((event) => event.information_status === "complete").length,
+    partial: events.filter((event) => event.information_status === "partial").length,
+    stable: events.filter((event) => event.release_channel === "stable").length,
+    prerelease: events.filter((event) => event.release_channel === "prerelease").length,
+    quarantined: reviewQueue.length,
+  };
 
   const models = modelResults.map((result) => result.model);
   const health = summarizeHealth(sourceStatuses);
@@ -1036,6 +1235,7 @@ export async function main(now = new Date()) {
     failed_sources: health.failed_sources,
     alert_sources: health.alert_sources,
     review_queue: reviewQueue,
+    publication_stats: publicationStats,
     content_hash: contentHash,
     sources: sourceStatuses,
   };
