@@ -1,14 +1,14 @@
 {
   "schema_version": 1,
-  "snapshot_id": "snapshot-0324d9c4af",
-  "checked_at": "2026-07-12T10:15:49.084Z",
+  "snapshot_id": "snapshot-9b0a0f1b31",
+  "checked_at": "2026-07-12T11:45:53.301Z",
   "current": {
     "schema_version": 1,
-    "snapshot_id": "snapshot-0324d9c4af",
-    "generated_at": "2026-07-12T10:15:49.084Z",
-    "checked_at": "2026-07-12T10:15:49.084Z",
+    "snapshot_id": "snapshot-9b0a0f1b31",
+    "generated_at": "2026-07-12T11:45:53.301Z",
+    "checked_at": "2026-07-12T11:45:53.301Z",
     "content_updated_at": "2026-07-12T07:00:49.751Z",
-    "last_full_success_at": "2026-07-12T10:15:49.084Z",
+    "last_full_success_at": "2026-07-12T11:45:53.301Z",
     "timezone": "Asia/Shanghai",
     "status": "degraded",
     "source_counts": {
@@ -27,8 +27,8 @@
         "repo_url": "https://github.com/openai/codex",
         "official_url": "https://developers.openai.com/codex",
         "x_url": "https://x.com/OpenAI",
-        "stars": 97280,
-        "stars_delta_24h": 173,
+        "stars": 97300,
+        "stars_delta_24h": 193,
         "stars_delta_7d": null,
         "latest_release": {
           "tag": "rust-v0.145.0-alpha.4",
@@ -54,8 +54,8 @@
         "repo_url": "https://github.com/anthropics/claude-code",
         "official_url": "https://code.claude.com/docs",
         "x_url": "https://x.com/AnthropicAI",
-        "stars": 137518,
-        "stars_delta_24h": 129,
+        "stars": 137523,
+        "stars_delta_24h": 134,
         "stars_delta_7d": null,
         "latest_release": {
           "tag": "v2.1.207",
@@ -81,8 +81,8 @@
         "repo_url": "https://github.com/google-antigravity/antigravity-cli",
         "official_url": "https://www.antigravity.google/docs/cli-using",
         "x_url": "https://x.com/GoogleAI",
-        "stars": 1568,
-        "stars_delta_24h": 12,
+        "stars": 1570,
+        "stars_delta_24h": 14,
         "stars_delta_7d": null,
         "latest_release": {
           "tag": "1.1.1",
@@ -104,8 +104,8 @@
         "repo_url": "https://github.com/openclaw/openclaw",
         "official_url": "https://openclaw.ai",
         "x_url": "https://x.com/openclaw",
-        "stars": 382657,
-        "stars_delta_24h": 98,
+        "stars": 382662,
+        "stars_delta_24h": 103,
         "stars_delta_7d": null,
         "latest_release": {
           "tag": "v2026.7.1-beta.5",
@@ -114,8 +114,8 @@
           "url": "https://github.com/openclaw/openclaw/releases/tag/v2026.7.1-beta.5"
         },
         "release_cadence_30d": {
-          "count": 16,
-          "median_days": 1.6383101851851851
+          "count": 15,
+          "median_days": 2
         },
         "npm": {
           "package": "openclaw",
@@ -160,7 +160,7 @@
             "required": true,
             "url": "https://openai.com/news/rss.xml",
             "status": "ok",
-            "checked_at": "2026-07-12T10:15:52.322Z",
+            "checked_at": "2026-07-12T11:45:56.659Z",
             "error": null
           },
           {
@@ -170,7 +170,7 @@
             "required": false,
             "url": "https://help.openai.com/en/articles/9624314-model-release-notes",
             "status": "error",
-            "checked_at": "2026-07-12T10:15:54.309Z",
+            "checked_at": "2026-07-12T11:45:58.602Z",
             "error": "403 Forbidden"
           },
           {
@@ -180,7 +180,7 @@
             "required": true,
             "url": "https://developers.openai.com/api/docs/deprecations",
             "status": "ok",
-            "checked_at": "2026-07-12T10:15:54.407Z",
+            "checked_at": "2026-07-12T11:45:58.735Z",
             "error": null
           },
           {
@@ -190,7 +190,7 @@
             "required": false,
             "url": "https://developers.openai.com/api/docs/changelog",
             "status": "ok",
-            "checked_at": "2026-07-12T10:15:54.507Z",
+            "checked_at": "2026-07-12T11:45:58.862Z",
             "error": null
           }
         ]
@@ -229,7 +229,7 @@
             "required": true,
             "url": "https://www.anthropic.com/news",
             "status": "ok",
-            "checked_at": "2026-07-12T10:15:54.944Z",
+            "checked_at": "2026-07-12T11:45:58.326Z",
             "error": null
           },
           {
@@ -239,7 +239,7 @@
             "required": false,
             "url": "https://platform.claude.com/docs/en/release-notes/overview",
             "status": "ok",
-            "checked_at": "2026-07-12T10:15:55.578Z",
+            "checked_at": "2026-07-12T11:45:58.754Z",
             "error": null
           },
           {
@@ -249,7 +249,7 @@
             "required": true,
             "url": "https://platform.claude.com/docs/en/about-claude/model-deprecations",
             "status": "ok",
-            "checked_at": "2026-07-12T10:15:55.893Z",
+            "checked_at": "2026-07-12T11:45:59.091Z",
             "error": null
           }
         ]
@@ -288,7 +288,7 @@
             "required": true,
             "url": "https://ai.google.dev/gemini-api/docs/changelog",
             "status": "ok",
-            "checked_at": "2026-07-12T10:15:52.876Z",
+            "checked_at": "2026-07-12T11:45:56.389Z",
             "error": null
           },
           {
@@ -298,7 +298,7 @@
             "required": true,
             "url": "https://ai.google.dev/gemini-api/docs/models",
             "status": "ok",
-            "checked_at": "2026-07-12T10:15:53.087Z",
+            "checked_at": "2026-07-12T11:45:56.611Z",
             "error": null
           }
         ]
@@ -2043,11 +2043,11 @@
   ],
   "health": {
     "schema_version": 1,
-    "snapshot_id": "snapshot-0324d9c4af",
-    "checked_at": "2026-07-12T10:15:49.084Z",
+    "snapshot_id": "snapshot-9b0a0f1b31",
+    "checked_at": "2026-07-12T11:45:53.301Z",
     "content_updated_at": "2026-07-12T07:00:49.751Z",
-    "last_full_success_at": "2026-07-12T10:15:49.084Z",
-    "latest_success_at": "2026-07-12T10:15:49.084Z",
+    "last_full_success_at": "2026-07-12T11:45:53.301Z",
+    "latest_success_at": "2026-07-12T11:45:53.301Z",
     "overall": "degraded",
     "source_counts": {
       "total": 20,
@@ -2062,17 +2062,26 @@
         "key": "model:gpt:model-release-notes",
         "required": false,
         "error": "403 Forbidden",
-        "consecutive_failures": 11
+        "consecutive_failures": 12
       }
     ],
     "alert_sources": [],
     "review_queue": [
       {
+        "id": "event:deprecation:claude:deprecations:b1c7c0ee04",
+        "title": "Claude: Model deprecations - Claude Platform Docs Claude Platform Docs Messages",
+        "type": "deprecation",
+        "source_url": "https://platform.claude.com/docs/en/about-claude/model-deprecations",
+        "occurred_at": "2026-07-12T11:45:59.097Z",
+        "confidence": "needs_review",
+        "reason": "not_verified"
+      },
+      {
         "id": "event:deprecation:claude:deprecations:8f6e6e70d8",
         "title": "Claude: As safer and more capable models launch, Anthropic regularly retires older ones. Applications relying on Anthropic models may need occasional updates to keep working. Impacted customers will always be notified by email a",
         "type": "deprecation",
         "source_url": "https://platform.claude.com/docs/en/about-claude/model-deprecations",
-        "occurred_at": "2026-07-12T10:15:55.897Z",
+        "occurred_at": "2026-07-12T11:45:59.097Z",
         "confidence": "needs_review",
         "reason": "not_verified"
       },
@@ -2081,16 +2090,7 @@
         "title": "Claude: To help measure the performance of replacement models on your tasks, consider thorough testing of your applications with the new models well before the retirement date. For specific instructions on migrating to the lates",
         "type": "deprecation",
         "source_url": "https://platform.claude.com/docs/en/about-claude/model-deprecations",
-        "occurred_at": "2026-07-12T10:15:55.897Z",
-        "confidence": "needs_review",
-        "reason": "not_verified"
-      },
-      {
-        "id": "event:deprecation:claude:deprecations:b1c7c0ee04",
-        "title": "Claude: Model deprecations - Claude Platform Docs Claude Platform Docs Messages",
-        "type": "deprecation",
-        "source_url": "https://platform.claude.com/docs/en/about-claude/model-deprecations",
-        "occurred_at": "2026-07-12T10:15:55.896Z",
+        "occurred_at": "2026-07-12T11:45:59.097Z",
         "confidence": "needs_review",
         "reason": "not_verified"
       },
@@ -2099,7 +2099,7 @@
         "title": "Gemini: Imagen 4 Deprecated Text-to-image model yet, featuring fast and ultra-fast generation and exceptional clarity up to 2K resolution. Music generation models",
         "type": "deprecation",
         "source_url": "https://ai.google.dev/gemini-api/docs/models",
-        "occurred_at": "2026-07-12T10:15:53.095Z",
+        "occurred_at": "2026-07-12T11:45:56.618Z",
         "confidence": "needs_review",
         "reason": "not_verified"
       },
@@ -2108,7 +2108,7 @@
         "title": "Gemini: These models are deprecated and will be shut down soon; migrate to newer models to prevent service interruptions. history Gemini 2.0 Flash Shut down",
         "type": "deprecation",
         "source_url": "https://ai.google.dev/gemini-api/docs/models",
-        "occurred_at": "2026-07-12T10:15:53.095Z",
+        "occurred_at": "2026-07-12T11:45:56.618Z",
         "confidence": "needs_review",
         "reason": "not_verified"
       },
@@ -2117,7 +2117,7 @@
         "title": "Gemini: history Gemini 2.0 Flash Shut down Our second generation workhorse model, with next-gen features and improved capabilities, including superior speed, native tool use, and a 1M token context window.",
         "type": "deprecation",
         "source_url": "https://ai.google.dev/gemini-api/docs/models",
-        "occurred_at": "2026-07-12T10:15:53.095Z",
+        "occurred_at": "2026-07-12T11:45:56.618Z",
         "confidence": "needs_review",
         "reason": "not_verified"
       },
@@ -2126,7 +2126,7 @@
         "title": "Gemini: Gemini 2.0 Flash Shut down Our second generation workhorse model, with next-gen features and improved capabilities, including superior speed, native tool use, and a 1M token context window. restore",
         "type": "deprecation",
         "source_url": "https://ai.google.dev/gemini-api/docs/models",
-        "occurred_at": "2026-07-12T10:15:53.095Z",
+        "occurred_at": "2026-07-12T11:45:56.618Z",
         "confidence": "needs_review",
         "reason": "not_verified"
       },
@@ -2135,7 +2135,7 @@
         "title": "Gemini: Migrate to Gen AI SDK Migrate to Interactions API Interactions breaking changes (May 2026)",
         "type": "deprecation",
         "source_url": "https://ai.google.dev/gemini-api/docs/models",
-        "occurred_at": "2026-07-12T10:15:53.093Z",
+        "occurred_at": "2026-07-12T11:45:56.616Z",
         "confidence": "needs_review",
         "reason": "not_verified"
       },
@@ -2144,7 +2144,7 @@
         "title": "Gemini: Migrate to Interactions API Interactions breaking changes (May 2026) Rate limits",
         "type": "deprecation",
         "source_url": "https://ai.google.dev/gemini-api/docs/models",
-        "occurred_at": "2026-07-12T10:15:53.093Z",
+        "occurred_at": "2026-07-12T11:45:56.616Z",
         "confidence": "needs_review",
         "reason": "not_verified"
       }
@@ -2154,32 +2154,32 @@
       "github:codex:repo": {
         "status": "ok",
         "required": true,
-        "checked_at": "2026-07-12T10:15:49.556Z",
-        "last_success_at": "2026-07-12T10:15:49.556Z",
+        "checked_at": "2026-07-12T11:45:53.672Z",
+        "last_success_at": "2026-07-12T11:45:53.672Z",
         "consecutive_failures": 0,
-        "etag": "W/\"6561b7e4819dd745bb89641b6187f59eb38209d9e06b184cfffb5cd9631f8fae\"",
-        "last_modified": "Sun, 12 Jul 2026 10:14:10 GMT",
-        "content_hash": "7a4e1dc65f050155947d7e40206418882ab29519484f922424be502b2cc73fc4",
-        "previous_hash": "d765446d3f06956620830f6b8f2aca53c21abac05936b9c5d91e5150692e6b49",
+        "etag": "W/\"81942f00194917b1e67c348d26424e070486e65452997c094d2b69c18d43b33c\"",
+        "last_modified": "Sun, 12 Jul 2026 11:41:28 GMT",
+        "content_hash": "7cd1856859248a32a81e4ec06a8733283fece83fd0e531deed2f840404bcb9da",
+        "previous_hash": "7a4e1dc65f050155947d7e40206418882ab29519484f922424be502b2cc73fc4",
         "error": null
       },
       "github:codex:releases": {
         "status": "ok",
         "required": true,
-        "checked_at": "2026-07-12T10:15:51.810Z",
-        "last_success_at": "2026-07-12T10:15:51.810Z",
+        "checked_at": "2026-07-12T11:45:55.761Z",
+        "last_success_at": "2026-07-12T11:45:55.761Z",
         "consecutive_failures": 0,
-        "etag": "W/\"5fc5ffa7df6bd34b12ab5bca8bb35c001b7f52f8a8bd3452e2838b2f66d987fc\"",
+        "etag": "W/\"032e583d36956e6dd2826993ba9e8e761d3b571d3621856e0b5bc1c7cfb16370\"",
         "last_modified": null,
-        "content_hash": "de865478efb74dc217d0598e05a2b3dae154a1f579999b0006524da8b78e0296",
-        "previous_hash": "a5228420e530a19a077fd39ebf50117a3a6722450e1d1ae93d437af88a48303b",
+        "content_hash": "371f5719b5d72a785539240e620eb72e6f9c37b7076132c1ccc1bd542c053bdb",
+        "previous_hash": "de865478efb74dc217d0598e05a2b3dae154a1f579999b0006524da8b78e0296",
         "error": null
       },
       "npm:codex": {
         "status": "ok",
         "required": false,
-        "checked_at": "2026-07-12T10:15:52.041Z",
-        "last_success_at": "2026-07-12T10:15:52.041Z",
+        "checked_at": "2026-07-12T11:45:56.023Z",
+        "last_success_at": "2026-07-12T11:45:56.023Z",
         "consecutive_failures": 0,
         "etag": null,
         "last_modified": null,
@@ -2190,32 +2190,32 @@
       "github:claude-code:repo": {
         "status": "ok",
         "required": true,
-        "checked_at": "2026-07-12T10:15:49.513Z",
-        "last_success_at": "2026-07-12T10:15:49.513Z",
+        "checked_at": "2026-07-12T11:45:53.644Z",
+        "last_success_at": "2026-07-12T11:45:53.644Z",
         "consecutive_failures": 0,
-        "etag": "W/\"a644111da64a73ae991f006c6f3828ed3a23938d76247d3c9a5db8b9c5118a38\"",
-        "last_modified": "Sun, 12 Jul 2026 09:57:27 GMT",
-        "content_hash": "173b3dda18d2813ab95b98715ff84386cbe4186af9d18d228f0098b1fa8cac86",
-        "previous_hash": "9b48ee159fc5787aa2fdb20308ffdc6f9f9a0a77c5b8c4962cf5af7239f076c0",
+        "etag": "W/\"dfc2a98bcba32e846d05770ded91bc338bb03f03180d260d614ff0fe5c72c81a\"",
+        "last_modified": "Sun, 12 Jul 2026 11:33:52 GMT",
+        "content_hash": "432d9dc7aec8b65092ef8eca8eb0fd72b205828f406f7d2b428477c85f69393d",
+        "previous_hash": "173b3dda18d2813ab95b98715ff84386cbe4186af9d18d228f0098b1fa8cac86",
         "error": null
       },
       "github:claude-code:releases": {
         "status": "ok",
         "required": true,
-        "checked_at": "2026-07-12T10:15:50.091Z",
-        "last_success_at": "2026-07-12T10:15:50.091Z",
+        "checked_at": "2026-07-12T11:45:54.060Z",
+        "last_success_at": "2026-07-12T11:45:54.060Z",
         "consecutive_failures": 0,
-        "etag": "W/\"259b51bf09e712d68e6e14ef7209a36e4bf6b08197197f26f56b8a96abd8ce10\"",
+        "etag": "W/\"72e00da5cd0e2c768c22b8b032ddbe05c93473d14f6c6fed766ef4996eaf70cc\"",
         "last_modified": null,
-        "content_hash": "cdc25b53620672010303df3fd725f3bd03cdea69a9d9a677924e6b33627b3f49",
-        "previous_hash": "acb8da184de19043bf365dadce4306c84bfb56abb9397f49f2cce80ba8da5d4d",
+        "content_hash": "7821a1f3439b3e1d1d4977073d790437a7b4ae40502cb1c49b28e4caff83102b",
+        "previous_hash": "cdc25b53620672010303df3fd725f3bd03cdea69a9d9a677924e6b33627b3f49",
         "error": null
       },
       "npm:claude-code": {
         "status": "ok",
         "required": false,
-        "checked_at": "2026-07-12T10:15:50.258Z",
-        "last_success_at": "2026-07-12T10:15:50.258Z",
+        "checked_at": "2026-07-12T11:45:54.486Z",
+        "last_success_at": "2026-07-12T11:45:54.486Z",
         "consecutive_failures": 0,
         "etag": null,
         "last_modified": null,
@@ -2226,59 +2226,59 @@
       "github:agy:repo": {
         "status": "ok",
         "required": true,
-        "checked_at": "2026-07-12T10:15:49.510Z",
-        "last_success_at": "2026-07-12T10:15:49.510Z",
+        "checked_at": "2026-07-12T11:45:53.655Z",
+        "last_success_at": "2026-07-12T11:45:53.655Z",
         "consecutive_failures": 0,
-        "etag": "W/\"ce1f79de47521a4bc5b941ce8eda10b85ac66368a537b51e2816820553978a0e\"",
-        "last_modified": "Sun, 12 Jul 2026 08:44:45 GMT",
-        "content_hash": "86fc8fc87eb724b49f682b838791cabf9ac153c180b21e3320d30417e74f5dc4",
-        "previous_hash": "c339ff7c74bf52e8c1c96076bf6e520eb8d4af3a9dd2ce9d82834271bf85c6ca",
+        "etag": "W/\"34eed0d513da3b6af41849cfc66528eeb0aa2ecfb4de33ed3561a3567e813efe\"",
+        "last_modified": "Sun, 12 Jul 2026 10:50:25 GMT",
+        "content_hash": "03bcce4eae8342e4a26169923d425b121c95b1c7bbbaacaf15712e196009cff9",
+        "previous_hash": "86fc8fc87eb724b49f682b838791cabf9ac153c180b21e3320d30417e74f5dc4",
         "error": null
       },
       "github:agy:releases": {
         "status": "ok",
         "required": true,
-        "checked_at": "2026-07-12T10:15:50.008Z",
-        "last_success_at": "2026-07-12T10:15:50.008Z",
+        "checked_at": "2026-07-12T11:45:54.006Z",
+        "last_success_at": "2026-07-12T11:45:54.006Z",
         "consecutive_failures": 0,
-        "etag": "W/\"cc18db130c67fd6f4ef5daf1efddceb455dfdb515f189efaf8fc0aa5ff9a85b8\"",
+        "etag": "W/\"04ec0b33c85fe1afb65961956116afe49f2a2e2ecff2a795a3e9834812330cc1\"",
         "last_modified": null,
-        "content_hash": "891e2cf96962547e3fed2ab5ce2e58922feac6bed6273878da37f840f9cc898c",
-        "previous_hash": "484adaf137fb66231eb07311a0b09a4ba3aac6a36889059be9ea8d930055d88d",
+        "content_hash": "e2658f28ef1f04adb246d176b267a68c1ee18a429a7f8fd918a888796f1a09aa",
+        "previous_hash": "891e2cf96962547e3fed2ab5ce2e58922feac6bed6273878da37f840f9cc898c",
         "error": null
       },
       "github:openclaw:repo": {
         "status": "ok",
         "required": true,
-        "checked_at": "2026-07-12T10:15:49.532Z",
-        "last_success_at": "2026-07-12T10:15:49.532Z",
+        "checked_at": "2026-07-12T11:45:53.681Z",
+        "last_success_at": "2026-07-12T11:45:53.681Z",
         "consecutive_failures": 0,
-        "etag": "W/\"0b0bb0cdc4e73c14126951fbc03c0996b833b4e7878544b4c98fa66ffc5d2bfe\"",
-        "last_modified": "Sun, 12 Jul 2026 10:15:17 GMT",
-        "content_hash": "9a812bf8fd6752521a38a613f12ebb08d5830aa7e2233ae5eee0017baea8d267",
-        "previous_hash": "7bfc128fb7c3e2c48ecbe7085749bf0964bcf650aede2d0e7dbd252347b403c1",
+        "etag": "W/\"d4db9473cf5ed8a892f5c0083fd0291f507408dd7182db1c2b20c7cddafa3091\"",
+        "last_modified": "Sun, 12 Jul 2026 11:43:42 GMT",
+        "content_hash": "6aafa65bf84a95c45a303041ef7025850d9257b5eddad26ba84ac85d50aea700",
+        "previous_hash": "9a812bf8fd6752521a38a613f12ebb08d5830aa7e2233ae5eee0017baea8d267",
         "error": null
       },
       "github:openclaw:releases": {
         "status": "ok",
         "required": true,
-        "checked_at": "2026-07-12T10:15:50.432Z",
-        "last_success_at": "2026-07-12T10:15:50.432Z",
+        "checked_at": "2026-07-12T11:45:54.349Z",
+        "last_success_at": "2026-07-12T11:45:54.349Z",
         "consecutive_failures": 0,
-        "etag": "W/\"ae64a3025b0837bf91c6d88ad0c1fd184e1d7215984c53e6a43a2bead19f6297\"",
+        "etag": "W/\"5f25009fb29fefb19dcf975a2f92502a4efcb125be310d0bd94d2951e8f02a1d\"",
         "last_modified": null,
-        "content_hash": "10b236064780da378540ebc40acaa2ad545ef8fe28e05793cb8004027675187a",
-        "previous_hash": "6db2d01bdc512d537d10ec379ba86b8ec44005c357af3a4d960f80f717c4c0b7",
+        "content_hash": "d3d5b44248022b2b262f148a6257c235a9edba2c00d4b858bf1057246471ba5d",
+        "previous_hash": "10b236064780da378540ebc40acaa2ad545ef8fe28e05793cb8004027675187a",
         "error": null
       },
       "npm:openclaw": {
         "status": "ok",
         "required": false,
-        "checked_at": "2026-07-12T10:15:50.492Z",
-        "last_success_at": "2026-07-12T10:15:50.492Z",
+        "checked_at": "2026-07-12T11:45:54.474Z",
+        "last_success_at": "2026-07-12T11:45:54.474Z",
         "consecutive_failures": 0,
         "etag": null,
-        "last_modified": "Sun, 12 Jul 2026 10:14:23 GMT",
+        "last_modified": "Sun, 12 Jul 2026 11:43:14 GMT",
         "content_hash": "a04724d9d445e012807e5d0cd3f99541928a7f57ef311238694e514a1e84e552",
         "previous_hash": "a04724d9d445e012807e5d0cd3f99541928a7f57ef311238694e514a1e84e552",
         "error": null
@@ -2286,13 +2286,13 @@
       "model:gpt:news-rss": {
         "status": "ok",
         "required": true,
-        "checked_at": "2026-07-12T10:15:52.322Z",
-        "last_success_at": "2026-07-12T10:15:52.322Z",
+        "checked_at": "2026-07-12T11:45:56.659Z",
+        "last_success_at": "2026-07-12T11:45:56.659Z",
         "consecutive_failures": 0,
         "etag": null,
         "last_modified": null,
-        "content_hash": "1f681a4cd55a5cc2a2b182c893312d34021c7ac350d3a27b6724dc8c7d10ce95",
-        "previous_hash": "531c57ce3d179141c5eabb9383297d85ef6709c190b18834709cf01cf4119d38",
+        "content_hash": "7f0a1f7facac38abc241cf41ed0ae60e39ebc5b92b8fc066fe6328d6290af574",
+        "previous_hash": "1f681a4cd55a5cc2a2b182c893312d34021c7ac350d3a27b6724dc8c7d10ce95",
         "error": null,
         "normalized": true,
         "feed_id": "news-rss",
@@ -2302,9 +2302,9 @@
       "model:gpt:model-release-notes": {
         "status": "error",
         "required": false,
-        "checked_at": "2026-07-12T10:15:54.309Z",
+        "checked_at": "2026-07-12T11:45:58.602Z",
         "last_success_at": null,
-        "consecutive_failures": 11,
+        "consecutive_failures": 12,
         "etag": null,
         "last_modified": null,
         "content_hash": null,
@@ -2317,8 +2317,8 @@
       "model:gpt:deprecations": {
         "status": "ok",
         "required": true,
-        "checked_at": "2026-07-12T10:15:54.407Z",
-        "last_success_at": "2026-07-12T10:15:54.407Z",
+        "checked_at": "2026-07-12T11:45:58.735Z",
+        "last_success_at": "2026-07-12T11:45:58.735Z",
         "consecutive_failures": 0,
         "etag": "W/\"2ce7b5eb73d48fd0c3a3bc1f1b449091\"",
         "last_modified": "Sun, 12 Jul 2026 06:20:03 GMT",
@@ -2333,8 +2333,8 @@
       "model:gpt:api-changelog": {
         "status": "ok",
         "required": false,
-        "checked_at": "2026-07-12T10:15:54.507Z",
-        "last_success_at": "2026-07-12T10:15:54.507Z",
+        "checked_at": "2026-07-12T11:45:58.862Z",
+        "last_success_at": "2026-07-12T11:45:58.862Z",
         "consecutive_failures": 0,
         "etag": "W/\"ac5d4c511b69783e971f4b8b45b3de38\"",
         "last_modified": "Sun, 12 Jul 2026 06:20:08 GMT",
@@ -2349,8 +2349,8 @@
       "model:claude:news": {
         "status": "ok",
         "required": true,
-        "checked_at": "2026-07-12T10:15:54.944Z",
-        "last_success_at": "2026-07-12T10:15:54.944Z",
+        "checked_at": "2026-07-12T11:45:58.326Z",
+        "last_success_at": "2026-07-12T11:45:58.326Z",
         "consecutive_failures": 0,
         "etag": null,
         "last_modified": null,
@@ -2365,8 +2365,8 @@
       "model:claude:platform-notes": {
         "status": "ok",
         "required": false,
-        "checked_at": "2026-07-12T10:15:55.578Z",
-        "last_success_at": "2026-07-12T10:15:55.578Z",
+        "checked_at": "2026-07-12T11:45:58.754Z",
+        "last_success_at": "2026-07-12T11:45:58.754Z",
         "consecutive_failures": 0,
         "etag": null,
         "last_modified": null,
@@ -2381,8 +2381,8 @@
       "model:claude:deprecations": {
         "status": "ok",
         "required": true,
-        "checked_at": "2026-07-12T10:15:55.893Z",
-        "last_success_at": "2026-07-12T10:15:55.893Z",
+        "checked_at": "2026-07-12T11:45:59.091Z",
+        "last_success_at": "2026-07-12T11:45:59.091Z",
         "consecutive_failures": 0,
         "etag": null,
         "last_modified": null,
@@ -2397,8 +2397,8 @@
       "model:gemini:api-changelog": {
         "status": "ok",
         "required": true,
-        "checked_at": "2026-07-12T10:15:52.876Z",
-        "last_success_at": "2026-07-12T10:15:52.876Z",
+        "checked_at": "2026-07-12T11:45:56.389Z",
+        "last_success_at": "2026-07-12T11:45:56.389Z",
         "consecutive_failures": 0,
         "etag": null,
         "last_modified": "Thu, 09 Jul 2026 23:04:22 GMT",
@@ -2413,8 +2413,8 @@
       "model:gemini:models-page": {
         "status": "ok",
         "required": true,
-        "checked_at": "2026-07-12T10:15:53.087Z",
-        "last_success_at": "2026-07-12T10:15:53.087Z",
+        "checked_at": "2026-07-12T11:45:56.611Z",
+        "last_success_at": "2026-07-12T11:45:56.611Z",
         "consecutive_failures": 0,
         "etag": null,
         "last_modified": "Thu, 09 Jul 2026 23:04:22 GMT",
