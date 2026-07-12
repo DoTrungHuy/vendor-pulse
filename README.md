@@ -9,6 +9,10 @@
 
 <br />
 
+🔗 **在线预览 / GPT 站点部署地址：** [agent-pulse-ai.tdo770756.chatgpt.site](https://agent-pulse-ai.tdo770756.chatgpt.site)
+
+<br />
+
 ![GitHub stars](https://img.shields.io/github/stars/DoTrungHuy/vendor-pulse?style=flat-square&logo=github)
 ![GitHub last commit](https://img.shields.io/github/last-commit/DoTrungHuy/vendor-pulse?style=flat-square&logo=github)
 ![Node.js](https://img.shields.io/badge/Node.js-%3E%3D22.13.0-339933?style=flat-square&logo=node.js&logoColor=white)
