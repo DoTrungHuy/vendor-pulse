@@ -1,10 +1,10 @@
 {
   "schema_version": 1,
-  "snapshot_id": "snapshot-19b099557e",
-  "generated_at": "2026-07-12T05:10:26.251Z",
-  "checked_at": "2026-07-12T05:10:26.251Z",
-  "content_updated_at": "2026-07-12T05:10:26.251Z",
-  "last_full_success_at": "2026-07-12T05:10:26.251Z",
+  "snapshot_id": "snapshot-0fbee13393",
+  "generated_at": "2026-07-12T05:12:21.471Z",
+  "checked_at": "2026-07-12T05:12:21.471Z",
+  "content_updated_at": "2026-07-12T05:12:21.471Z",
+  "last_full_success_at": "2026-07-12T05:12:21.471Z",
   "timezone": "Asia/Shanghai",
   "status": "degraded",
   "source_counts": {
@@ -23,8 +23,8 @@
       "repo_url": "https://github.com/openai/codex",
       "official_url": "https://developers.openai.com/codex",
       "x_url": "https://x.com/OpenAI",
-      "stars": 97240,
-      "stars_delta_24h": 172,
+      "stars": 97241,
+      "stars_delta_24h": 173,
       "stars_delta_7d": null,
       "latest_release": {
         "tag": "rust-v0.145.0-alpha.4",
@@ -50,8 +50,8 @@
       "repo_url": "https://github.com/anthropics/claude-code",
       "official_url": "https://code.claude.com/docs",
       "x_url": "https://x.com/AnthropicAI",
-      "stars": 137477,
-      "stars_delta_24h": 115,
+      "stars": 137479,
+      "stars_delta_24h": 117,
       "stars_delta_7d": null,
       "latest_release": {
         "tag": "v2.1.207",
@@ -156,7 +156,7 @@
           "required": true,
           "url": "https://openai.com/news/rss.xml",
           "status": "ok",
-          "checked_at": "2026-07-12T05:10:29.575Z",
+          "checked_at": "2026-07-12T05:12:24.532Z",
           "error": null
         },
         {
@@ -166,7 +166,7 @@
           "required": false,
           "url": "https://help.openai.com/en/articles/9624314-model-release-notes",
           "status": "error",
-          "checked_at": "2026-07-12T05:10:31.471Z",
+          "checked_at": "2026-07-12T05:12:26.411Z",
           "error": "403 Forbidden"
         },
         {
@@ -176,7 +176,7 @@
           "required": true,
           "url": "https://developers.openai.com/api/docs/deprecations",
           "status": "ok",
-          "checked_at": "2026-07-12T05:10:31.512Z",
+          "checked_at": "2026-07-12T05:12:26.516Z",
           "error": null
         },
         {
@@ -186,7 +186,7 @@
           "required": false,
           "url": "https://developers.openai.com/api/docs/changelog",
           "status": "ok",
-          "checked_at": "2026-07-12T05:10:31.555Z",
+          "checked_at": "2026-07-12T05:12:26.565Z",
           "error": null
         }
       ]
@@ -197,12 +197,12 @@
       "provider": "Anthropic",
       "source_url": "https://www.anthropic.com/news",
       "title": "Introducing Claude Sonnet 5",
-      "occurred_at": "2026-07-12T05:10:31.693Z",
+      "occurred_at": "2026-07-12T05:12:26.841Z",
       "status": "ok",
       "latest_model": {
         "title": "Introducing Claude Sonnet 5",
-        "occurred_at": "2026-07-12T05:10:31.693Z",
-        "published_at": "2026-07-12T05:10:31.693Z",
+        "occurred_at": "2026-07-12T05:12:26.841Z",
+        "published_at": "2026-07-12T05:12:26.841Z",
         "effective_at": null,
         "source_url": "https://www.anthropic.com/news",
         "feed_id": "news",
@@ -210,7 +210,7 @@
       },
       "latest_policy": {
         "title": "As safer and more capable models launch, Anthropic regularly retires older ones. Applications relying on Anthropic models may need occasional updates to keep working. Impacted customers will always be notified by email a",
-        "occurred_at": "2026-07-12T05:10:32.455Z",
+        "occurred_at": "2026-07-12T05:12:27.531Z",
         "published_at": null,
         "effective_at": null,
         "source_url": "https://platform.claude.com/docs/en/about-claude/model-deprecations",
@@ -225,7 +225,7 @@
           "required": true,
           "url": "https://www.anthropic.com/news",
           "status": "ok",
-          "checked_at": "2026-07-12T05:10:31.691Z",
+          "checked_at": "2026-07-12T05:12:26.838Z",
           "error": null
         },
         {
@@ -235,7 +235,7 @@
           "required": false,
           "url": "https://platform.claude.com/docs/en/release-notes/overview",
           "status": "ok",
-          "checked_at": "2026-07-12T05:10:32.156Z",
+          "checked_at": "2026-07-12T05:12:27.231Z",
           "error": null
         },
         {
@@ -245,7 +245,7 @@
           "required": true,
           "url": "https://platform.claude.com/docs/en/about-claude/model-deprecations",
           "status": "ok",
-          "checked_at": "2026-07-12T05:10:32.450Z",
+          "checked_at": "2026-07-12T05:12:27.524Z",
           "error": null
         }
       ]
@@ -284,7 +284,7 @@
           "required": true,
           "url": "https://ai.google.dev/gemini-api/docs/changelog",
           "status": "ok",
-          "checked_at": "2026-07-12T05:10:29.291Z",
+          "checked_at": "2026-07-12T05:12:24.250Z",
           "error": null
         },
         {
@@ -294,7 +294,7 @@
           "required": true,
           "url": "https://ai.google.dev/gemini-api/docs/models",
           "status": "ok",
-          "checked_at": "2026-07-12T05:10:29.554Z",
+          "checked_at": "2026-07-12T05:12:24.492Z",
           "error": null
         }
       ]
