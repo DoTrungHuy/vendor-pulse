@@ -1,19 +1,19 @@
 {
   "schema_version": 1,
-  "snapshot_id": "snapshot-d878afbef6",
-  "generated_at": "2026-07-12T06:47:09.096Z",
-  "checked_at": "2026-07-12T06:47:09.096Z",
-  "content_updated_at": "2026-07-12T06:47:09.096Z",
+  "snapshot_id": "snapshot-ad405e4128",
+  "generated_at": "2026-07-12T07:00:49.751Z",
+  "checked_at": "2026-07-12T07:00:49.751Z",
+  "content_updated_at": "2026-07-12T07:00:49.751Z",
   "last_full_success_at": "2026-07-12T06:47:09.096Z",
   "timezone": "Asia/Shanghai",
   "status": "degraded",
   "source_counts": {
     "total": 20,
-    "healthy": 19,
-    "failed": 1,
+    "healthy": 10,
+    "failed": 10,
     "required": 14,
-    "required_healthy": 14,
-    "required_failed": 0
+    "required_healthy": 6,
+    "required_failed": 8
   },
   "tools": [
     {
@@ -41,7 +41,7 @@
         "version": "0.144.1",
         "weekly_downloads": 10106046
       },
-      "status": "ok"
+      "status": "error"
     },
     {
       "id": "claude-code",
@@ -68,7 +68,7 @@
         "version": "2.1.207",
         "weekly_downloads": 9075756
       },
-      "status": "ok"
+      "status": "error"
     },
     {
       "id": "agy",
@@ -91,7 +91,7 @@
         "median_days": 2
       },
       "npm": null,
-      "status": "ok"
+      "status": "degraded"
     },
     {
       "id": "openclaw",
@@ -118,7 +118,7 @@
         "version": "2026.6.11",
         "weekly_downloads": 2154828
       },
-      "status": "ok"
+      "status": "error"
     }
   ],
   "models": [
@@ -126,26 +126,26 @@
       "id": "gpt",
       "name": "GPT",
       "provider": "OpenAI",
-      "source_url": "https://openai.com/index/gpt-5-6-preferred-model-microsoft-365-copilot",
-      "title": "GPT-5.6 is now the preferred model in Microsoft 365 Copilot",
-      "occurred_at": "2026-07-09T13:00:00.000Z",
+      "source_url": "https://openai.com/index/introducing-gpt-live",
+      "title": "Introducing GPT-Live",
+      "occurred_at": "2026-07-08T00:00:00.000Z",
       "status": "degraded",
       "latest_model": {
-        "title": "GPT-5.6 is now the preferred model in Microsoft 365 Copilot",
-        "occurred_at": "2026-07-09T13:00:00.000Z",
-        "published_at": "2026-07-09T13:00:00.000Z",
+        "title": "Introducing GPT-Live",
+        "occurred_at": "2026-07-08T00:00:00.000Z",
+        "published_at": "2026-07-08T00:00:00.000Z",
         "effective_at": null,
-        "source_url": "https://openai.com/index/gpt-5-6-preferred-model-microsoft-365-copilot",
+        "source_url": "https://openai.com/index/introducing-gpt-live",
         "feed_id": "news-rss",
         "confidence": "verified"
       },
       "latest_policy": {
-        "title": "Dec 11, 2026 o3-pro-2025-06-10 gpt-5.5-pro 2026-06-03: Reusable prompts On June 3, 2026, we notified developers using reusable prompts in the dashboard and API that reusable prompt objects are being deprecated.",
-        "occurred_at": "2025-06-10T00:00:00.000Z",
-        "published_at": null,
-        "effective_at": "2025-06-10T00:00:00.000Z",
-        "source_url": "https://developers.openai.com/api/docs/deprecations",
-        "feed_id": "deprecations",
+        "title": "Retiring GPT-4o, GPT-4.1, GPT-4.1 mini, and OpenAI o4-mini in ChatGPT",
+        "occurred_at": "2026-01-29T00:00:00.000Z",
+        "published_at": "2026-01-29T00:00:00.000Z",
+        "effective_at": null,
+        "source_url": "https://openai.com/index/retiring-gpt-4o-and-older-models",
+        "feed_id": "news-rss",
         "confidence": "verified"
       },
       "feeds": [
@@ -156,7 +156,7 @@
           "required": true,
           "url": "https://openai.com/news/rss.xml",
           "status": "ok",
-          "checked_at": "2026-07-12T06:47:11.988Z",
+          "checked_at": "2026-07-12T07:00:57.087Z",
           "error": null
         },
         {
@@ -166,7 +166,7 @@
           "required": false,
           "url": "https://help.openai.com/en/articles/9624314-model-release-notes",
           "status": "error",
-          "checked_at": "2026-07-12T06:47:13.935Z",
+          "checked_at": "2026-07-12T07:01:01.401Z",
           "error": "403 Forbidden"
         },
         {
@@ -175,9 +175,9 @@
           "kind": "deprecation",
           "required": true,
           "url": "https://developers.openai.com/api/docs/deprecations",
-          "status": "ok",
-          "checked_at": "2026-07-12T06:47:14.226Z",
-          "error": null
+          "status": "error",
+          "checked_at": "2026-07-12T07:01:04.106Z",
+          "error": "403 Forbidden"
         },
         {
           "id": "api-changelog",
@@ -185,9 +185,9 @@
           "kind": "model",
           "required": false,
           "url": "https://developers.openai.com/api/docs/changelog",
-          "status": "ok",
-          "checked_at": "2026-07-12T06:47:14.288Z",
-          "error": null
+          "status": "error",
+          "checked_at": "2026-07-12T07:01:06.803Z",
+          "error": "403 Forbidden"
         }
       ]
     },
@@ -195,17 +195,17 @@
       "id": "claude",
       "name": "Claude",
       "provider": "Anthropic",
-      "source_url": "https://platform.claude.com/docs/en/release-notes/overview",
-      "title": "We&#x27;ve launched Claude Sonnet 5 ( claude-sonnet-5 ), the next generation of our Sonnet model family, at introductory pricing of $2 / $10 per MTok through August 31, 2026 (standard $3 / $15 thereafter).",
+      "source_url": "https://www.anthropic.com/news/claude-sonnet-5",
+      "title": "Introducing Claude Sonnet 5",
       "occurred_at": "2026-06-30T00:00:00.000Z",
       "status": "ok",
       "latest_model": {
-        "title": "We&#x27;ve launched Claude Sonnet 5 ( claude-sonnet-5 ), the next generation of our Sonnet model family, at introductory pricing of $2 / $10 per MTok through August 31, 2026 (standard $3 / $15 thereafter).",
+        "title": "Introducing Claude Sonnet 5",
         "occurred_at": "2026-06-30T00:00:00.000Z",
         "published_at": "2026-06-30T00:00:00.000Z",
         "effective_at": null,
-        "source_url": "https://platform.claude.com/docs/en/release-notes/overview",
-        "feed_id": "platform-notes",
+        "source_url": "https://www.anthropic.com/news/claude-sonnet-5",
+        "feed_id": "news",
         "confidence": "verified"
       },
       "latest_policy": {
@@ -225,7 +225,7 @@
           "required": true,
           "url": "https://www.anthropic.com/news",
           "status": "ok",
-          "checked_at": "2026-07-12T06:47:12.935Z",
+          "checked_at": "2026-07-12T07:01:00.687Z",
           "error": null
         },
         {
@@ -235,7 +235,7 @@
           "required": false,
           "url": "https://platform.claude.com/docs/en/release-notes/overview",
           "status": "ok",
-          "checked_at": "2026-07-12T06:47:13.365Z",
+          "checked_at": "2026-07-12T07:01:02.885Z",
           "error": null
         },
         {
@@ -245,7 +245,7 @@
           "required": true,
           "url": "https://platform.claude.com/docs/en/about-claude/model-deprecations",
           "status": "ok",
-          "checked_at": "2026-07-12T06:47:13.774Z",
+          "checked_at": "2026-07-12T07:01:04.021Z",
           "error": null
         }
       ]
@@ -268,10 +268,10 @@
         "confidence": "verified"
       },
       "latest_policy": {
-        "title": "Deprecation announcement : The following image generation models are",
+        "title": "being deprecated and will be shut down on August 17, 2026 :",
         "occurred_at": "2026-06-15T00:00:00.000Z",
         "published_at": "2026-06-15T00:00:00.000Z",
-        "effective_at": null,
+        "effective_at": "2026-08-17T00:00:00.000Z",
         "source_url": "https://ai.google.dev/gemini-api/docs/changelog",
         "feed_id": "api-changelog",
         "confidence": "verified"
@@ -284,7 +284,7 @@
           "required": true,
           "url": "https://ai.google.dev/gemini-api/docs/changelog",
           "status": "ok",
-          "checked_at": "2026-07-12T06:47:11.970Z",
+          "checked_at": "2026-07-12T07:00:56.684Z",
           "error": null
         },
         {
@@ -294,7 +294,7 @@
           "required": true,
           "url": "https://ai.google.dev/gemini-api/docs/models",
           "status": "ok",
-          "checked_at": "2026-07-12T06:47:12.195Z",
+          "checked_at": "2026-07-12T07:00:57.219Z",
           "error": null
         }
       ]
