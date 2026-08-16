@@ -1,19 +1,19 @@
 {
   "schema_version": 1,
-  "snapshot_id": "snapshot-9adfd8706f",
-  "generated_at": "2026-08-16T22:37:32.240Z",
-  "checked_at": "2026-08-16T22:37:32.240Z",
-  "content_updated_at": "2026-08-16T22:37:32.240Z",
-  "last_full_success_at": "2026-08-16T21:34:53.761Z",
+  "snapshot_id": "snapshot-ce726b64fd",
+  "generated_at": "2026-08-16T23:34:33.941Z",
+  "checked_at": "2026-08-16T23:34:33.941Z",
+  "content_updated_at": "2026-08-16T23:34:33.941Z",
+  "last_full_success_at": "2026-08-16T23:34:33.941Z",
   "timezone": "Asia/Shanghai",
   "status": "degraded",
   "source_counts": {
     "total": 20,
-    "healthy": 18,
-    "failed": 2,
+    "healthy": 19,
+    "failed": 1,
     "required": 14,
-    "required_healthy": 13,
-    "required_failed": 1
+    "required_healthy": 14,
+    "required_failed": 0
   },
   "tools": [
     {
@@ -23,9 +23,9 @@
       "repo_url": "https://github.com/openai/codex",
       "official_url": "https://developers.openai.com/codex",
       "x_url": "https://x.com/OpenAI",
-      "stars": 106267,
-      "stars_delta_24h": 154,
-      "stars_delta_7d": 1326,
+      "stars": 106269,
+      "stars_delta_24h": 156,
+      "stars_delta_7d": 1328,
       "latest_release": {
         "tag": "rust-v0.148.0-alpha.20",
         "title": "0.148.0-alpha.20",
@@ -52,9 +52,9 @@
       "repo_url": "https://github.com/anthropics/claude-code",
       "official_url": "https://code.claude.com/docs",
       "x_url": "https://x.com/AnthropicAI",
-      "stars": 141656,
-      "stars_delta_24h": 96,
-      "stars_delta_7d": 837,
+      "stars": 141657,
+      "stars_delta_24h": 97,
+      "stars_delta_7d": 838,
       "latest_release": {
         "tag": "v2.1.233",
         "title": "v2.1.233",
@@ -81,9 +81,9 @@
       "repo_url": "https://github.com/google-antigravity/antigravity-cli",
       "official_url": "https://www.antigravity.google/docs/cli-using",
       "x_url": "https://x.com/GoogleAI",
-      "stars": 1928,
-      "stars_delta_24h": 11,
-      "stars_delta_7d": 56,
+      "stars": 1929,
+      "stars_delta_24h": 12,
+      "stars_delta_7d": 57,
       "latest_release": {
         "tag": "1.1.13",
         "title": "1.1.13",
@@ -106,9 +106,9 @@
       "repo_url": "https://github.com/openclaw/openclaw",
       "official_url": "https://openclaw.ai",
       "x_url": "https://x.com/openclaw",
-      "stars": 386464,
-      "stars_delta_24h": 72,
-      "stars_delta_7d": 775,
+      "stars": 386466,
+      "stars_delta_24h": 74,
+      "stars_delta_7d": 777,
       "latest_release": {
         "tag": "pr-124528-profiles",
         "title": "PR #124528 Gateway profile evidence",
@@ -143,7 +143,7 @@
         "occurred_at": "2026-07-08T00:00:00.000Z",
         "published_at": "2026-07-08T00:00:00.000Z",
         "effective_at": null,
-        "detected_at": "2026-08-16T22:37:34.171Z",
+        "detected_at": "2026-08-16T23:34:36.118Z",
         "source_url": "https://openai.com/index/introducing-gpt-live",
         "feed_id": "news-rss",
         "confidence": "verified",
@@ -157,7 +157,7 @@
         "occurred_at": "2026-01-29T00:00:00.000Z",
         "published_at": "2026-01-29T00:00:00.000Z",
         "effective_at": "2026-02-13T00:00:00.000Z",
-        "detected_at": "2026-08-16T22:37:34.176Z",
+        "detected_at": "2026-08-16T23:34:36.123Z",
         "source_url": "https://openai.com/index/retiring-gpt-4o-and-older-models",
         "feed_id": "news-rss",
         "confidence": "verified",
@@ -174,7 +174,7 @@
           "required": true,
           "url": "https://openai.com/news/rss.xml",
           "status": "ok",
-          "checked_at": "2026-08-16T22:37:34.160Z",
+          "checked_at": "2026-08-16T23:34:36.107Z",
           "error": null
         },
         {
@@ -184,7 +184,7 @@
           "required": false,
           "url": "https://help.openai.com/en/articles/9624314-model-release-notes",
           "status": "error",
-          "checked_at": "2026-08-16T22:37:36.067Z",
+          "checked_at": "2026-08-16T23:34:38.021Z",
           "error": "403 Forbidden"
         },
         {
@@ -194,7 +194,7 @@
           "required": true,
           "url": "https://developers.openai.com/api/docs/deprecations",
           "status": "ok",
-          "checked_at": "2026-08-16T22:37:36.111Z",
+          "checked_at": "2026-08-16T23:34:38.489Z",
           "error": null
         },
         {
@@ -204,7 +204,7 @@
           "required": false,
           "url": "https://developers.openai.com/api/docs/changelog",
           "status": "ok",
-          "checked_at": "2026-08-16T22:37:36.137Z",
+          "checked_at": "2026-08-16T23:34:38.763Z",
           "error": null
         }
       ]
@@ -222,7 +222,7 @@
         "occurred_at": "2026-06-30T00:00:00.000Z",
         "published_at": "2026-06-30T00:00:00.000Z",
         "effective_at": null,
-        "detected_at": "2026-08-16T22:37:34.587Z",
+        "detected_at": "2026-08-16T23:34:36.271Z",
         "source_url": "https://www.anthropic.com/news/claude-sonnet-5",
         "feed_id": "news",
         "confidence": "verified",
@@ -233,10 +233,10 @@
       },
       "latest_policy": {
         "title": "claude-opus-4-1-20250805 Retired June 5, 2026 August 5, 2026",
-        "occurred_at": "2026-08-16T22:37:35.395Z",
+        "occurred_at": "2026-08-16T23:34:37.112Z",
         "published_at": null,
         "effective_at": "2026-08-05T00:00:00.000Z",
-        "detected_at": "2026-08-16T22:37:35.395Z",
+        "detected_at": "2026-08-16T23:34:37.112Z",
         "source_url": "https://platform.claude.com/docs/en/about-claude/model-deprecations",
         "feed_id": "deprecations",
         "confidence": "verified",
@@ -253,7 +253,7 @@
           "required": true,
           "url": "https://www.anthropic.com/news",
           "status": "ok",
-          "checked_at": "2026-08-16T22:37:34.584Z",
+          "checked_at": "2026-08-16T23:34:36.269Z",
           "error": null
         },
         {
@@ -263,7 +263,7 @@
           "required": false,
           "url": "https://platform.claude.com/docs/en/release-notes/overview",
           "status": "ok",
-          "checked_at": "2026-08-16T22:37:35.069Z",
+          "checked_at": "2026-08-16T23:34:36.802Z",
           "error": null
         },
         {
@@ -273,7 +273,7 @@
           "required": true,
           "url": "https://platform.claude.com/docs/en/about-claude/model-deprecations",
           "status": "ok",
-          "checked_at": "2026-08-16T22:37:35.387Z",
+          "checked_at": "2026-08-16T23:34:37.104Z",
           "error": null
         }
       ]
@@ -285,13 +285,13 @@
       "source_url": "https://ai.google.dev/gemini-api/docs/changelog",
       "title": "Gemini Omni Flash in public preview : Released gemini-omni-flash-preview ,",
       "occurred_at": "2026-06-30T00:00:00.000Z",
-      "status": "degraded",
+      "status": "ok",
       "latest_model": {
         "title": "Gemini Omni Flash in public preview : Released gemini-omni-flash-preview ,",
         "occurred_at": "2026-06-30T00:00:00.000Z",
         "published_at": "2026-06-30T00:00:00.000Z",
         "effective_at": null,
-        "detected_at": "2026-08-16T21:34:56.524Z",
+        "detected_at": "2026-08-16T23:34:36.377Z",
         "source_url": "https://ai.google.dev/gemini-api/docs/changelog",
         "feed_id": "api-changelog",
         "confidence": "verified",
@@ -301,18 +301,18 @@
         "summary": "Gemini Omni Flash in public preview : Released gemini-omni-flash-preview ,"
       },
       "latest_policy": {
-        "title": "Imagen 4 (Deprecated) Text-to-image model featuring fast and ultra-fast generation and exceptional clarity up to 2K resolution. imagen-4.0-generate",
-        "occurred_at": "2026-08-16T22:39:13.551Z",
-        "published_at": null,
-        "effective_at": null,
-        "detected_at": "2026-08-16T22:39:13.551Z",
-        "source_url": "https://ai.google.dev/gemini-api/docs/models",
-        "feed_id": "models-page",
-        "confidence": "needs_review",
-        "information_status": "partial",
+        "title": "The following Gemini 2.0 models are now shut down :",
+        "occurred_at": "2026-06-01T00:00:00.000Z",
+        "published_at": "2026-06-01T00:00:00.000Z",
+        "effective_at": "2026-06-01T00:00:00.000Z",
+        "detected_at": "2026-08-16T23:34:36.378Z",
+        "source_url": "https://ai.google.dev/gemini-api/docs/changelog",
+        "feed_id": "api-changelog",
+        "confidence": "verified",
+        "information_status": "complete",
         "source_status": "official",
         "release_channel": null,
-        "summary": "Imagen 4 (Deprecated) Text-to-image model featuring fast and ultra-fast generation and exceptional clarity up to 2K resolution."
+        "summary": "The following Gemini 2.0 models are now shut down :"
       },
       "feeds": [
         {
@@ -321,9 +321,9 @@
           "kind": "model",
           "required": true,
           "url": "https://ai.google.dev/gemini-api/docs/changelog",
-          "status": "error",
-          "checked_at": "2026-08-16T22:38:35.903Z",
-          "error": "The operation was aborted due to timeout"
+          "status": "ok",
+          "checked_at": "2026-08-16T23:34:36.369Z",
+          "error": null
         },
         {
           "id": "models-page",
@@ -332,7 +332,7 @@
           "required": true,
           "url": "https://ai.google.dev/gemini-api/docs/models",
           "status": "ok",
-          "checked_at": "2026-08-16T22:39:13.543Z",
+          "checked_at": "2026-08-16T23:34:36.742Z",
           "error": null
         }
       ]
