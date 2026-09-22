@@ -1,10 +1,10 @@
 {
   "schema_version": 1,
-  "snapshot_id": "snapshot-161ce17c24",
-  "generated_at": "2026-09-22T14:56:28.249Z",
-  "checked_at": "2026-09-22T14:56:28.249Z",
-  "content_updated_at": "2026-09-22T14:56:28.249Z",
-  "last_full_success_at": "2026-09-22T14:56:28.249Z",
+  "snapshot_id": "snapshot-f8b1c20876",
+  "generated_at": "2026-09-22T18:56:09.079Z",
+  "checked_at": "2026-09-22T18:56:09.079Z",
+  "content_updated_at": "2026-09-22T18:56:09.079Z",
+  "last_full_success_at": "2026-09-22T18:56:09.079Z",
   "timezone": "Asia/Shanghai",
   "status": "degraded",
   "source_counts": {
@@ -23,20 +23,20 @@
       "repo_url": "https://github.com/openai/codex",
       "official_url": "https://developers.openai.com/codex",
       "x_url": "https://x.com/OpenAI",
-      "stars": 125923,
+      "stars": 125949,
       "stars_delta_24h": 221,
-      "stars_delta_7d": 1583,
+      "stars_delta_7d": 1579,
       "latest_release": {
-        "tag": "rust-v0.157.0-alpha.8",
-        "title": "0.157.0-alpha.8",
-        "published_at": "2026-09-22T12:34:27Z",
-        "url": "https://github.com/openai/codex/releases/tag/rust-v0.157.0-alpha.8",
+        "tag": "rust-v0.157.0-alpha.9",
+        "title": "0.157.0-alpha.9",
+        "published_at": "2026-09-22T18:00:16Z",
+        "url": "https://github.com/openai/codex/releases/tag/rust-v0.157.0-alpha.9",
         "release_channel": "prerelease",
-        "summary": "Release 0.157.0-alpha.8"
+        "summary": "Release 0.157.0-alpha.9"
       },
       "release_cadence_30d": {
         "count": 20,
-        "median_days": 0.14706018518518518
+        "median_days": 0.2005324074074074
       },
       "npm": {
         "package": "@openai/codex",
@@ -52,24 +52,24 @@
       "repo_url": "https://github.com/anthropics/claude-code",
       "official_url": "https://code.claude.com/docs",
       "x_url": "https://x.com/AnthropicAI",
-      "stars": 147599,
-      "stars_delta_24h": 197,
-      "stars_delta_7d": 2464,
+      "stars": 147630,
+      "stars_delta_24h": 199,
+      "stars_delta_7d": 2459,
       "latest_release": {
-        "tag": "v2.1.278",
-        "title": "v2.1.278",
-        "published_at": "2026-09-19T03:10:40Z",
-        "url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.278",
+        "tag": "v2.1.280",
+        "title": "v2.1.280",
+        "published_at": "2026-09-22T16:38:14Z",
+        "url": "https://github.com/anthropics/claude-code/releases/tag/v2.1.280",
         "release_channel": "stable",
-        "summary": "Changed auto mode for Claude API and Enterprise users, and on Bedrock, Vertex, Foundry and gateways, to default to the server-side classifier, which does not charge for classifier overhead…"
+        "summary": "Added Claude Opus 5.5 (claude-opus-5-5), now the default Opus model - 1M context, $4/$20 per Mtok with $0.20/Mtok cache reads"
       },
       "release_cadence_30d": {
         "count": 20,
-        "median_days": 0.9314236111111112
+        "median_days": 0.9493171296296297
       },
       "npm": {
         "package": "@anthropic-ai/claude-code",
-        "version": "2.1.278",
+        "version": "2.1.280",
         "weekly_downloads": 8669665
       },
       "status": "ok"
@@ -81,9 +81,9 @@
       "repo_url": "https://github.com/google-antigravity/antigravity-cli",
       "official_url": "https://www.antigravity.google/docs/cli-using",
       "x_url": "https://x.com/GoogleAI",
-      "stars": 2355,
-      "stars_delta_24h": 10,
-      "stars_delta_7d": 64,
+      "stars": 2356,
+      "stars_delta_24h": 11,
+      "stars_delta_7d": 63,
       "latest_release": {
         "tag": "1.2.8",
         "title": "1.2.8",
@@ -106,9 +106,9 @@
       "repo_url": "https://github.com/openclaw/openclaw",
       "official_url": "https://openclaw.ai",
       "x_url": "https://x.com/openclaw",
-      "stars": 390257,
-      "stars_delta_24h": 69,
-      "stars_delta_7d": 511,
+      "stars": 390259,
+      "stars_delta_24h": 58,
+      "stars_delta_7d": 493,
       "latest_release": {
         "tag": "v2026.7.35",
         "title": "openclaw 2026.7.35",
@@ -143,7 +143,7 @@
         "occurred_at": "2026-07-08T00:00:00.000Z",
         "published_at": "2026-07-08T00:00:00.000Z",
         "effective_at": null,
-        "detected_at": "2026-09-22T14:56:31.086Z",
+        "detected_at": "2026-09-22T18:56:12.036Z",
         "source_url": "https://openai.com/index/introducing-gpt-live",
         "feed_id": "news-rss",
         "confidence": "verified",
@@ -153,18 +153,18 @@
         "summary": "A new generation of voice models for natural human-AI interaction, now powering ChatGPT Voice."
       },
       "latest_policy": {
-        "title": "Retiring GPT-4o, GPT-4.1, GPT-4.1 mini, and OpenAI o4-mini in ChatGPT",
-        "occurred_at": "2026-01-29T00:00:00.000Z",
-        "published_at": "2026-01-29T00:00:00.000Z",
-        "effective_at": "2026-02-13T00:00:00.000Z",
-        "detected_at": "2026-09-22T14:56:31.090Z",
-        "source_url": "https://openai.com/index/retiring-gpt-4o-and-older-models",
-        "feed_id": "news-rss",
+        "title": "The gpt-5.4-cyber model is deprecated and will be removed from the API on October 1, 2026. Migrate to gpt-5.6-cyber before the shutdown date.",
+        "occurred_at": "2026-09-22T18:56:13.988Z",
+        "published_at": null,
+        "effective_at": "2026-10-01T00:00:00.000Z",
+        "detected_at": "2026-09-22T18:56:13.988Z",
+        "source_url": "https://developers.openai.com/api/docs/deprecations",
+        "feed_id": "deprecations",
         "confidence": "verified",
         "information_status": "complete",
         "source_status": "official",
         "release_channel": null,
-        "summary": "On February 13, 2026, alongside the previously announced retirement⁠ of GPT‑5 (Instant, Thinking, and Pro), we will retire GPT‑4o, GPT‑4.1, GPT‑4.1 mini, and OpenAI o4-mini from ChatGPT."
+        "summary": "The gpt-5.4-cyber model is deprecated and will be removed from the API on October 1, 2026."
       },
       "feeds": [
         {
@@ -174,7 +174,7 @@
           "required": true,
           "url": "https://openai.com/news/rss.xml",
           "status": "ok",
-          "checked_at": "2026-09-22T14:56:31.073Z",
+          "checked_at": "2026-09-22T18:56:12.023Z",
           "error": null
         },
         {
@@ -184,7 +184,7 @@
           "required": false,
           "url": "https://help.openai.com/en/articles/9624314-model-release-notes",
           "status": "error",
-          "checked_at": "2026-09-22T14:56:33.137Z",
+          "checked_at": "2026-09-22T18:56:13.918Z",
           "error": "403 Forbidden"
         },
         {
@@ -194,7 +194,7 @@
           "required": true,
           "url": "https://developers.openai.com/api/docs/deprecations",
           "status": "ok",
-          "checked_at": "2026-09-22T14:56:33.281Z",
+          "checked_at": "2026-09-22T18:56:13.974Z",
           "error": null
         },
         {
@@ -204,7 +204,7 @@
           "required": false,
           "url": "https://developers.openai.com/api/docs/changelog",
           "status": "ok",
-          "checked_at": "2026-09-22T14:56:33.369Z",
+          "checked_at": "2026-09-22T18:56:14.011Z",
           "error": null
         }
       ]
@@ -213,30 +213,30 @@
       "id": "claude",
       "name": "Claude",
       "provider": "Anthropic",
-      "source_url": "https://www.anthropic.com/news/claude-opus-5",
-      "title": "Introducing Claude Opus 5",
-      "occurred_at": "2026-07-24T00:00:00.000Z",
+      "source_url": "https://www.anthropic.com/news",
+      "title": "Introducing Claude Opus 5.5",
+      "occurred_at": "2026-09-22T18:56:12.360Z",
       "status": "ok",
       "latest_model": {
-        "title": "Introducing Claude Opus 5",
-        "occurred_at": "2026-07-24T00:00:00.000Z",
-        "published_at": "2026-07-24T00:00:00.000Z",
+        "title": "Introducing Claude Opus 5.5",
+        "occurred_at": "2026-09-22T18:56:12.360Z",
+        "published_at": null,
         "effective_at": null,
-        "detected_at": "2026-09-17T18:15:38.232Z",
-        "source_url": "https://www.anthropic.com/news/claude-opus-5",
+        "detected_at": "2026-09-22T18:56:12.360Z",
+        "source_url": "https://www.anthropic.com/news",
         "feed_id": "news",
-        "confidence": "verified",
-        "information_status": "complete",
+        "confidence": "needs_review",
+        "information_status": "partial",
         "source_status": "official",
         "release_channel": "stable",
-        "summary": "Introducing Claude Opus 5"
+        "summary": "Introducing Claude Opus 5.5"
       },
       "latest_policy": {
         "title": "claude-opus-4-1-20250805 Retired June 5, 2026 August 5, 2026",
-        "occurred_at": "2026-09-22T14:56:32.102Z",
+        "occurred_at": "2026-09-22T18:56:13.084Z",
         "published_at": null,
         "effective_at": "2026-08-05T00:00:00.000Z",
-        "detected_at": "2026-09-22T14:56:32.102Z",
+        "detected_at": "2026-09-22T18:56:13.084Z",
         "source_url": "https://platform.claude.com/docs/en/about-claude/model-deprecations",
         "feed_id": "deprecations",
         "confidence": "verified",
@@ -253,7 +253,7 @@
           "required": true,
           "url": "https://www.anthropic.com/news",
           "status": "ok",
-          "checked_at": "2026-09-22T14:56:31.221Z",
+          "checked_at": "2026-09-22T18:56:12.356Z",
           "error": null
         },
         {
@@ -263,7 +263,7 @@
           "required": false,
           "url": "https://platform.claude.com/docs/en/release-notes/overview",
           "status": "ok",
-          "checked_at": "2026-09-22T14:56:31.853Z",
+          "checked_at": "2026-09-22T18:56:12.815Z",
           "error": null
         },
         {
@@ -273,7 +273,7 @@
           "required": true,
           "url": "https://platform.claude.com/docs/en/about-claude/model-deprecations",
           "status": "ok",
-          "checked_at": "2026-09-22T14:56:32.096Z",
+          "checked_at": "2026-09-22T18:56:13.076Z",
           "error": null
         }
       ]
@@ -291,7 +291,7 @@
         "occurred_at": "2026-06-30T00:00:00.000Z",
         "published_at": "2026-06-30T00:00:00.000Z",
         "effective_at": null,
-        "detected_at": "2026-09-22T14:56:31.677Z",
+        "detected_at": "2026-09-22T18:56:12.540Z",
         "source_url": "https://ai.google.dev/gemini-api/docs/changelog",
         "feed_id": "api-changelog",
         "confidence": "verified",
@@ -305,7 +305,7 @@
         "occurred_at": "2026-06-01T00:00:00.000Z",
         "published_at": "2026-06-01T00:00:00.000Z",
         "effective_at": "2026-06-01T00:00:00.000Z",
-        "detected_at": "2026-09-22T14:56:31.678Z",
+        "detected_at": "2026-09-22T18:56:12.540Z",
         "source_url": "https://ai.google.dev/gemini-api/docs/changelog",
         "feed_id": "api-changelog",
         "confidence": "verified",
@@ -322,7 +322,7 @@
           "required": true,
           "url": "https://ai.google.dev/gemini-api/docs/changelog",
           "status": "ok",
-          "checked_at": "2026-09-22T14:56:31.669Z",
+          "checked_at": "2026-09-22T18:56:12.531Z",
           "error": null
         },
         {
@@ -332,7 +332,7 @@
           "required": true,
           "url": "https://ai.google.dev/gemini-api/docs/models",
           "status": "ok",
-          "checked_at": "2026-09-22T14:56:31.871Z",
+          "checked_at": "2026-09-22T18:56:12.788Z",
           "error": null
         }
       ]
